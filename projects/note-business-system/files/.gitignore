@@ -1,0 +1,6 @@
+# Zip files and large uploads are not tracked in git
+*.zip
+*.rar
+*.7z
+*.tar
+*.gz
