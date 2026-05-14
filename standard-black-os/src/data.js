@@ -156,7 +156,7 @@ export function loadData() {
     if (stored.skills) {
       data.skills = data.skills.map(sk => {
         const s = stored.skills.find(ss => ss.id === sk.id);
-        return s ? { ...sk, runs: s.runs ?? 0, last: s.last ?? "—" } : sk;
+        return s ? { ...sk, runs: s.runs ?? 0, last: s.last ?? "—", status: s.status ?? sk.status } : sk;
       });
       const custom = stored.skills.filter(ss => !data.skills.find(dk => dk.id === ss.id));
       data.skills = [...data.skills, ...custom];
@@ -175,7 +175,11 @@ export function loadData() {
 }
 
 export function saveData(data) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  } catch {
+    // localStorage unavailable (private mode, quota exceeded) — ignore silently
+  }
 }
 
 export const FUND_SERIES = [
