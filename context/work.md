@@ -8,8 +8,9 @@
 
 | Priority | Vertical | Status |
 |---|---|---|
-| 1 | Cash reserves | Active — funded by car sales income |
+| 1 | Cash reserves | Active — funded by Staples income |
 | 2 | Real estate note fund platform | Phase I — course + mentorship in progress |
+| 2.5 | Standard Black Creations (website dev) | Active — first client delivered |
 | 3 | Public markets | Future |
 | 4 | Crypto (selective) | Future |
 | 5 | Operating company acquisitions (HVAC, plumbing, construction, trucking, property management) | Future |
@@ -21,7 +22,7 @@ Rockefeller/ultra-high-net-worth family-office architecture: nested entities, tr
 Currently in **Phase I (0–2 years):** Build reserves, complete note underwriting education, form entity stack, begin small-scale execution.
 
 ## Active Income
-Car Salesman — Clay Cooley Volkswagen, Richardson, TX. This income funds the build.
+Staples employee, $17/hr, Monday–Friday. Building Standard Black Creations (website business) as a side hustle on Lovable.
 
 ## Tools & Integrations
 - Gmail (MCP connected)
