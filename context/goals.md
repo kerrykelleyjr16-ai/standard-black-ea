@@ -8,17 +8,15 @@
 
 ## Q2 2026 Goals
 
-1. **Complete car sales workflow** — Functional lead gen, appointment, and conversion system running at Clay Cooley VW by end of April.
+1. **Note mentorship momentum** — Full team in active coaching phase with Desi Arnez. Goal: complete 2–3 note transactions independently.
 
-2. **Note course momentum** — Full team actively progressing through Desi Arnez course. Establish a weekly study/review cadence.
+2. **Note business operating system** — Draft the core SOP structure and identify the first 2–3 AI integration points.
 
-3. **Note business operating system** — Draft the core SOP structure and identify the first 2–3 AI integration points.
+3. **Team leadership framework** — Live and in use: defined roles, weekly operating rhythm, accountability system, delegation model.
 
 4. **Entity structure foundation** — Research and select the right entity stack (LLC, LP, trust structure). Engage legal counsel if funds permit.
 
 5. **Team payment structure** — Define contribution amounts, cadence, and what the pool covers. Document it formally.
-
-6. **Leadership structure** — Establish a basic operating rhythm for the team: defined roles, weekly check-in format, accountability system.
 
 ---
 

@@ -4,44 +4,106 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Standard Black — Fund Architecture</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@200;300;400;500;600&display=swap" rel="stylesheet">
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    /* ── Design System Tokens ── */
+    :root {
+      --c-bg:           hsl(0 0% 4%);
+      --c-bg-charcoal:  hsl(0 0% 8%);
+      --c-bg-card:      hsl(0 0% 6%);
+      --c-bg-elev:      hsl(0 0% 10%);
 
-    body {
-      background: #0a0a0a;
-      color: #f0f0f0;
-      font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
-      padding: 40px 24px 60px;
-      min-height: 100vh;
+      --c-fg:           hsl(40 25% 95%);
+      --c-fg-1:         hsl(40 20% 92%);
+      --c-fg-2:         hsl(40 8% 60%);
+      --c-fg-3:         hsl(40 8% 40%);
+
+      --c-gold:         hsl(42 55% 52%);
+      --c-gold-deep:    hsl(38 65% 38%);
+      --c-gold-soft:    hsl(44 50% 70%);
+      --c-gold-glow:    hsl(44 70% 65%);
+
+      --c-border:       hsl(40 15% 14%);
+      --c-border-soft:  hsl(40 15% 14% / 0.6);
+
+      --gradient-gold: linear-gradient(135deg, hsl(38 65% 45%) 0%, hsl(44 70% 65%) 50%, hsl(38 65% 45%) 100%);
+
+      --radius:    0.125rem;
+      --radius-lg: 0.25rem;
+
+      --font-serif: 'Cormorant Garamond', 'Garamond', 'Georgia', serif;
+      --font-sans:  'Inter', system-ui, -apple-system, 'Helvetica Neue', sans-serif;
+
+      --ls-eyebrow: 0.3em;
+      --ls-tag:     0.25em;
+      --ls-hero:    0.12em;
+
+      --ease-luxe: cubic-bezier(0.22, 1, 0.36, 1);
     }
 
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { color-scheme: dark; scroll-behavior: smooth; }
+
+    body {
+      background: var(--c-bg);
+      color: var(--c-fg-1);
+      font-family: var(--font-sans);
+      font-weight: 300;
+      font-size: 1rem;
+      letter-spacing: 0.01em;
+      padding: 60px 24px 80px;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    ::selection { background: hsl(42 55% 52% / 0.25); color: var(--c-fg); }
+
+    /* ── Header ── */
     header {
       text-align: center;
-      margin-bottom: 48px;
+      margin-bottom: 64px;
+    }
+
+    .header-eyebrow {
+      font-family: var(--font-sans);
+      font-size: 0.625rem;
+      font-weight: 400;
+      letter-spacing: var(--ls-eyebrow);
+      text-transform: uppercase;
+      color: var(--c-gold);
+      margin-bottom: 16px;
+      display: block;
     }
 
     header h1 {
-      font-size: 13px;
-      font-weight: 600;
-      letter-spacing: 0.25em;
+      font-family: var(--font-serif);
+      font-size: clamp(2rem, 4vw, 3.25rem);
+      font-weight: 300;
+      letter-spacing: var(--ls-hero);
       text-transform: uppercase;
-      color: #888;
-      margin-bottom: 8px;
+      color: var(--c-fg);
+      line-height: 1.05;
+      margin-bottom: 12px;
     }
 
-    header h2 {
-      font-size: 26px;
-      font-weight: 700;
-      letter-spacing: 0.04em;
-      color: #fff;
+    .luxury-line {
+      display: block;
+      height: 1px;
+      width: 3rem;
+      background: linear-gradient(90deg, transparent, var(--c-gold), transparent);
+      margin: 16px auto;
     }
 
     header p {
-      font-size: 12px;
-      color: #555;
-      margin-top: 6px;
-      letter-spacing: 0.1em;
+      font-size: 0.6875rem;
+      color: var(--c-fg-3);
+      letter-spacing: 0.2em;
       text-transform: uppercase;
+      font-weight: 300;
     }
 
     /* ── Layout ── */
@@ -50,26 +112,30 @@
       flex-direction: column;
       align-items: center;
       gap: 0;
-      max-width: 900px;
+      max-width: 920px;
       margin: 0 auto;
     }
 
     /* ── Nodes ── */
     .node {
-      border: 1px solid #2a2a2a;
-      border-radius: 6px;
-      padding: 18px 24px;
+      border: 1px solid var(--c-border);
+      border-radius: var(--radius);
+      padding: 20px 24px;
       width: 100%;
-      max-width: 560px;
+      max-width: 580px;
       position: relative;
+      background: var(--c-bg-card);
+      transition: border-color 300ms var(--ease-luxe);
     }
 
     .node-title {
-      font-size: 13px;
-      font-weight: 700;
-      letter-spacing: 0.12em;
+      font-family: var(--font-sans);
+      font-size: 0.625rem;
+      font-weight: 500;
+      letter-spacing: var(--ls-eyebrow);
       text-transform: uppercase;
-      margin-bottom: 10px;
+      margin-bottom: 14px;
+      color: var(--c-fg-2);
     }
 
     .node-bullets {
@@ -78,41 +144,60 @@
     }
 
     .node-bullets li {
-      font-size: 12px;
-      color: #aaa;
-      padding: 3px 0 3px 14px;
+      font-size: 0.75rem;
+      color: var(--c-fg-2);
+      padding: 4px 0 4px 16px;
       position: relative;
-      line-height: 1.5;
+      line-height: 1.6;
+      font-weight: 300;
     }
 
     .node-bullets li::before {
       content: '—';
       position: absolute;
       left: 0;
-      color: #444;
+      color: var(--c-fg-3);
     }
 
-    /* Color variants */
-    .node-investors   { background: #111; border-color: #333; }
-    .node-investors .node-title { color: #fff; }
+    /* ── Node color variants ── */
+    .node-investors {
+      background: var(--c-bg-card);
+      border-color: hsl(40 15% 18%);
+    }
+    .node-investors .node-title { color: var(--c-fg); }
 
-    .node-feeder      { background: #0f1a0f; border-color: #1d3a1d; }
-    .node-feeder .node-title { color: #5dba5d; }
+    .node-feeder {
+      background: hsl(130 20% 5%);
+      border-color: hsl(130 25% 14%);
+    }
+    .node-feeder .node-title { color: hsl(130 45% 58%); }
 
-    .node-master      { background: #0c1520; border-color: #1a3050; }
-    .node-master .node-title { color: #5a9fd4; }
+    .node-master {
+      background: hsl(210 25% 6%);
+      border-color: hsl(210 30% 16%);
+    }
+    .node-master .node-title { color: hsl(210 55% 62%); }
 
-    .node-income      { background: #100f1a; border-color: #2a2060; }
-    .node-income .node-title { color: #9d8fea; }
+    .node-income {
+      background: hsl(260 20% 6%);
+      border-color: hsl(260 25% 18%);
+    }
+    .node-income .node-title { color: hsl(260 50% 68%); }
 
-    .node-workout     { background: #1a0f0f; border-color: #4a1a1a; }
-    .node-workout .node-title { color: #d47a7a; }
+    .node-workout {
+      background: hsl(0 20% 6%);
+      border-color: hsl(0 30% 18%);
+    }
+    .node-workout .node-title { color: hsl(0 50% 65%); }
 
-    .node-warehouse   { background: #0f1510; border-color: #1e3520; }
-    .node-warehouse .node-title { color: #6bbf7a; }
+    .node-warehouse {
+      background: hsl(140 20% 5%);
+      border-color: hsl(140 25% 14%);
+    }
+    .node-warehouse .node-title { color: hsl(140 40% 58%); }
 
-    .node-cashflow    { background: #12100a; border-color: #3a2e0a; }
-    .node-cashflow .node-title { color: #d4a83a; }
+    .node-cashflow { border-color: hsl(42 30% 16%); }
+    .node-cashflow .node-title { color: var(--c-gold); }
 
     /* ── Arrows ── */
     .arrow {
@@ -121,113 +206,68 @@
       align-items: center;
       gap: 0;
       width: 100%;
-      max-width: 560px;
+      max-width: 580px;
     }
 
     .arrow-line {
-      width: 2px;
+      width: 1px;
       height: 24px;
-      background: #333;
+      background: var(--c-border);
     }
 
     .arrow-label {
-      font-size: 10px;
-      color: #555;
-      letter-spacing: 0.08em;
+      font-size: 0.5625rem;
+      color: var(--c-fg-3);
+      letter-spacing: 0.2em;
       text-transform: uppercase;
-      margin: -2px 0;
-      padding: 2px 8px;
-      background: #111;
-      border: 1px solid #222;
-      border-radius: 3px;
+      font-weight: 400;
+      margin: -1px 0;
+      padding: 3px 10px;
+      background: var(--c-bg);
+      border: 1px solid var(--c-border);
+      border-radius: var(--radius);
     }
 
     .arrow-head {
       width: 0;
       height: 0;
-      border-left: 6px solid transparent;
-      border-right: 6px solid transparent;
-      border-top: 8px solid #333;
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+      border-top: 7px solid var(--c-border);
     }
 
     /* ── Split row ── */
     .split-row {
       display: flex;
       justify-content: center;
-      gap: 24px;
+      gap: 20px;
       width: 100%;
-      max-width: 900px;
+      max-width: 920px;
       position: relative;
     }
 
     .split-row .node {
-      max-width: 420px;
+      max-width: 440px;
       flex: 1;
-    }
-
-    /* Horizontal connector between the two branches */
-    .h-connector {
-      display: flex;
-      align-items: flex-start;
-      justify-content: center;
-      width: 100%;
-      max-width: 900px;
-      position: relative;
-      height: 40px;
-    }
-
-    .h-connector-svg {
-      width: 100%;
-      max-width: 900px;
-      height: 40px;
-      overflow: visible;
-    }
-
-    /* ── Merge arrow below split ── */
-    .merge-row {
-      display: flex;
-      justify-content: center;
-      gap: 24px;
-      width: 100%;
-      max-width: 900px;
-      position: relative;
-    }
-
-    .merge-arrow {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      flex: 1;
-    }
-
-    .merge-arrow .arrow-line { height: 20px; }
-
-    .merge-h-line {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 100%;
-      max-width: 900px;
-      position: relative;
-      height: 12px;
     }
 
     /* ── Cashflow section ── */
     .cashflow-section {
       width: 100%;
-      max-width: 900px;
-      margin-top: 40px;
-      border-top: 1px solid #1e1e1e;
-      padding-top: 32px;
+      max-width: 920px;
+      margin-top: 48px;
+      border-top: 1px solid var(--c-border);
+      padding-top: 36px;
     }
 
     .cashflow-label {
-      font-size: 10px;
-      letter-spacing: 0.2em;
-      color: #555;
+      font-size: 0.5625rem;
+      letter-spacing: 0.3em;
+      color: var(--c-fg-3);
       text-transform: uppercase;
       text-align: center;
-      margin-bottom: 16px;
+      margin-bottom: 20px;
+      font-weight: 400;
     }
 
     .cashflow-flow {
@@ -236,54 +276,71 @@
       justify-content: center;
       flex-wrap: wrap;
       gap: 0;
-      max-width: 900px;
+      max-width: 920px;
     }
 
     .cf-step {
-      background: #111;
-      border: 1px solid #222;
-      border-radius: 4px;
-      padding: 10px 14px;
-      font-size: 11px;
-      color: #ccc;
+      background: var(--c-bg-card);
+      border: 1px solid var(--c-border);
+      border-radius: var(--radius);
+      padding: 10px 16px;
+      font-size: 0.6875rem;
+      color: var(--c-fg-1);
       text-align: center;
       white-space: nowrap;
+      font-weight: 300;
+      transition: border-color 300ms var(--ease-luxe);
     }
+
+    .cf-step:hover { border-color: hsl(42 30% 22%); }
 
     .cf-step span {
       display: block;
-      font-size: 9px;
-      color: #555;
-      margin-top: 3px;
-      letter-spacing: 0.06em;
+      font-size: 0.5rem;
+      color: var(--c-fg-3);
+      margin-top: 4px;
+      letter-spacing: 0.2em;
       text-transform: uppercase;
+      font-weight: 400;
     }
 
     .cf-arrow {
-      font-size: 16px;
-      color: #d4a83a;
+      font-size: 14px;
+      color: var(--c-gold);
       padding: 0 6px;
       flex-shrink: 0;
+      opacity: 0.6;
     }
 
+    /* ── Footer ── */
     footer {
       text-align: center;
-      margin-top: 52px;
-      font-size: 11px;
-      color: #333;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
+      margin-top: 60px;
+      padding-top: 24px;
+      border-top: 1px solid var(--c-border);
+      max-width: 920px;
+      margin-left: auto;
+      margin-right: auto;
     }
 
-    footer strong { color: #555; }
+    footer p {
+      font-size: 0.5625rem;
+      color: var(--c-fg-3);
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      font-weight: 400;
+    }
+
+    footer strong { color: var(--c-fg-2); }
   </style>
 </head>
 <body>
 
   <header>
-    <h1>Standard Black / Kasino Family Holdings</h1>
-    <h2>Fund Architecture</h2>
-    <p>Master–Feeder Structure · SPV Framework · Capital Flow</p>
+    <span class="header-eyebrow">Standard Black &nbsp;·&nbsp; Kasino Family Holdings</span>
+    <h1>Fund Architecture</h1>
+    <span class="luxury-line"></span>
+    <p>Master–Feeder Structure &nbsp;·&nbsp; SPV Framework &nbsp;·&nbsp; Capital Flow</p>
   </header>
 
   <div class="diagram">
@@ -337,28 +394,23 @@
     </div>
 
     <!-- Split connector: Master → two SPVs -->
-    <div style="width:100%; max-width:900px; display:flex; justify-content:center; position:relative; height:50px;">
-      <svg width="100%" height="50" style="overflow:visible;">
-        <!-- vertical line down from master -->
-        <line x1="50%" y1="0" x2="50%" y2="20" stroke="#333" stroke-width="2"/>
-        <!-- horizontal bar -->
-        <line x1="25%" y1="20" x2="75%" y2="20" stroke="#333" stroke-width="2"/>
-        <!-- left branch down -->
-        <line x1="25%" y1="20" x2="25%" y2="44" stroke="#333" stroke-width="2"/>
-        <polygon points="25%,50 calc(25% - 6px),38 calc(25% + 6px),38" fill="#333"
-          transform="translate(-1,0)"/>
-        <!-- right branch down -->
-        <line x1="75%" y1="20" x2="75%" y2="44" stroke="#333" stroke-width="2"/>
-        <!-- arrowheads via markers won't work easily with %; use polyline approach -->
+    <div style="width:100%; max-width:920px; display:flex; justify-content:center; position:relative; height:54px;">
+      <svg width="100%" height="54" style="overflow:visible;">
         <defs>
-          <marker id="arr" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
-            <path d="M0,0 L8,4 L0,8 Z" fill="#333"/>
+          <marker id="arr" markerWidth="8" markerHeight="8" refX="4" refY="8" orient="auto">
+            <path d="M0,0 L4,8 L8,0" fill="none" stroke="hsl(40 15% 14%)" stroke-width="1.5"/>
           </marker>
         </defs>
-        <line x1="25%" y1="20" x2="25%" y2="48" stroke="#333" stroke-width="2" marker-end="url(#arr)"/>
-        <line x1="75%" y1="20" x2="75%" y2="48" stroke="#333" stroke-width="2" marker-end="url(#arr)"/>
-        <text x="25%" y="17" text-anchor="middle" fill="#555" font-size="9" letter-spacing="1" font-family="Arial">INCOME SLEEVE</text>
-        <text x="75%" y="17" text-anchor="middle" fill="#555" font-size="9" letter-spacing="1" font-family="Arial">WORKOUT SLEEVE</text>
+        <!-- vertical drop from master -->
+        <line x1="50%" y1="0" x2="50%" y2="20" stroke="hsl(40 15% 14%)" stroke-width="1"/>
+        <!-- horizontal bar -->
+        <line x1="25%" y1="20" x2="75%" y2="20" stroke="hsl(40 15% 14%)" stroke-width="1"/>
+        <!-- left branch -->
+        <line x1="25%" y1="20" x2="25%" y2="48" stroke="hsl(40 15% 14%)" stroke-width="1" marker-end="url(#arr)"/>
+        <!-- right branch -->
+        <line x1="75%" y1="20" x2="75%" y2="48" stroke="hsl(40 15% 14%)" stroke-width="1" marker-end="url(#arr)"/>
+        <text x="25%" y="15" text-anchor="middle" fill="hsl(40 8% 35%)" font-size="8" letter-spacing="2" font-family="Inter, sans-serif" font-weight="400">INCOME SLEEVE</text>
+        <text x="75%" y="15" text-anchor="middle" fill="hsl(40 8% 35%)" font-size="8" letter-spacing="2" font-family="Inter, sans-serif" font-weight="400">WORKOUT SLEEVE</text>
       </svg>
     </div>
 
@@ -389,21 +441,20 @@
 
     </div>
 
-    <!-- Merge arrows down to warehouse -->
-    <div style="width:100%; max-width:900px; display:flex; justify-content:center; position:relative; height:50px;">
-      <svg width="100%" height="50" style="overflow:visible;">
+    <!-- Merge arrows down to warehouse (dashed — optional path) -->
+    <div style="width:100%; max-width:920px; display:flex; justify-content:center; position:relative; height:52px;">
+      <svg width="100%" height="52" style="overflow:visible;">
         <defs>
-          <marker id="arr2" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
-            <path d="M0,0 L8,4 L0,8 Z" fill="#2a2a2a"/>
+          <marker id="arr2" markerWidth="8" markerHeight="8" refX="4" refY="8" orient="auto">
+            <path d="M0,0 L4,8 L8,0" fill="none" stroke="hsl(40 15% 12%)" stroke-width="1.5"/>
           </marker>
         </defs>
-        <!-- left branch up from income (optional) -->
-        <line x1="25%" y1="0" x2="25%" y2="20" stroke="#2a2a2a" stroke-width="1.5" stroke-dasharray="4,3"/>
-        <line x1="25%" y1="20" x2="50%" y2="20" stroke="#2a2a2a" stroke-width="1.5" stroke-dasharray="4,3"/>
-        <line x1="75%" y1="0" x2="75%" y2="20" stroke="#2a2a2a" stroke-width="1.5" stroke-dasharray="4,3"/>
-        <line x1="75%" y1="20" x2="50%" y2="20" stroke="#2a2a2a" stroke-width="1.5" stroke-dasharray="4,3"/>
-        <line x1="50%" y1="20" x2="50%" y2="48" stroke="#2a2a2a" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arr2)"/>
-        <text x="50%" y="16" text-anchor="middle" fill="#444" font-size="9" letter-spacing="1" font-family="Arial">IF LEVERAGED (INCOME) / OPTIONAL AT SCALE</text>
+        <line x1="25%" y1="0" x2="25%" y2="20" stroke="hsl(40 15% 12%)" stroke-width="1" stroke-dasharray="4,3"/>
+        <line x1="25%" y1="20" x2="50%" y2="20" stroke="hsl(40 15% 12%)" stroke-width="1" stroke-dasharray="4,3"/>
+        <line x1="75%" y1="0" x2="75%" y2="20" stroke="hsl(40 15% 12%)" stroke-width="1" stroke-dasharray="4,3"/>
+        <line x1="75%" y1="20" x2="50%" y2="20" stroke="hsl(40 15% 12%)" stroke-width="1" stroke-dasharray="4,3"/>
+        <line x1="50%" y1="20" x2="50%" y2="48" stroke="hsl(40 15% 12%)" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arr2)"/>
+        <text x="50%" y="15" text-anchor="middle" fill="hsl(40 8% 30%)" font-size="7.5" letter-spacing="1.5" font-family="Inter, sans-serif" font-weight="400">IF LEVERAGED (INCOME) / OPTIONAL AT SCALE</text>
       </svg>
     </div>
 
@@ -418,10 +469,10 @@
       </ul>
     </div>
 
-  </div><!-- /diagram -->
+  </div>
 
   <!-- CASHFLOW ROUTING -->
-  <div class="cashflow-section" style="max-width:900px; margin:40px auto 0;">
+  <div class="cashflow-section">
     <div class="cashflow-label">Cashflow Routing — Recommended Path</div>
     <div class="cashflow-flow">
       <div class="cf-step">Borrowers<span>Payments</span></div>
@@ -439,7 +490,7 @@
   </div>
 
   <footer>
-    <strong>Standard Black</strong> &nbsp;·&nbsp; Kasino Family Holdings &nbsp;·&nbsp; Confidential
+    <p><strong>Standard Black</strong> &nbsp;·&nbsp; Kasino Family Holdings &nbsp;·&nbsp; Confidential</p>
   </footer>
 
 </body>

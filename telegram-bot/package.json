@@ -1,0 +1,18 @@
+{
+  "name": "standard-black-telegram-bot",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "wrangler dev --test-scheduled",
+    "deploy": "wrangler deploy",
+    "secret": "wrangler secret put"
+  },
+  "dependencies": {
+    "@upstash/redis": "^1.34.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.0.0",
+    "typescript": "^5.0.0",
+    "wrangler": "^4.90.0"
+  }
+}
