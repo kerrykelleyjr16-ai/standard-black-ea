@@ -1,12 +1,17 @@
-import { f } from './tokens.js'
-import { loadData } from './data.js'
-console.log('data check:', loadData())
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import Dashboard from './pages/Dashboard.jsx'
+import VentureDetail from './pages/VentureDetail.jsx'
+import { C } from './tokens.js'
+
 export default function App() {
   return (
-    <div style={{ background: '#050505', minHeight: '100vh', padding: 40 }}>
-      <div style={{ fontFamily: f.display, fontSize: 32, color: '#F5F1E8', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
-        Standard Black
+    <BrowserRouter>
+      <div style={{ minHeight: '100vh', background: C.bg }}>
+        <Routes>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/venture/:id" element={<VentureDetail />} />
+        </Routes>
       </div>
-    </div>
+    </BrowserRouter>
   )
 }
