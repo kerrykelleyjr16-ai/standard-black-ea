@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Standard Black — Fund Architecture</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #0a0a0a;
+      color: #f0f0f0;
+      font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+      padding: 40px 24px 60px;
+      min-height: 100vh;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    header h1 {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: #888;
+      margin-bottom: 8px;
+    }
+
+    header h2 {
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      color: #fff;
+    }
+
+    header p {
+      font-size: 12px;
+      color: #555;
+      margin-top: 6px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    /* ── Layout ── */
+    .diagram {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    /* ── Nodes ── */
+    .node {
+      border: 1px solid #2a2a2a;
+      border-radius: 6px;
+      padding: 18px 24px;
+      width: 100%;
+      max-width: 560px;
+      position: relative;
+    }
+
+    .node-title {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .node-bullets {
+      list-style: none;
+      padding: 0;
+    }
+
+    .node-bullets li {
+      font-size: 12px;
+      color: #aaa;
+      padding: 3px 0 3px 14px;
+      position: relative;
+      line-height: 1.5;
+    }
+
+    .node-bullets li::before {
+      content: '—';
+      position: absolute;
+      left: 0;
+      color: #444;
+    }
+
+    /* Color variants */
+    .node-investors   { background: #111; border-color: #333; }
+    .node-investors .node-title { color: #fff; }
+
+    .node-feeder      { background: #0f1a0f; border-color: #1d3a1d; }
+    .node-feeder .node-title { color: #5dba5d; }
+
+    .node-master      { background: #0c1520; border-color: #1a3050; }
+    .node-master .node-title { color: #5a9fd4; }
+
+    .node-income      { background: #100f1a; border-color: #2a2060; }
+    .node-income .node-title { color: #9d8fea; }
+
+    .node-workout     { background: #1a0f0f; border-color: #4a1a1a; }
+    .node-workout .node-title { color: #d47a7a; }
+
+    .node-warehouse   { background: #0f1510; border-color: #1e3520; }
+    .node-warehouse .node-title { color: #6bbf7a; }
+
+    .node-cashflow    { background: #12100a; border-color: #3a2e0a; }
+    .node-cashflow .node-title { color: #d4a83a; }
+
+    /* ── Arrows ── */
+    .arrow {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+      width: 100%;
+      max-width: 560px;
+    }
+
+    .arrow-line {
+      width: 2px;
+      height: 24px;
+      background: #333;
+    }
+
+    .arrow-label {
+      font-size: 10px;
+      color: #555;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin: -2px 0;
+      padding: 2px 8px;
+      background: #111;
+      border: 1px solid #222;
+      border-radius: 3px;
+    }
+
+    .arrow-head {
+      width: 0;
+      height: 0;
+      border-left: 6px solid transparent;
+      border-right: 6px solid transparent;
+      border-top: 8px solid #333;
+    }
+
+    /* ── Split row ── */
+    .split-row {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      width: 100%;
+      max-width: 900px;
+      position: relative;
+    }
+
+    .split-row .node {
+      max-width: 420px;
+      flex: 1;
+    }
+
+    /* Horizontal connector between the two branches */
+    .h-connector {
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      width: 100%;
+      max-width: 900px;
+      position: relative;
+      height: 40px;
+    }
+
+    .h-connector-svg {
+      width: 100%;
+      max-width: 900px;
+      height: 40px;
+      overflow: visible;
+    }
+
+    /* ── Merge arrow below split ── */
+    .merge-row {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      width: 100%;
+      max-width: 900px;
+      position: relative;
+    }
+
+    .merge-arrow {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex: 1;
+    }
+
+    .merge-arrow .arrow-line { height: 20px; }
+
+    .merge-h-line {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      max-width: 900px;
+      position: relative;
+      height: 12px;
+    }
+
+    /* ── Cashflow section ── */
+    .cashflow-section {
+      width: 100%;
+      max-width: 900px;
+      margin-top: 40px;
+      border-top: 1px solid #1e1e1e;
+      padding-top: 32px;
+    }
+
+    .cashflow-label {
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      color: #555;
+      text-transform: uppercase;
+      text-align: center;
+      margin-bottom: 16px;
+    }
+
+    .cashflow-flow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 0;
+      max-width: 900px;
+    }
+
+    .cf-step {
+      background: #111;
+      border: 1px solid #222;
+      border-radius: 4px;
+      padding: 10px 14px;
+      font-size: 11px;
+      color: #ccc;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .cf-step span {
+      display: block;
+      font-size: 9px;
+      color: #555;
+      margin-top: 3px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .cf-arrow {
+      font-size: 16px;
+      color: #d4a83a;
+      padding: 0 6px;
+      flex-shrink: 0;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 52px;
+      font-size: 11px;
+      color: #333;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    footer strong { color: #555; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Standard Black / Kasino Family Holdings</h1>
+    <h2>Fund Architecture</h2>
+    <p>Master–Feeder Structure · SPV Framework · Capital Flow</p>
+  </header>
+
+  <div class="diagram">
+
+    <!-- INVESTORS -->
+    <div class="node node-investors">
+      <div class="node-title">Investors</div>
+      <ul class="node-bullets">
+        <li>Wire / ACH subscriptions</li>
+        <li>Optional stablecoin rail</li>
+        <li>Accredited / qualified purchaser eligibility</li>
+      </ul>
+    </div>
+
+    <!-- Arrow: Investors → Feeder -->
+    <div class="arrow">
+      <div class="arrow-line"></div>
+      <div class="arrow-label">Subscriptions</div>
+      <div class="arrow-line"></div>
+      <div class="arrow-head"></div>
+    </div>
+
+    <!-- FEEDER FUND -->
+    <div class="node node-feeder">
+      <div class="node-title">Feeder Fund &nbsp;·&nbsp; Tokenized or Non-Tokenized</div>
+      <ul class="node-bullets">
+        <li>KYC / AML + eligibility verification</li>
+        <li>Issues feeder interests (permissioned tokens optional)</li>
+        <li>Holds subscription cash temporarily before contribution</li>
+      </ul>
+    </div>
+
+    <!-- Arrow: Feeder → Master -->
+    <div class="arrow">
+      <div class="arrow-line"></div>
+      <div class="arrow-label">Capital Contribution</div>
+      <div class="arrow-line"></div>
+      <div class="arrow-head"></div>
+    </div>
+
+    <!-- MASTER FUND -->
+    <div class="node node-master">
+      <div class="node-title">Master Fund</div>
+      <ul class="node-bullets">
+        <li>Portfolio construction + governance</li>
+        <li>Allocation policy: Income vs. Workout sleeves</li>
+        <li>Forms and controls all SPVs</li>
+        <li>NAV calculation + investor reporting</li>
+        <li>Distribution &amp; waterfall (LP pref + split)</li>
+      </ul>
+    </div>
+
+    <!-- Split connector: Master → two SPVs -->
+    <div style="width:100%; max-width:900px; display:flex; justify-content:center; position:relative; height:50px;">
+      <svg width="100%" height="50" style="overflow:visible;">
+        <!-- vertical line down from master -->
+        <line x1="50%" y1="0" x2="50%" y2="20" stroke="#333" stroke-width="2"/>
+        <!-- horizontal bar -->
+        <line x1="25%" y1="20" x2="75%" y2="20" stroke="#333" stroke-width="2"/>
+        <!-- left branch down -->
+        <line x1="25%" y1="20" x2="25%" y2="44" stroke="#333" stroke-width="2"/>
+        <polygon points="25%,50 calc(25% - 6px),38 calc(25% + 6px),38" fill="#333"
+          transform="translate(-1,0)"/>
+        <!-- right branch down -->
+        <line x1="75%" y1="20" x2="75%" y2="44" stroke="#333" stroke-width="2"/>
+        <!-- arrowheads via markers won't work easily with %; use polyline approach -->
+        <defs>
+          <marker id="arr" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+            <path d="M0,0 L8,4 L0,8 Z" fill="#333"/>
+          </marker>
+        </defs>
+        <line x1="25%" y1="20" x2="25%" y2="48" stroke="#333" stroke-width="2" marker-end="url(#arr)"/>
+        <line x1="75%" y1="20" x2="75%" y2="48" stroke="#333" stroke-width="2" marker-end="url(#arr)"/>
+        <text x="25%" y="17" text-anchor="middle" fill="#555" font-size="9" letter-spacing="1" font-family="Arial">INCOME SLEEVE</text>
+        <text x="75%" y="17" text-anchor="middle" fill="#555" font-size="9" letter-spacing="1" font-family="Arial">WORKOUT SLEEVE</text>
+      </svg>
+    </div>
+
+    <!-- Split row: two SPVs -->
+    <div class="split-row">
+
+      <!-- INCOME SPVs -->
+      <div class="node node-income">
+        <div class="node-title">Income SPVs &nbsp;·&nbsp; PN / RPL Pools</div>
+        <ul class="node-bullets">
+          <li>Acquire cash-flowing performing &amp; re-performing notes</li>
+          <li>Eligible for warehouse financing</li>
+          <li>Primary servicer remits to SPV account</li>
+          <li>Lower risk profile · steady yield</li>
+        </ul>
+      </div>
+
+      <!-- WORKOUT SPVs -->
+      <div class="node node-workout">
+        <div class="node-title">Workout SPVs &nbsp;·&nbsp; NPL Pools</div>
+        <ul class="node-bullets">
+          <li>Acquire fast-path non-performing notes</li>
+          <li>Separate reserves &amp; advance controls</li>
+          <li>Special servicer + counsel panels</li>
+          <li>No leverage early — optional at scale</li>
+        </ul>
+      </div>
+
+    </div>
+
+    <!-- Merge arrows down to warehouse -->
+    <div style="width:100%; max-width:900px; display:flex; justify-content:center; position:relative; height:50px;">
+      <svg width="100%" height="50" style="overflow:visible;">
+        <defs>
+          <marker id="arr2" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+            <path d="M0,0 L8,4 L0,8 Z" fill="#2a2a2a"/>
+          </marker>
+        </defs>
+        <!-- left branch up from income (optional) -->
+        <line x1="25%" y1="0" x2="25%" y2="20" stroke="#2a2a2a" stroke-width="1.5" stroke-dasharray="4,3"/>
+        <line x1="25%" y1="20" x2="50%" y2="20" stroke="#2a2a2a" stroke-width="1.5" stroke-dasharray="4,3"/>
+        <line x1="75%" y1="0" x2="75%" y2="20" stroke="#2a2a2a" stroke-width="1.5" stroke-dasharray="4,3"/>
+        <line x1="75%" y1="20" x2="50%" y2="20" stroke="#2a2a2a" stroke-width="1.5" stroke-dasharray="4,3"/>
+        <line x1="50%" y1="20" x2="50%" y2="48" stroke="#2a2a2a" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arr2)"/>
+        <text x="50%" y="16" text-anchor="middle" fill="#444" font-size="9" letter-spacing="1" font-family="Arial">IF LEVERAGED (INCOME) / OPTIONAL AT SCALE</text>
+      </svg>
+    </div>
+
+    <!-- WAREHOUSE SPV -->
+    <div class="node node-warehouse">
+      <div class="node-title">Warehouse / Facility SPV &nbsp;·&nbsp; Optional at Scale</div>
+      <ul class="node-bullets">
+        <li>Holds pledged eligible Income notes as collateral</li>
+        <li>Debt service waterfall takes priority</li>
+        <li>Excess cash flows back upstream to Master</li>
+        <li>Not deployed in early phase — activated when AUM justifies leverage</li>
+      </ul>
+    </div>
+
+  </div><!-- /diagram -->
+
+  <!-- CASHFLOW ROUTING -->
+  <div class="cashflow-section" style="max-width:900px; margin:40px auto 0;">
+    <div class="cashflow-label">Cashflow Routing — Recommended Path</div>
+    <div class="cashflow-flow">
+      <div class="cf-step">Borrowers<span>Payments</span></div>
+      <div class="cf-arrow">→</div>
+      <div class="cf-step">Servicer Lockbox<span>3rd-Party Servicer</span></div>
+      <div class="cf-arrow">→</div>
+      <div class="cf-step">SPV Bank Account<span>Income or Workout</span></div>
+      <div class="cf-arrow">→</div>
+      <div class="cf-step">Debt Service (if any)<span>Warehouse Facility</span></div>
+      <div class="cf-arrow">→</div>
+      <div class="cf-step">Master Fund<span>Net Cash</span></div>
+      <div class="cf-arrow">→</div>
+      <div class="cf-step">Distributions<span>LP Pref → GP Split</span></div>
+    </div>
+  </div>
+
+  <footer>
+    <strong>Standard Black</strong> &nbsp;·&nbsp; Kasino Family Holdings &nbsp;·&nbsp; Confidential
+  </footer>
+
+</body>
+</html>
