@@ -92,6 +92,21 @@ const DEFAULT_VENTURES = [
       "Identify first business tool to fund from operating pool",
     ],
   },
+  {
+    id: "trading-os",
+    name: "Trading OS",
+    iconName: "TrendingUp",
+    status: "active",
+    priority: 7,
+    kpi: { label: "Session Phase", value: "Pre-Market", target: "Live Trading", pct: 0 },
+    sub: "Options trading command room · AIOS development tracker · Aristotle framework",
+    about: "Full options trading operating system. Trading tab: manual command room with live SPY/QQQ market bias, watchlist, trade plan builder, risk rules, and strategy vault pre-loaded with Aristotle's framework. Trading AIOS tab: XP, ranks, discipline tracking, setup grader, AI coach, and weekly review engine.",
+    nextActions: [
+      "Complete pre-market checklist before first trade",
+      "Log first trade in the Trade Journal",
+      "Review discipline score at end of week",
+    ],
+  },
 ];
 
 const DEFAULT_SKILLS = [

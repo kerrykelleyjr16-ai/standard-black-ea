@@ -1,9 +1,9 @@
 import { useNavigate } from 'react-router-dom'
-import { DollarSign, Layers, BookOpen, Monitor, Building2, Users, ChevronRight } from 'lucide-react'
+import { DollarSign, Layers, BookOpen, Monitor, Building2, Users, TrendingUp, ChevronRight } from 'lucide-react'
 import { C, f } from '../tokens.js'
 import Pill from './Pill.jsx'
 
-const ICONS = { DollarSign, Layers, BookOpen, Monitor, Building2, Users };
+const ICONS = { DollarSign, Layers, BookOpen, Monitor, Building2, Users, TrendingUp };
 
 export default function VentureRow({ venture }) {
   const navigate = useNavigate();
@@ -48,7 +48,7 @@ export default function VentureRow({ venture }) {
         </div>
       </div>
       <button
-        onClick={() => navigate(`/venture/${venture.id}`)}
+        onClick={() => venture.id === 'trading-os' ? navigate('/trading-os') : navigate(`/venture/${venture.id}`)}
         style={{
           fontFamily: f.mono, fontSize: 10, letterSpacing: '0.12em', textTransform: 'uppercase',
           color: C.gold, background: 'transparent', border: `1px solid ${C.goldDim}`,
