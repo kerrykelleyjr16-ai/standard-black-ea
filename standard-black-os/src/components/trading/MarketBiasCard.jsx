@@ -4,7 +4,7 @@ import { C, f } from '../../tokens.js'
 
 async function fetchQuote(ticker) {
   try {
-    const url = `https://query1.finance.yahoo.com/v8/finance/chart/${ticker}?interval=1d&range=1d`;
+    const url = `/api/finance/v8/finance/chart/${ticker}?interval=1d&range=1d`;
     const res = await fetch(url);
     if (!res.ok) throw new Error('fetch failed');
     const json = await res.json();
