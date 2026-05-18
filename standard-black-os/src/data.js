@@ -146,12 +146,19 @@ const DEFAULT_ACTIVITY = [
   { t: "—", who: "mcp", msg: "MCP servers: Gmail · Calendar · Drive · Canva · Docusign · Zapier", kind: "ok" },
 ];
 
+const DEFAULT_AIOS = {
+  followUps: [],
+  tasks: [],
+  cashReserve: { current: 0, target: 5000, label: 'Operating Reserve' },
+};
+
 function defaultData() {
   return {
     ventures: DEFAULT_VENTURES,
     skills: DEFAULT_SKILLS,
     automations: DEFAULT_AUTOMATIONS,
     activity: DEFAULT_ACTIVITY,
+    aios: DEFAULT_AIOS,
   };
 }
 
@@ -183,6 +190,13 @@ export function loadData() {
       });
     }
     if (stored.activity) data.activity = stored.activity;
+    if (stored.aios) {
+      data.aios = {
+        ...DEFAULT_AIOS,
+        ...stored.aios,
+        cashReserve: { ...DEFAULT_AIOS.cashReserve, ...(stored.aios.cashReserve ?? {}) },
+      };
+    }
     return data;
   } catch {
     return defaultData();

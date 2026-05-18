@@ -14,6 +14,7 @@ import SkillButton from '../components/SkillButton.jsx'
 import ActivityLog from '../components/ActivityLog.jsx'
 import ConfigPanel from '../components/ConfigPanel.jsx'
 import NewSkillModal from '../components/NewSkillModal.jsx'
+import AIOSAgent from '../components/AIOSAgent.jsx'
 
 const VENTURE_FILTERS = ['all', 'fund', 'creations', 'team', 'os'];
 
@@ -210,6 +211,9 @@ export default function Dashboard() {
             </Panel>
           </div>
         </div>
+
+        {/* AIOS Super Agent */}
+        <AIOSAgent data={data} persist={persist} />
 
         {/* Footer */}
         <div style={{
