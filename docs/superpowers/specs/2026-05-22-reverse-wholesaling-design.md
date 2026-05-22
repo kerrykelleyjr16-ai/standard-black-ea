@@ -1,13 +1,13 @@
 # Reverse Wholesaling AI System — Design Spec
 **Date:** 2026-05-22  
 **Status:** Approved — ready for implementation  
-**Method:** Brian Haskins' buyer-first (market-driven) wholesaling  
+**Method:** Buyer-first (market-driven) wholesaling  
 
 ---
 
 ## 1. What We're Building
 
-An AI-powered reverse wholesaling CRM that implements Brian Haskins' buyer-first method. The core loop: build a buyer list with precise buy boxes → find properties that match → AI qualifies sellers → close fast because the deal is pre-sold.
+An AI-powered reverse wholesaling CRM built by Standard Black. The core loop: build a buyer list with precise buy boxes → find properties that match → AI qualifies sellers → close fast because the deal is pre-sold.
 
 Three pillars:
 1. **Buyer Engine** — store buyer buy boxes and use them to drive everything downstream
