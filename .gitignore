@@ -5,3 +5,4 @@ node_modules/
 .superpowers/
 standard-black-os/node_modules/
 standard-black-os/dist/
+telegram-bot/.dev.vars
