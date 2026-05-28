@@ -1,0 +1,355 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e4]:
+    - banner [ref=e5]:
+      - generic [ref=e6]:
+        - generic [ref=e7]:
+          - generic [ref=e8]: SB
+          - generic [ref=e9]:
+            - generic [ref=e10]: Standard Black
+            - generic [ref=e11]: Kerry Kelley Jr · Operator
+        - generic [ref=e12]:
+          - generic [ref=e15]: Heartbeat · live
+          - generic [ref=e17]: 03:03:03
+          - link "Standard Black" [ref=e19] [cursor=pointer]:
+            - /url: https://standard-black-scale.lovable.app
+            - text: Standard Black
+            - img [ref=e20]
+          - button "Config" [ref=e24] [cursor=pointer]:
+            - img [ref=e25]
+            - text: Config
+    - generic [ref=e28]:
+      - generic [ref=e29]:
+        - generic [ref=e30]:
+          - generic [ref=e32]: Capital Raised · Fund I
+          - generic [ref=e33]: $0
+          - generic [ref=e34]: Target $1M–$5M · accredited
+          - img [ref=e38]
+        - generic [ref=e39]:
+          - generic [ref=e41]: Note OS Sprint
+          - generic [ref=e42]: 2 / 6
+          - generic [ref=e43]: Sprint 1 complete · Supabase pending
+        - generic [ref=e44]:
+          - generic [ref=e46]: SB Creations · Sites
+          - generic [ref=e47]: "1"
+          - generic [ref=e48]: Delivered · 100 visits
+          - img [ref=e52]
+        - generic [ref=e59]:
+          - generic [ref=e61]: Active Ventures
+          - generic [ref=e62]: 6 / 7
+          - generic [ref=e63]: 1 in planning
+        - generic [ref=e64]:
+          - generic [ref=e66]: OS Status
+          - generic [ref=e67]: Nominal
+          - generic [ref=e68]: 17 skills live · 4 automations
+      - generic [ref=e69]:
+        - generic [ref=e70]:
+          - generic [ref=e71]:
+            - generic [ref=e72]:
+              - generic [ref=e73]: Ventures
+              - generic [ref=e74]:
+                - button "all" [ref=e75] [cursor=pointer]
+                - button "fund" [ref=e76] [cursor=pointer]
+                - button "creations" [ref=e77] [cursor=pointer]
+                - button "team" [ref=e78] [cursor=pointer]
+                - button "os" [ref=e79] [cursor=pointer]
+            - generic [ref=e80]:
+              - generic [ref=e81]:
+                - img [ref=e83]
+                - generic [ref=e85]:
+                  - generic [ref=e86]:
+                    - text: Note Fund I
+                    - generic [ref=e87]: active
+                  - generic [ref=e88]: Residential notes · Accredited only · $150K min
+                - generic [ref=e89]:
+                  - generic [ref=e90]: Capital Raised
+                  - generic [ref=e91]: $0
+                  - generic [ref=e92]: → $1M–$5M
+                - button "Open" [ref=e93] [cursor=pointer]:
+                  - text: Open
+                  - img [ref=e94]
+              - generic [ref=e96]:
+                - img [ref=e98]
+                - generic [ref=e102]:
+                  - generic [ref=e103]:
+                    - text: Note Business System
+                    - generic [ref=e104]: active
+                  - generic [ref=e105]: 18 agents live · Supabase migrations ready · Sprint 2 in progress
+                - generic [ref=e106]:
+                  - generic [ref=e107]: Sprint
+                  - generic [ref=e108]: 2 / 6
+                  - generic [ref=e109]: → Sprint 6
+                - button "Open" [ref=e110] [cursor=pointer]:
+                  - text: Open
+                  - img [ref=e111]
+              - generic [ref=e113]:
+                - img [ref=e115]
+                - generic [ref=e117]:
+                  - generic [ref=e118]:
+                    - text: Note Mentorship
+                    - generic [ref=e119]: active
+                  - generic [ref=e120]: Desi Arnez program · Full team enrolled · Live coaching phase
+                - generic [ref=e121]:
+                  - generic [ref=e122]: Phase
+                  - generic [ref=e123]: Coaching
+                  - generic [ref=e124]: → 2–3 Transactions
+                - button "Open" [ref=e125] [cursor=pointer]:
+                  - text: Open
+                  - img [ref=e126]
+              - generic [ref=e128]:
+                - img [ref=e130]
+                - generic [ref=e132]:
+                  - generic [ref=e133]:
+                    - text: Standard Black Creations
+                    - generic [ref=e134]: active
+                  - generic [ref=e135]: Website design & dev · Lovable platform · 1 site live · 100 visits
+                - generic [ref=e136]:
+                  - generic [ref=e137]: Sites Delivered
+                  - generic [ref=e138]: "1"
+                  - generic [ref=e139]: → Paid Clients
+                - button "Open" [ref=e140] [cursor=pointer]:
+                  - text: Open
+                  - img [ref=e141]
+              - generic [ref=e143]:
+                - img [ref=e145]
+                - generic [ref=e149]:
+                  - generic [ref=e150]:
+                    - text: Entity Structure
+                    - generic [ref=e151]: planning
+                  - generic [ref=e152]: LLC / LP / Trust · Kasino Family Holdings · Rockefeller architecture
+                - generic [ref=e153]:
+                  - generic [ref=e154]: Target
+                  - generic [ref=e155]: Nov 2026
+                  - generic [ref=e156]: → Stack Live
+                - button "Open" [ref=e157] [cursor=pointer]:
+                  - text: Open
+                  - img [ref=e158]
+              - generic [ref=e160]:
+                - img [ref=e162]
+                - generic [ref=e167]:
+                  - generic [ref=e168]:
+                    - text: Team Payment Structure
+                    - generic [ref=e169]: active
+                  - generic [ref=e170]: $105 each · Kerry · Kody · TJ · Due 28th/month
+                - generic [ref=e171]:
+                  - generic [ref=e172]: Pool
+                  - generic [ref=e173]: $315/mo
+                  - generic [ref=e174]: → Debt Cleared
+                - button "Open" [ref=e175] [cursor=pointer]:
+                  - text: Open
+                  - img [ref=e176]
+              - generic [ref=e178]:
+                - img [ref=e180]
+                - generic [ref=e183]:
+                  - generic [ref=e184]:
+                    - text: Trading OS
+                    - generic [ref=e185]: active
+                  - generic [ref=e186]: Options trading command room · AIOS development tracker · Aristotle framework
+                - generic [ref=e187]:
+                  - generic [ref=e188]: Session Phase
+                  - generic [ref=e189]: Pre-Market
+                  - generic [ref=e190]: → Live Trading
+                - button "Open" [ref=e191] [cursor=pointer]:
+                  - text: Open
+                  - img [ref=e192]
+          - generic [ref=e194]:
+            - generic [ref=e195]:
+              - generic [ref=e197]: Fund I · Capital Raise (YTD)
+              - img [ref=e202]:
+                - generic [ref=e206]:
+                  - generic [ref=e208]: Jan
+                  - generic [ref=e210]: Feb
+                  - generic [ref=e212]: Mar
+                  - generic [ref=e214]: Apr
+                  - generic [ref=e216]: May
+                  - generic [ref=e218]: Jun
+                - generic [ref=e220]:
+                  - generic [ref=e222]: "0"
+                  - generic [ref=e224]: "1"
+                  - generic [ref=e226]: "2"
+                  - generic [ref=e228]: "3"
+                  - generic [ref=e230]: "4"
+            - generic [ref=e231]:
+              - generic [ref=e233]: SB Creations · Sites Delivered
+              - img [ref=e238]:
+                - generic [ref=e242]:
+                  - generic [ref=e244]: Jan
+                  - generic [ref=e246]: Feb
+                  - generic [ref=e248]: Mar
+                  - generic [ref=e250]: Apr
+                  - generic [ref=e252]: May
+                  - generic [ref=e254]: Jun
+                - generic [ref=e256]:
+                  - generic [ref=e258]: "0"
+                  - generic [ref=e260]: "0.25"
+                  - generic [ref=e262]: "0.5"
+                  - generic [ref=e264]: "0.75"
+                  - generic [ref=e266]: "1"
+        - generic [ref=e272]:
+          - generic [ref=e273]:
+            - generic [ref=e274]:
+              - generic [ref=e275]: Skills · 20 shown
+              - button "New" [ref=e276] [cursor=pointer]:
+                - img [ref=e277]
+                - text: New
+            - generic [ref=e280]:
+              - button "Note Investing Underwriter /fund:note-investing-underwriter · 0 runs · —" [ref=e281] [cursor=pointer]:
+                - generic [ref=e282]:
+                  - generic [ref=e283]: Note Investing Underwriter
+                  - generic [ref=e284]: /fund:note-investing-underwriter · 0 runs · —
+                - img [ref=e286]
+              - button "Acquisition Analyzer /fund:acquisition-analyzer · 0 runs · —" [ref=e288] [cursor=pointer]:
+                - generic [ref=e289]:
+                  - generic [ref=e290]: Acquisition Analyzer
+                  - generic [ref=e291]: /fund:acquisition-analyzer · 0 runs · —
+                - img [ref=e293]
+              - button "Finance Dashboard Builder /fund:finance-dashboard-builder · 0 runs · —" [ref=e295] [cursor=pointer]:
+                - generic [ref=e296]:
+                  - generic [ref=e297]: Finance Dashboard Builder
+                  - generic [ref=e298]: /fund:finance-dashboard-builder · 0 runs · —
+                - img [ref=e300]
+              - button "Business Task Manager /team:business-task-manager · 0 runs · —" [ref=e302] [cursor=pointer]:
+                - generic [ref=e303]:
+                  - generic [ref=e304]: Business Task Manager
+                  - generic [ref=e305]: /team:business-task-manager · 0 runs · —
+                - img [ref=e307]
+              - button "SOP Builder /team:sop-builder · 0 runs · —" [ref=e309] [cursor=pointer]:
+                - generic [ref=e310]:
+                  - generic [ref=e311]: SOP Builder
+                  - generic [ref=e312]: /team:sop-builder · 0 runs · —
+                - img [ref=e314]
+              - button "CRM Manager /team:crm-manager · 0 runs · —" [ref=e316] [cursor=pointer]:
+                - generic [ref=e317]:
+                  - generic [ref=e318]: CRM Manager
+                  - generic [ref=e319]: /team:crm-manager · 0 runs · —
+                - img [ref=e321]
+              - button "Weekly Review /team:weekly-review · 0 runs · —" [ref=e323] [cursor=pointer]:
+                - generic [ref=e324]:
+                  - generic [ref=e325]: Weekly Review
+                  - generic [ref=e326]: /team:weekly-review · 0 runs · —
+                - img [ref=e328]
+              - button "Client Intake + Proposal planned /creations:client-intake · 0 runs · —" [disabled] [ref=e330]:
+                - generic [ref=e331]:
+                  - generic [ref=e332]:
+                    - text: Client Intake + Proposal
+                    - generic [ref=e333]: planned
+                  - generic [ref=e334]: /creations:client-intake · 0 runs · —
+              - button "Project Tracker planned /creations:project-tracker · 0 runs · —" [disabled] [ref=e335]:
+                - generic [ref=e336]:
+                  - generic [ref=e337]:
+                    - text: Project Tracker
+                    - generic [ref=e338]: planned
+                  - generic [ref=e339]: /creations:project-tracker · 0 runs · —
+              - button "Scope + Pricing Generator planned /creations:proposal-builder · 0 runs · —" [disabled] [ref=e340]:
+                - generic [ref=e341]:
+                  - generic [ref=e342]:
+                    - text: Scope + Pricing Generator
+                    - generic [ref=e343]: planned
+                  - generic [ref=e344]: /creations:proposal-builder · 0 runs · —
+              - button "Daily Command Center /os:daily-command-center · 0 runs · —" [ref=e345] [cursor=pointer]:
+                - generic [ref=e346]:
+                  - generic [ref=e347]: Daily Command Center
+                  - generic [ref=e348]: /os:daily-command-center · 0 runs · —
+                - img [ref=e350]
+              - button "Dev Workflow /os:dev-workflow · 0 runs · —" [ref=e352] [cursor=pointer]:
+                - generic [ref=e353]:
+                  - generic [ref=e354]: Dev Workflow
+                  - generic [ref=e355]: /os:dev-workflow · 0 runs · —
+                - img [ref=e357]
+              - button "Automation Planner /os:automation-planner · 0 runs · —" [ref=e359] [cursor=pointer]:
+                - generic [ref=e360]:
+                  - generic [ref=e361]: Automation Planner
+                  - generic [ref=e362]: /os:automation-planner · 0 runs · —
+                - img [ref=e364]
+              - button "AI Router /os:ai-router · 0 runs · —" [ref=e366] [cursor=pointer]:
+                - generic [ref=e367]:
+                  - generic [ref=e368]: AI Router
+                  - generic [ref=e369]: /os:ai-router · 0 runs · —
+                - img [ref=e371]
+              - button "MCP Integration Builder /os:mcp-integration-builder · 0 runs · —" [ref=e373] [cursor=pointer]:
+                - generic [ref=e374]:
+                  - generic [ref=e375]: MCP Integration Builder
+                  - generic [ref=e376]: /os:mcp-integration-builder · 0 runs · —
+                - img [ref=e378]
+              - button "Code Review Coordinator /os:code-review-coordinator · 0 runs · —" [ref=e380] [cursor=pointer]:
+                - generic [ref=e381]:
+                  - generic [ref=e382]: Code Review Coordinator
+                  - generic [ref=e383]: /os:code-review-coordinator · 0 runs · —
+                - img [ref=e385]
+              - button "Security Approval Gate /os:security-approval-gate · 0 runs · —" [ref=e387] [cursor=pointer]:
+                - generic [ref=e388]:
+                  - generic [ref=e389]: Security Approval Gate
+                  - generic [ref=e390]: /os:security-approval-gate · 0 runs · —
+                - img [ref=e392]
+              - button "Trigger.dev Workflow /os:trigger-dev · 0 runs · —" [ref=e394] [cursor=pointer]:
+                - generic [ref=e395]:
+                  - generic [ref=e396]: Trigger.dev Workflow
+                  - generic [ref=e397]: /os:trigger-dev · 0 runs · —
+                - img [ref=e399]
+              - button "Research Summarizer /general:research-summarizer · 0 runs · —" [ref=e401] [cursor=pointer]:
+                - generic [ref=e402]:
+                  - generic [ref=e403]: Research Summarizer
+                  - generic [ref=e404]: /general:research-summarizer · 0 runs · —
+                - img [ref=e406]
+              - button "Email Draft Reviewer /general:email-draft-reviewer · 0 runs · —" [ref=e408] [cursor=pointer]:
+                - generic [ref=e409]:
+                  - generic [ref=e410]: Email Draft Reviewer
+                  - generic [ref=e411]: /general:email-draft-reviewer · 0 runs · —
+                - img [ref=e413]
+          - generic [ref=e415]:
+            - generic [ref=e417]: Automations
+            - generic [ref=e418]:
+              - generic [ref=e419]:
+                - generic [ref=e420]:
+                  - generic [ref=e421]: Weekly Team Sync Agenda
+                  - generic [ref=e422]: Mon 8:00 CT
+                - button [ref=e423] [cursor=pointer]
+              - generic [ref=e425]:
+                - generic [ref=e426]:
+                  - generic [ref=e427]: Note Deal Pipeline Review
+                  - generic [ref=e428]: Fri 5:00 CT
+                - button [ref=e429] [cursor=pointer]
+              - generic [ref=e431]:
+                - generic [ref=e432]:
+                  - generic [ref=e433]: Mentorship Debt Tracker
+                  - generic [ref=e434]: 28th/month
+                - button [ref=e435] [cursor=pointer]
+              - generic [ref=e437]:
+                - generic [ref=e438]:
+                  - generic [ref=e439]: Heartbeat Sync
+                  - generic [ref=e440]: Session start
+                - button [ref=e441] [cursor=pointer]
+          - generic [ref=e443]:
+            - generic [ref=e445]: Activity · Live Log
+            - generic [ref=e447]:
+              - generic [ref=e448]:
+                - generic [ref=e449]: —
+                - generic [ref=e450]: system
+                - generic [ref=e451]: Standard Black OS initialized — connect data sources to populate live metrics
+              - generic [ref=e452]:
+                - generic [ref=e453]: —
+                - generic [ref=e454]: heartbeat
+                - generic [ref=e455]: Scanning .claude/skills … 17 live · 3 planned · 0 conflicts
+              - generic [ref=e456]:
+                - generic [ref=e457]: —
+                - generic [ref=e458]: memory
+                - generic [ref=e459]: CLAUDE.md loaded · context files indexed · 6 ventures registered
+              - generic [ref=e460]:
+                - generic [ref=e461]: —
+                - generic [ref=e462]: mcp
+                - generic [ref=e463]: "MCP servers: Gmail · Calendar · Drive · Canva · Docusign · Zapier"
+      - generic [ref=e464]:
+        - generic [ref=e465]:
+          - generic [ref=e466]:
+            - img [ref=e467]
+            - text: Vault · synced
+          - generic [ref=e471]:
+            - img [ref=e472]
+            - text: Claude Code · connected
+          - generic [ref=e475]:
+            - img [ref=e476]
+            - text: 6 MCP servers
+          - generic [ref=e482]:
+            - img [ref=e483]
+            - text: main · clean
+        - generic [ref=e487]: Standard Black OS v0.1 · 2026-05-16
+  - generic [ref=e488]: "0.25"

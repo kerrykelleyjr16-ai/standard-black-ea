@@ -1,0 +1,10 @@
+- generic [ref=e1]:
+  - generic [ref=e489]:
+    - banner [ref=e490]:
+      - generic [ref=e491]
+    - generic [ref=e521]:
+      - generic [ref=e522]
+      - generic [ref=e539]
+      - generic [ref=e592]
+      - generic [ref=e644]
+  - generic [ref=e488]: "0.25"

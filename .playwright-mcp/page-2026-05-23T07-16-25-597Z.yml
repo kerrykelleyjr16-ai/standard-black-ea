@@ -1,0 +1,34 @@
+- generic [active] [ref=e1]:
+  - complementary [ref=e2]:
+    - generic [ref=e3]: WHOLESALE OS
+    - navigation [ref=e4]:
+      - link "Dashboard" [ref=e5] [cursor=pointer]:
+        - /url: /dashboard
+      - link "Buyers" [ref=e6] [cursor=pointer]:
+        - /url: /buyers
+      - link "Leads" [ref=e7] [cursor=pointer]:
+        - /url: /leads
+      - link "Deals" [ref=e8] [cursor=pointer]:
+        - /url: /deals
+      - link "Import" [ref=e9] [cursor=pointer]:
+        - /url: /import
+  - main [ref=e10]:
+    - generic [ref=e11]:
+      - generic [ref=e12]:
+        - heading "Dashboard" [level=1] [ref=e13]
+        - paragraph [ref=e14]: Standard Black Wholesale OS
+      - generic [ref=e15]:
+        - generic [ref=e16]:
+          - paragraph [ref=e18]: Total Leads
+          - paragraph [ref=e21]: Active Deals
+          - paragraph [ref=e24]: Active Buyers
+          - paragraph [ref=e27]: Potential Fees
+          - paragraph [ref=e30]: Closed Deals
+        - generic [ref=e33]:
+          - generic [ref=e35]:
+            - heading "Lead Pipeline" [level=2] [ref=e36]
+            - button "View all →" [ref=e37] [cursor=pointer]
+          - generic [ref=e52]:
+            - heading "Recent Deals" [level=2] [ref=e53]
+            - button "View all →" [ref=e54] [cursor=pointer]
+        - heading "Recent Activity" [level=2] [ref=e60]

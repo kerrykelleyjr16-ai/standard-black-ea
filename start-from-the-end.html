@@ -1,0 +1,1447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Rise Within Network — The Reverse Engineer's Goal System</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet"/>
+  <style>
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black:   #0A0A0A;
+      --gold:    #C9A84C;
+      --gray:    #6B6B6B;
+      --light:   #F5F5F3;
+      --white:   #FFFFFF;
+      --body-font: 'Lora', Georgia, serif;
+      --head-font: 'Montserrat', 'Helvetica Neue', sans-serif;
+    }
+
+    body {
+      font-family: var(--body-font);
+      font-size: 16px;
+      color: var(--black);
+      background: var(--white);
+      line-height: 1.8;
+    }
+
+    /* ── COVER ───────────────────────────────────────── */
+    .cover {
+      background: var(--black);
+      color: var(--white);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 80px 90px;
+      page-break-after: always;
+      position: relative;
+    }
+
+    .cover-brand {
+      font-family: var(--head-font);
+      font-weight: 600;
+      font-size: 11px;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 60px;
+    }
+
+    .cover-eyebrow {
+      font-family: var(--head-font);
+      font-weight: 400;
+      font-size: 12px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.45);
+      margin-bottom: 18px;
+    }
+
+    .cover-title {
+      font-family: var(--head-font);
+      font-weight: 900;
+      font-size: 68px;
+      line-height: 1.0;
+      letter-spacing: -0.02em;
+      color: var(--white);
+      margin-bottom: 10px;
+    }
+
+    .cover-title span {
+      color: var(--gold);
+    }
+
+    .cover-subtitle {
+      font-family: var(--head-font);
+      font-weight: 400;
+      font-size: 17px;
+      color: rgba(255,255,255,0.65);
+      margin-top: 22px;
+      max-width: 520px;
+      line-height: 1.6;
+    }
+
+    .cover-divider {
+      width: 60px;
+      height: 2px;
+      background: var(--gold);
+      margin: 48px 0;
+    }
+
+    .cover-author {
+      font-family: var(--head-font);
+      font-weight: 500;
+      font-size: 13px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.5);
+    }
+
+    .cover-author strong {
+      color: var(--white);
+      font-weight: 700;
+    }
+
+    .cover-footer {
+      position: absolute;
+      bottom: 48px;
+      left: 90px;
+      right: 90px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      padding-top: 24px;
+    }
+
+    .cover-footer-left {
+      font-family: var(--head-font);
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.3);
+    }
+
+    .cover-footer-right {
+      font-family: var(--head-font);
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.3);
+    }
+
+    /* ── NOTE PAGE ───────────────────────────────────── */
+    .note-page {
+      padding: 80px 90px;
+      page-break-after: always;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: 60vh;
+    }
+
+    .note-page .note-label {
+      font-family: var(--head-font);
+      font-size: 10px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 36px;
+    }
+
+    .note-page p {
+      font-size: 17px;
+      color: var(--black);
+      line-height: 1.9;
+      max-width: 600px;
+      margin-bottom: 20px;
+    }
+
+    /* ── TOC ─────────────────────────────────────────── */
+    .toc-page {
+      padding: 80px 90px;
+      page-break-after: always;
+    }
+
+    .toc-label {
+      font-family: var(--head-font);
+      font-size: 10px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 48px;
+    }
+
+    .toc-item {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      padding: 16px 0;
+      border-bottom: 1px solid #E8E8E8;
+    }
+
+    .toc-item:last-child {
+      border-bottom: none;
+    }
+
+    .toc-left {
+      display: flex;
+      align-items: baseline;
+      gap: 20px;
+    }
+
+    .toc-num {
+      font-family: var(--head-font);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: 0.1em;
+      min-width: 28px;
+    }
+
+    .toc-name {
+      font-family: var(--head-font);
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--black);
+      letter-spacing: 0.01em;
+    }
+
+    .toc-sub {
+      font-family: var(--body-font);
+      font-size: 12px;
+      color: var(--gray);
+      display: block;
+      margin-top: 3px;
+      font-style: italic;
+    }
+
+    /* ── SECTION PAGES ───────────────────────────────── */
+    .section-divider {
+      background: var(--black);
+      color: var(--white);
+      padding: 70px 90px;
+      page-break-before: always;
+      page-break-after: avoid;
+    }
+
+    .section-divider .sec-num {
+      font-family: var(--head-font);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 20px;
+    }
+
+    .section-divider h2 {
+      font-family: var(--head-font);
+      font-weight: 900;
+      font-size: 36px;
+      line-height: 1.15;
+      color: var(--white);
+      letter-spacing: -0.01em;
+      max-width: 560px;
+    }
+
+    .section-body {
+      padding: 64px 90px;
+      page-break-inside: avoid;
+    }
+
+    .section-body p {
+      font-size: 16px;
+      line-height: 1.9;
+      color: #1A1A1A;
+      margin-bottom: 22px;
+      max-width: 680px;
+    }
+
+    .section-body h3 {
+      font-family: var(--head-font);
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--black);
+      margin: 40px 0 16px;
+    }
+
+    .section-body h4 {
+      font-family: var(--head-font);
+      font-weight: 700;
+      font-size: 16px;
+      color: var(--black);
+      margin: 32px 0 12px;
+    }
+
+    .section-body strong {
+      font-weight: 600;
+      color: var(--black);
+    }
+
+    /* Callout box */
+    .callout {
+      background: var(--light);
+      border-left: 4px solid var(--gold);
+      padding: 28px 32px;
+      margin: 36px 0;
+      max-width: 680px;
+      page-break-inside: avoid;
+    }
+
+    .callout p {
+      margin-bottom: 10px;
+      font-size: 15px;
+    }
+
+    .callout p:last-child { margin-bottom: 0; }
+
+    .callout-label {
+      font-family: var(--head-font);
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 14px;
+    }
+
+    /* Arrow list */
+    .arrow-list {
+      list-style: none;
+      margin: 20px 0 28px;
+      max-width: 640px;
+    }
+
+    .arrow-list li {
+      font-family: var(--body-font);
+      font-size: 16px;
+      line-height: 1.7;
+      color: #1A1A1A;
+      padding: 8px 0 8px 28px;
+      border-bottom: 1px solid #EFEFEF;
+      position: relative;
+    }
+
+    .arrow-list li:last-child { border-bottom: none; }
+
+    .arrow-list li::before {
+      content: "→";
+      position: absolute;
+      left: 0;
+      color: var(--gold);
+      font-style: normal;
+      font-family: var(--head-font);
+    }
+
+    /* Formula box */
+    .formula {
+      background: var(--black);
+      color: var(--white);
+      padding: 32px 36px;
+      margin: 36px 0;
+      max-width: 680px;
+      page-break-inside: avoid;
+    }
+
+    .formula .formula-label {
+      font-family: var(--head-font);
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 16px;
+    }
+
+    .formula p {
+      font-family: var(--head-font);
+      font-weight: 600;
+      font-size: 15px;
+      color: var(--white) !important;
+      line-height: 1.6;
+      margin-bottom: 8px !important;
+    }
+
+    .formula p:last-child { margin-bottom: 0 !important; }
+
+    /* Fill-in fields */
+    .fill-line {
+      display: block;
+      border-bottom: 1.5px solid #C0C0C0;
+      margin: 8px 0 20px;
+      min-height: 32px;
+      max-width: 560px;
+    }
+
+    .fill-label {
+      font-family: var(--head-font);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      color: var(--gray);
+      text-transform: uppercase;
+      margin-top: 20px;
+    }
+
+    /* ── SECTION NUMBERS (inline) ────────────────────── */
+    .inline-num {
+      font-family: var(--head-font);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--gold);
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    /* ── FINAL WORD ──────────────────────────────────── */
+    .final-page {
+      background: var(--black);
+      color: var(--white);
+      padding: 80px 90px;
+      page-break-before: always;
+      min-height: 60vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .final-page .final-label {
+      font-family: var(--head-font);
+      font-size: 10px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 36px;
+    }
+
+    .final-page p {
+      font-size: 17px;
+      line-height: 1.9;
+      color: rgba(255,255,255,0.85);
+      max-width: 580px;
+      margin-bottom: 22px;
+    }
+
+    .final-page .sign-off {
+      font-family: var(--head-font);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--gold);
+      letter-spacing: 0.1em;
+      margin-top: 40px;
+    }
+
+    /* ── BONUS WORKSHEET ─────────────────────────────── */
+    .worksheet-cover {
+      background: var(--gold);
+      color: var(--black);
+      padding: 80px 90px;
+      page-break-before: always;
+    }
+
+    .worksheet-cover .ws-label {
+      font-family: var(--head-font);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: rgba(0,0,0,0.5);
+      margin-bottom: 28px;
+    }
+
+    .worksheet-cover h2 {
+      font-family: var(--head-font);
+      font-weight: 900;
+      font-size: 42px;
+      line-height: 1.1;
+      color: var(--black);
+      letter-spacing: -0.02em;
+      margin-bottom: 20px;
+    }
+
+    .worksheet-cover p {
+      font-family: var(--head-font);
+      font-size: 14px;
+      color: rgba(0,0,0,0.6);
+      max-width: 480px;
+      line-height: 1.7;
+    }
+
+    .worksheet-body {
+      padding: 64px 90px;
+    }
+
+    .ws-section {
+      margin-bottom: 48px;
+      max-width: 700px;
+      page-break-inside: avoid;
+    }
+
+    .ws-section-title {
+      font-family: var(--head-font);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--gold);
+    }
+
+    .ws-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 16px;
+    }
+
+    .ws-table th {
+      font-family: var(--head-font);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--gray);
+      padding: 10px 14px;
+      text-align: left;
+      background: var(--light);
+      border: 1px solid #E0E0E0;
+    }
+
+    .ws-table td {
+      padding: 16px 14px;
+      border: 1px solid #E0E0E0;
+      vertical-align: top;
+      min-height: 48px;
+    }
+
+    .ws-table td.label-col {
+      font-family: var(--head-font);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--black);
+      background: var(--light);
+      width: 35%;
+    }
+
+    .ws-table td.write-col {
+      background: var(--white);
+      width: 65%;
+    }
+
+    .ws-row-label {
+      font-family: var(--head-font);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--gray);
+      letter-spacing: 0.05em;
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .ws-write-line {
+      display: block;
+      border-bottom: 1px solid #DEDEDE;
+      min-height: 28px;
+      margin-bottom: 8px;
+    }
+
+    .ws-num-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .ws-num-list li {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      margin-bottom: 18px;
+    }
+
+    .ws-num-list li .num {
+      font-family: var(--head-font);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--gold);
+      min-width: 20px;
+      padding-top: 2px;
+    }
+
+    .ws-num-list li .content {
+      flex: 1;
+    }
+
+    .ws-num-list li .content .qlabel {
+      font-family: var(--head-font);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--black);
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .ws-num-list li .content .qline {
+      display: block;
+      border-bottom: 1px solid #DEDEDE;
+      min-height: 28px;
+      margin-bottom: 6px;
+    }
+
+    /* rule box at bottom of worksheet */
+    .rule-box {
+      background: var(--black);
+      color: var(--white);
+      padding: 28px 36px;
+      margin-top: 48px;
+      max-width: 700px;
+    }
+
+    .rule-box p {
+      font-family: var(--head-font);
+      font-size: 13px;
+      font-weight: 500;
+      color: rgba(255,255,255,0.85);
+      line-height: 1.7;
+      text-align: center;
+    }
+
+    .rule-box p em {
+      color: var(--gold);
+      font-style: normal;
+      font-weight: 700;
+    }
+
+    /* ── PRINT STYLES ────────────────────────────────── */
+    @media print {
+      body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .cover { page-break-after: always; }
+      .section-divider { page-break-before: always; }
+      .worksheet-cover { page-break-before: always; }
+      .final-page { page-break-before: always; }
+    }
+
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════ -->
+<!--  COVER                                            -->
+<!-- ══════════════════════════════════════════════════ -->
+<div class="cover">
+  <div class="cover-brand">Rise Within Network</div>
+  <div class="cover-eyebrow">The Reverse Engineer's Goal System</div>
+  <div class="cover-title">Start<br>From<br>the <span>End.</span></div>
+  <div class="cover-subtitle">
+    A no-fluff framework for athletes and ambitious people who are done
+    setting goals they never finish.
+  </div>
+  <div class="cover-divider"></div>
+  <div class="cover-author">By <strong>Rise Within Network</strong></div>
+  <div class="cover-footer">
+    <span class="cover-footer-left">Rise Within Network — standardblack.com</span>
+    <span class="cover-footer-right">© 2026 All Rights Reserved</span>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════ -->
+<!--  NOTE BEFORE YOU START                            -->
+<!-- ══════════════════════════════════════════════════ -->
+<div class="note-page">
+  <div class="note-label">A Note Before You Start</div>
+  <p>
+    This guide wasn't written in a classroom. It was built in weight rooms,
+    on football fields, in boxing gyms, and in the middle of building a business
+    from scratch.
+  </p>
+  <p>
+    Everything in here has been tested against real resistance, real setbacks,
+    and real goals that had to get done without a perfect environment or a
+    perfect plan.
+  </p>
+  <p>
+    Most goal-setting content teaches you how to write a goal.
+    This teaches you how to build a system that makes reaching it
+    almost inevitable.
+  </p>
+  <p style="font-family:'Montserrat',sans-serif; font-weight:700; font-size:18px; color:#0A0A0A; margin-top:32px;">
+    Work backwards. Win forward.
+  </p>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════ -->
+<!--  TABLE OF CONTENTS                                -->
+<!-- ══════════════════════════════════════════════════ -->
+<div class="toc-page">
+  <div class="toc-label">Table of Contents</div>
+
+  <div class="toc-item">
+    <div class="toc-left">
+      <span class="toc-num">01</span>
+      <span>
+        <span class="toc-name">Why You Keep Starting Over</span>
+        <span class="toc-sub">And it's not laziness</span>
+      </span>
+    </div>
+  </div>
+
+  <div class="toc-item">
+    <div class="toc-left">
+      <span class="toc-num">02</span>
+      <span>
+        <span class="toc-name">The Reverse Engineer's Method</span>
+        <span class="toc-sub">Start at the finish line</span>
+      </span>
+    </div>
+  </div>
+
+  <div class="toc-item">
+    <div class="toc-left">
+      <span class="toc-num">03</span>
+      <span>
+        <span class="toc-name">Tear It Down</span>
+        <span class="toc-sub">Breaking any goal into exact steps</span>
+      </span>
+    </div>
+  </div>
+
+  <div class="toc-item">
+    <div class="toc-left">
+      <span class="toc-num">04</span>
+      <span>
+        <span class="toc-name">The Needle Movers</span>
+        <span class="toc-sub">Cut everything that doesn't matter</span>
+      </span>
+    </div>
+  </div>
+
+  <div class="toc-item">
+    <div class="toc-left">
+      <span class="toc-num">05</span>
+      <span>
+        <span class="toc-name">Build In the Rest</span>
+        <span class="toc-sub">Recovery is part of the system</span>
+      </span>
+    </div>
+  </div>
+
+  <div class="toc-item">
+    <div class="toc-left">
+      <span class="toc-num">06</span>
+      <span>
+        <span class="toc-name">The Weekly Check-In</span>
+        <span class="toc-sub">10 minutes that keep everything on track</span>
+      </span>
+    </div>
+  </div>
+
+  <div class="toc-item">
+    <div class="toc-left">
+      <span class="toc-num">07</span>
+      <span>
+        <span class="toc-name">Your 90-Day Execution Map</span>
+        <span class="toc-sub">Putting it all together</span>
+      </span>
+    </div>
+  </div>
+
+  <div class="toc-item">
+    <div class="toc-left">
+      <span class="toc-num" style="color:#C9A84C;">★</span>
+      <span>
+        <span class="toc-name">Bonus: The Reverse Engineer's Goal Worksheet</span>
+        <span class="toc-sub">One-page fill-in reference — reuse every 90 days</span>
+      </span>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════ -->
+<!--  SECTION 1                                        -->
+<!-- ══════════════════════════════════════════════════ -->
+<div class="section-divider">
+  <div class="sec-num">Section 01</div>
+  <h2>Why You Keep Starting Over<br>(And It's Not Laziness)</h2>
+</div>
+
+<div class="section-body">
+  <p>
+    Let's start with the truth most people don't want to hear.
+  </p>
+  <p>
+    You've set goals before. You had real motivation when you set them. You wrote them down,
+    maybe told a few people, maybe even started strong for a couple of weeks. Then something
+    happened — life got busy, the motivation faded, or you just stopped.
+  </p>
+  <p>
+    You blamed yourself. Called it laziness. Told yourself you didn't want it bad enough.
+  </p>
+  <p>That's not the problem.</p>
+
+  <div class="callout">
+    <div class="callout-label">The Real Problem</div>
+    <p>The problem is <strong>architecture</strong>. Most people set goals the wrong way — they start
+    from where they are and try to figure out how to get somewhere they've never been.</p>
+  </div>
+
+  <p>
+    That's like driving to a city you've never visited without GPS or a map — just a general
+    sense of which direction it might be. You'll start. You'll drive. You'll make decisions
+    along the way. And eventually you'll either get lucky and stumble into your destination,
+    or get frustrated and turn around.
+  </p>
+  <p>
+    The smarter move: know exactly where you're going first. Figure out the exact route.
+    Then drive. That's what reverse engineering your goals means. You start at the end —
+    the specific, clear, non-negotiable destination — and work backwards until you know
+    exactly what the first step is. Not a vague first step. The actual, specific action
+    you can take this week.
+  </p>
+  <p>
+    There's something else most goal systems completely miss: <strong>what you focus on
+    matters as much as what you do.</strong> Most people set a goal and then spend their
+    energy focused on how far away they are, how hard it is, what they don't have yet.
+    That's the wrong lens.
+  </p>
+  <p>
+    The right lens is ruthless focus on the small things — the daily actions, the small
+    wins, the tiny adjustments — that compound into the result over time.
+  </p>
+  <p>
+    Athletes understand this. You don't get better at your sport by obsessing over your
+    competition. You get better by focusing on your technique, your recovery, your details.
+    The result takes care of itself when the process is locked in.
+  </p>
+
+  <div class="formula">
+    <div class="formula-label">The Foundation</div>
+    <p>System over motivation.</p>
+    <p>Process over pressure.</p>
+    <p>Details over distance.</p>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════ -->
+<!--  SECTION 2                                        -->
+<!-- ══════════════════════════════════════════════════ -->
+<div class="section-divider">
+  <div class="sec-num">Section 02</div>
+  <h2>The Reverse Engineer's Method — Start at the Finish Line</h2>
+</div>
+
+<div class="section-body">
+  <p>
+    Before you do anything else, you need to get clear on your actual destination.
+    Not a vague direction. Not "I want to get in better shape" or "I want to be more successful."
+    Those aren't goals — they're wishes. They have no address. You can't reverse engineer a wish.
+  </p>
+
+  <h3>A Real Goal Has Three Things</h3>
+
+  <ul class="arrow-list">
+    <li><strong>It's specific.</strong> Not "get fit" — <em>"Drop 20 pounds and add 15 pounds to my bench press."</em></li>
+    <li><strong>It has a deadline.</strong> Not "someday" — <em>"By September 1st."</em></li>
+    <li><strong>You can measure it.</strong> If you can't tell whether you achieved it or not, it's not a goal. It's a fantasy.</li>
+  </ul>
+
+  <p>
+    Write your goal down right now. One sentence. Specific, deadline, measurable.
+  </p>
+
+  <div class="callout">
+    <div class="callout-label">Examples</div>
+    <p>"I will close my first real estate note deal by December 31st."</p>
+    <p>"I will cut my 40-yard dash time to 4.5 seconds by the start of next season."</p>
+  </div>
+
+  <p>That's your finish line. That's where you start.</p>
+
+  <p>
+    Now ask yourself one question: <em>If I achieved this goal, what would have had to be true
+    in the 30 days before I achieved it?</em>
+  </p>
+  <p>
+    Write that down. That's your checkpoint one month out.
+  </p>
+  <p>
+    Then ask it again: <em>For that checkpoint to be true, what would have had to happen
+    in the 90 days before that?</em> Write that down. Keep going until you arrive at today.
+    At some point you'll hit a step you can actually take this week. That is your starting point.
+  </p>
+
+  <h3>The One-Page Version</h3>
+
+  <p class="fill-label">Goal (specific + deadline):</p>
+  <span class="fill-line"></span>
+
+  <p class="fill-label">What must be true 1 month before I hit it?</p>
+  <span class="fill-line"></span>
+
+  <p class="fill-label">What must be true 3 months before that?</p>
+  <span class="fill-line"></span>
+
+  <p class="fill-label">What must be true 3 months before that?</p>
+  <span class="fill-line"></span>
+
+  <p class="fill-label">What's the first step I can take this week?</p>
+  <span class="fill-line"></span>
+
+  <div class="formula" style="margin-top:40px;">
+    <div class="formula-label">The Method</div>
+    <p>Most people plan forward from where they are.</p>
+    <p>You plan backward from where you're going.</p>
+    <p>Every step you take has a clear reason for existing.</p>
+    <p>You're not guessing. You're executing.</p>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════ -->
+<!--  SECTION 3                                        -->
+<!-- ══════════════════════════════════════════════════ -->
+<div class="section-divider">
+  <div class="sec-num">Section 03</div>
+  <h2>Tear It Down — Breaking Any Goal Into Exact Steps</h2>
+</div>
+
+<div class="section-body">
+  <p>
+    Once you have your reverse-engineered path, most people make the same mistake:
+    they try to do everything at once. They see all the steps laid out and treat it
+    like a sprint. That's how burnout happens by week three.
+  </p>
+  <p>Here's the right approach — break your goal into three layers.</p>
+
+  <h3>The Three Layers</h3>
+
+  <h4>Layer 1 — The Goal (Your Destination)</h4>
+  <p>
+    One sentence. Specific, deadline, measurable. This is fixed. Everything else
+    is built around it. You don't move this.
+  </p>
+
+  <h4>Layer 2 — The Milestones (Checkpoints every 30–90 days)</h4>
+  <p>
+    These are the waypoints from your reverse engineering. You should have 3–5 of them.
+    Each one is a mini-destination — a point you need to hit to stay on track.
+  </p>
+
+  <div class="callout">
+    <div class="callout-label">Milestones vs. Tasks</div>
+    <p>Milestones are <strong>outcomes</strong>, not tasks.</p>
+    <p>"Complete note underwriting certification" = milestone.</p>
+    <p>"Read chapter 4" = task.</p>
+    <p>Know the difference. It matters.</p>
+  </div>
+
+  <h4>Layer 3 — The Weekly Actions (What You Actually Do)</h4>
+  <p>
+    This is where the goal gets executed. Every week, identify 3–5 specific actions
+    that move you toward your current milestone. Not tasks that feel productive —
+    tasks that actually move the needle.
+  </p>
+
+  <h3>How to Tell the Difference</h3>
+
+  <ul class="arrow-list">
+    <li>A <strong>needle-mover</strong> is something that, if you skipped it, you'd clearly be further from your goal. It's uncomfortable. It requires something from you.</li>
+    <li>A <strong>fake-productive task</strong> feels like work but doesn't move you forward. Reorganizing notes. Redoing a spreadsheet. Reading one more article before you start.</li>
+  </ul>
+
+  <p>
+    When you sit down each week, ask: <em>"What are the 3 things I could do this week
+    that would move me furthest toward my milestone?"</em> Do those first.
+    Everything else is secondary.
+  </p>
+
+  <div class="formula">
+    <div class="formula-label">The Breakdown Formula</div>
+    <p>Goal → 3–5 Milestones → 3–5 Weekly Needle-Movers</p>
+    <p style="color:rgba(255,255,255,0.5); font-weight:400; font-size:13px; margin-top:10px;">Simple by design. Complexity is where goals go to die.</p>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════ -->
+<!--  SECTION 4                                        -->
+<!-- ══════════════════════════════════════════════════ -->
+<div class="section-divider">
+  <div class="sec-num">Section 04</div>
+  <h2>The Needle Movers — Cut Everything That Doesn't Matter</h2>
+</div>
+
+<div class="section-body">
+  <p>
+    This is the section most goal guides skip. And it's arguably the most important one.
+  </p>
+  <p>
+    Knowing what to do isn't the problem. Knowing what <em>not</em> to do is.
+  </p>
+  <p>
+    Every goal comes with a long list of things you could do to work toward it.
+    Training for a sport? You could lift, sprint, drill, watch film, fix your nutrition,
+    sleep better, get coaching, study competition, work on mental toughness.
+    Building a business? Website, calls, ads, content, networking, systems, product development.
+    The list is endless.
+  </p>
+  <p>
+    Most people try to do everything and end up doing nothing well.
+  </p>
+
+  <div class="callout">
+    <div class="callout-label">The Principle</div>
+    <p>
+      At any given stage of pursuing a goal, <strong>2–3 actions produce 80% of your results.</strong>
+      Everything else is noise. Your job is to find those actions and protect your time for them.
+    </p>
+  </div>
+
+  <h3>How to Find Your Needle Movers</h3>
+
+  <ul class="arrow-list">
+    <li>"If I could only do <strong>one thing</strong> for the next 30 days toward this goal, what would it be?" That's needle-mover #1.</li>
+    <li>"If I could add <strong>one more thing</strong>, what would it be?" That's needle-mover #2.</li>
+    <li>"And one more?" That's needle-mover #3.</li>
+    <li><strong>Stop there.</strong> Three needle-movers per month. Execute them relentlessly.</li>
+  </ul>
+
+  <p>
+    This is the athletic mindset applied to goals. In football, you don't try to master every
+    position — you master your assignment on every play. In boxing, you don't try to learn
+    30 combinations in a week — you drill 3 until they're automatic. Same principle,
+    every domain.
+  </p>
+
+  <h3>The Cut Test</h3>
+  <p>
+    Every time you catch yourself doing something that isn't one of your 3 needle-movers, ask:
+    <em>"Is this moving me toward my milestone, or am I just feeling busy?"</em>
+    If it's the latter, put it on a "later" list and come back after your milestone is hit.
+  </p>
+
+  <div class="formula">
+    <div class="formula-label">The Rule</div>
+    <p>Focus compounds.</p>
+    <p>Scattered effort doesn't.</p>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════ -->
+<!--  SECTION 5                                        -->
+<!-- ══════════════════════════════════════════════════ -->
+<div class="section-divider">
+  <div class="sec-num">Section 05</div>
+  <h2>Build In the Rest — Recovery Is Part of the System</h2>
+</div>
+
+<div class="section-body">
+  <p>
+    Here's something nobody puts in goal-setting guides.
+  </p>
+  <p>
+    Rest isn't a reward for hard work. It's a requirement for sustained performance.
+  </p>
+  <p>
+    This is one of the most overlooked things I see — in athletes, in entrepreneurs,
+    in anyone pushing hard toward something. They run at 100% until they break down,
+    take a forced rest, then try to run it back. That's not a system. That's a damage cycle.
+  </p>
+  <p>
+    The best athletes in the world don't just train hard — they recover intentionally.
+    The adaptation doesn't happen during the work. It happens during the rest.
+    The work creates the stimulus. The rest is when you rebuild, stronger than before.
+    Same is true for business, creative work, and any goal that requires sustained effort.
+  </p>
+
+  <h3>Signs You're Not Recovering Enough</h3>
+
+  <ul class="arrow-list">
+    <li>Motivation is gone but discipline hasn't picked up the slack</li>
+    <li>You're making decisions slower than usual</li>
+    <li>Small setbacks feel bigger than they are</li>
+    <li>You're putting in hours but results have plateaued</li>
+    <li>You've stopped enjoying the process entirely</li>
+  </ul>
+
+  <p>
+    When you see these signs, the answer isn't to push harder. It's to recover smarter.
+  </p>
+
+  <h3>Recovery Protocol — Built Into Your System</h3>
+
+  <h4>Daily</h4>
+  <p>
+    7–8 hours of sleep. Non-negotiable. Sleep is when your brain consolidates what you
+    learned, your body repairs, and your decision-making resets. No goal is worth
+    trading this away consistently.
+  </p>
+
+  <h4>Weekly</h4>
+  <p>
+    One full rest day. Not a light day — an actual rest day. No work on the goal.
+    Let your system decompress. You'll come back sharper every time.
+  </p>
+
+  <h4>Monthly</h4>
+  <p>
+    A review day. Step back and assess progress honestly. You can't see the path
+    clearly when you're always on it. Build this in before you need it.
+  </p>
+
+  <div class="callout">
+    <div class="callout-label">The Mental Side</div>
+    <p>
+      Know when to push through and when to pull back. Discomfort is normal — that's growth.
+      Burnout and resentment toward the goal are signals you've crossed a line.
+      Don't confuse toughness with ignoring what your body is telling you.
+      The best performers know that distinction cold.
+    </p>
+  </div>
+
+  <div class="formula">
+    <div class="formula-label">The Standard</div>
+    <p>Build recovery into your schedule before you need it.</p>
+    <p>Not as a backup plan — as part of the architecture.</p>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════ -->
+<!--  SECTION 6                                        -->
+<!-- ══════════════════════════════════════════════════ -->
+<div class="section-divider">
+  <div class="sec-num">Section 06</div>
+  <h2>The Weekly Check-In — 10 Minutes That Keep Everything on Track</h2>
+</div>
+
+<div class="section-body">
+  <p>
+    This is the piece that separates people who actually reach their goals from people
+    who have great plans they never finish.
+  </p>
+  <p>
+    Most goal systems are built for January. By March, they're forgotten. Why? Because
+    there's no maintenance built in. Goals require regular attention — not obsessive daily
+    attention, but consistent weekly check-ins that keep you calibrated.
+  </p>
+  <p>
+    Here's the Weekly Check-In. Ten minutes. Every Sunday, or whatever day starts your week.
+  </p>
+
+  <h3>The 5 Questions</h3>
+
+  <ul class="arrow-list">
+    <li>
+      <strong>What did I accomplish this week toward my goal?</strong><br/>
+      List the needle-movers you completed. Be honest. Busy work doesn't count.
+    </li>
+    <li>
+      <strong>What didn't I get done — and why?</strong><br/>
+      Not to beat yourself up. To diagnose. The <em>why</em> tells you what to fix.
+    </li>
+    <li>
+      <strong>Am I still on track for my next milestone?</strong><br/>
+      Yes or no. If yes, keep executing. If no, what specifically needs to change?
+    </li>
+    <li>
+      <strong>What are my 3 needle-movers for next week?</strong><br/>
+      Specific. Actionable. Tied to your current milestone. Write them before you close.
+    </li>
+    <li>
+      <strong>What do I need to protect or recover this week?</strong><br/>
+      Sleep? Mental space? A hard conversation you've been avoiding? Note it. Build it in.
+    </li>
+  </ul>
+
+  <p>
+    Five questions. Ten minutes. Done.
+  </p>
+  <p>
+    The key is consistency, not perfection. Miss a week? Come back the next week.
+    One missed check-in is not a reason to abandon the system. This works because of
+    what it does over months — not because you executed it flawlessly every time.
+  </p>
+
+  <div class="callout">
+    <div class="callout-label">On Accountability</div>
+    <p>
+      If you want to significantly increase your chances of following through, share your
+      weekly check-in answers with someone — a friend, teammate, or mentor.
+      You don't need a coach. You just need someone who will ask: <strong>"Did you do
+      what you said?"</strong> Build that in.
+    </p>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════ -->
+<!--  SECTION 7                                        -->
+<!-- ══════════════════════════════════════════════════ -->
+<div class="section-divider">
+  <div class="sec-num">Section 07</div>
+  <h2>Your 90-Day Execution Map — Putting It All Together</h2>
+</div>
+
+<div class="section-body">
+  <p>
+    Everything in this guide comes together here.
+  </p>
+  <p>
+    Ninety days is the right window for serious goal execution. Long enough to make real
+    progress. Short enough to stay focused. Most big goals can be broken into 90-day phases,
+    and if your goal takes longer, your first milestone should land somewhere in this window.
+  </p>
+
+  <h3>Build Your 90-Day Map in 7 Steps</h3>
+
+  <ul class="arrow-list">
+    <li>
+      <strong>Step 1 — Confirm your goal.</strong><br/>
+      One sentence. Specific. Deadline. Measurable.
+    </li>
+    <li>
+      <strong>Step 2 — Set your 90-day milestone.</strong><br/>
+      What specific outcome will you have achieved in 90 days that proves you're on track?
+    </li>
+    <li>
+      <strong>Step 3 — Identify your needle-movers.</strong><br/>
+      What are the 2–3 actions that will drive 80% of your progress toward this milestone?
+    </li>
+    <li>
+      <strong>Step 4 — Build your weekly structure.</strong><br/>
+      How many days per week will you work on this? What time? Put it on your calendar
+      as a scheduled commitment — not a wish.
+    </li>
+    <li>
+      <strong>Step 5 — Schedule your recovery.</strong><br/>
+      Mark your rest day. Schedule your weekly check-in. Recovery is not optional.
+    </li>
+    <li>
+      <strong>Step 6 — Name your accountability partner.</strong><br/>
+      Who will you share your weekly check-in with? Contact them today.
+    </li>
+    <li>
+      <strong>Step 7 — Start.</strong><br/>
+      Not tomorrow. Today. Your first needle-mover starts now.
+    </li>
+  </ul>
+
+  <div class="formula">
+    <div class="formula-label">The Architecture</div>
+    <p>Goal → Milestones → Needle-Movers → Weekly Check-In → Recovery → Repeat</p>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════ -->
+<!--  FINAL WORD                                       -->
+<!-- ══════════════════════════════════════════════════ -->
+<div class="final-page">
+  <div class="final-label">A Final Word</div>
+  <p>
+    The reason most people fail at goals isn't lack of ability or lack of desire.
+    It's lack of architecture. They have the destination — they just don't have the map.
+  </p>
+  <p>
+    This system is the map. What you do with it is on you.
+  </p>
+  <p>
+    Everything in here was built from real experience — from playing and coaching in a game
+    that exposes weak systems immediately, and from building a business from nothing in a
+    world that doesn't make room for the unprepared.
+  </p>
+  <p>
+    Stay locked on the details that matter, recover smart, and check in every week.
+    The goal isn't a question of <em>if</em> at that point — it's <em>when</em>.
+  </p>
+  <p>Now get to work.</p>
+  <div class="sign-off">— Rise Within Network, Rise Within Network</div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════ -->
+<!--  BONUS WORKSHEET                                  -->
+<!-- ══════════════════════════════════════════════════ -->
+<div class="worksheet-cover">
+  <div class="ws-label">Bonus Resource</div>
+  <h2>The Reverse Engineer's<br>Goal Worksheet</h2>
+  <p>
+    Your one-page reference. Fill it in, print it out, and reuse it every 90 days.
+    This is the entire system on a single page.
+  </p>
+</div>
+
+<div class="worksheet-body">
+
+  <!-- MY GOAL -->
+  <div class="ws-section">
+    <div class="ws-section-title">Step 1 — My Goal</div>
+    <span class="ws-row-label">In one sentence (specific + deadline + measurable):</span>
+    <span class="ws-write-line"></span>
+    <span class="ws-write-line"></span>
+  </div>
+
+  <!-- REVERSE ENGINEER IT -->
+  <div class="ws-section">
+    <div class="ws-section-title">Step 2 — Reverse Engineer It</div>
+    <table class="ws-table">
+      <thead>
+        <tr>
+          <th>Checkpoint</th>
+          <th>What Must Be True at This Point?</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="label-col">1 month before I hit my goal</td>
+          <td class="write-col"></td>
+        </tr>
+        <tr>
+          <td class="label-col">3 months before that</td>
+          <td class="write-col"></td>
+        </tr>
+        <tr>
+          <td class="label-col">3 months before that</td>
+          <td class="write-col"></td>
+        </tr>
+        <tr>
+          <td class="label-col">My first step (this week)</td>
+          <td class="write-col"></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 90-DAY MILESTONE -->
+  <div class="ws-section">
+    <div class="ws-section-title">Step 3 — My 90-Day Milestone</div>
+    <span class="ws-row-label">The specific outcome I will achieve in the next 90 days:</span>
+    <span class="ws-write-line"></span>
+    <span class="ws-write-line"></span>
+  </div>
+
+  <!-- NEEDLE MOVERS -->
+  <div class="ws-section">
+    <div class="ws-section-title">Step 4 — My Needle Movers This Month</div>
+    <span class="ws-row-label">The 3 actions that will drive 80% of my progress:</span>
+    <br/>
+    <ul class="ws-num-list">
+      <li>
+        <span class="num">1.</span>
+        <span class="content"><span class="qline"></span></span>
+      </li>
+      <li>
+        <span class="num">2.</span>
+        <span class="content"><span class="qline"></span></span>
+      </li>
+      <li>
+        <span class="num">3.</span>
+        <span class="content"><span class="qline"></span></span>
+      </li>
+    </ul>
+  </div>
+
+  <!-- WEEKLY STRUCTURE -->
+  <div class="ws-section">
+    <div class="ws-section-title">Step 5 — My Weekly Structure</div>
+    <table class="ws-table">
+      <tbody>
+        <tr>
+          <td class="label-col">Days I work on this goal</td>
+          <td class="write-col"></td>
+        </tr>
+        <tr>
+          <td class="label-col">Time block</td>
+          <td class="write-col"></td>
+        </tr>
+        <tr>
+          <td class="label-col">Weekly check-in day</td>
+          <td class="write-col"></td>
+        </tr>
+        <tr>
+          <td class="label-col">Rest day</td>
+          <td class="write-col"></td>
+        </tr>
+        <tr>
+          <td class="label-col">Accountability partner</td>
+          <td class="write-col"></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- WEEKLY CHECK-IN -->
+  <div class="ws-section">
+    <div class="ws-section-title">Weekly Check-In Template — Copy This Every Sunday</div>
+    <ul class="ws-num-list">
+      <li>
+        <span class="num">1.</span>
+        <span class="content">
+          <span class="qlabel">What I accomplished this week:</span>
+          <span class="qline"></span>
+          <span class="qline"></span>
+        </span>
+      </li>
+      <li>
+        <span class="num">2.</span>
+        <span class="content">
+          <span class="qlabel">What I didn't complete + why:</span>
+          <span class="qline"></span>
+          <span class="qline"></span>
+        </span>
+      </li>
+      <li>
+        <span class="num">3.</span>
+        <span class="content">
+          <span class="qlabel">Am I on track for my milestone? &nbsp;&nbsp; YES &nbsp;&nbsp;/&nbsp;&nbsp; NO</span>
+          <span class="qlabel" style="margin-top:10px;">If no, what changes:</span>
+          <span class="qline"></span>
+        </span>
+      </li>
+      <li>
+        <span class="num">4.</span>
+        <span class="content">
+          <span class="qlabel">My 3 needle-movers for next week:</span>
+          <span class="qline"></span>
+          <span class="qline"></span>
+          <span class="qline"></span>
+        </span>
+      </li>
+      <li>
+        <span class="num">5.</span>
+        <span class="content">
+          <span class="qlabel">What I need to protect or recover this week:</span>
+          <span class="qline"></span>
+        </span>
+      </li>
+    </ul>
+  </div>
+
+  <!-- RULE BOX -->
+  <div class="rule-box">
+    <p>
+      Focus on the small things that actually move the needle.&nbsp;
+      <em>Recover intentionally.</em>&nbsp;
+      Check in every week.&nbsp;
+      <em>The goal takes care of itself.</em>
+    </p>
+  </div>
+
+</div>
+
+</body>
+</html>

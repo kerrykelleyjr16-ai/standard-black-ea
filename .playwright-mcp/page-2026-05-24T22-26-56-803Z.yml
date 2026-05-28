@@ -1,0 +1,126 @@
+- generic [active] [ref=e1]:
+  - complementary [ref=e2]:
+    - generic [ref=e3]: WHOLESALE OS
+    - navigation [ref=e4]:
+      - link "Dashboard" [ref=e5] [cursor=pointer]:
+        - /url: /dashboard
+      - link "Buyers" [ref=e6] [cursor=pointer]:
+        - /url: /buyers
+      - link "Leads" [ref=e7] [cursor=pointer]:
+        - /url: /leads
+      - link "Deals" [ref=e8] [cursor=pointer]:
+        - /url: /deals
+      - link "Import" [ref=e9] [cursor=pointer]:
+        - /url: /import
+  - main [ref=e10]:
+    - generic [ref=e11]:
+      - button "← Back to Pipeline" [ref=e14] [cursor=pointer]
+      - generic [ref=e15]:
+        - generic [ref=e16]:
+          - generic [ref=e17]:
+            - heading "817 Marsalis Ave" [level=1] [ref=e18]
+            - paragraph [ref=e19]: Dallas, TX 75203
+          - generic [ref=e20]: PropStream
+        - generic [ref=e21]:
+          - generic [ref=e22]:
+            - generic [ref=e23]: New
+            - generic [ref=e24]: ›
+          - generic [ref=e25]:
+            - generic [ref=e26]: Skip Traced
+            - generic [ref=e27]: ›
+          - generic [ref=e28]:
+            - generic [ref=e29]: Contacted
+            - generic [ref=e30]: ›
+          - generic [ref=e31]:
+            - generic [ref=e32]: Responded
+            - generic [ref=e33]: ›
+          - generic [ref=e34]:
+            - generic [ref=e35]: Qualified
+            - generic [ref=e36]: ›
+          - generic [ref=e37]:
+            - generic [ref=e38]: Analyzed
+            - generic [ref=e39]: ›
+          - generic [ref=e40]:
+            - generic [ref=e41]: Matched
+            - generic [ref=e42]: ›
+          - generic [ref=e43]:
+            - generic [ref=e44]: Offer Made
+            - generic [ref=e45]: ›
+          - generic [ref=e46]:
+            - generic [ref=e47]: Under Contract
+            - generic [ref=e48]: ›
+          - generic [ref=e49]:
+            - generic [ref=e50]: Assigned
+            - generic [ref=e51]: ›
+          - generic [ref=e53]: Closed
+      - generic [ref=e54]:
+        - generic [ref=e55]:
+          - generic [ref=e56]:
+            - heading "Property Info" [level=2] [ref=e57]
+            - generic [ref=e58]:
+              - generic [ref=e59]:
+                - paragraph [ref=e60]: Type
+                - paragraph [ref=e61]: SFR
+              - generic [ref=e62]:
+                - paragraph [ref=e63]: Year Built
+                - paragraph [ref=e64]: "1952"
+              - generic [ref=e65]:
+                - paragraph [ref=e66]: Beds
+                - paragraph [ref=e67]: "3"
+              - generic [ref=e68]:
+                - paragraph [ref=e69]: Baths
+                - paragraph [ref=e70]: "1"
+              - generic [ref=e71]:
+                - paragraph [ref=e72]: Sqft
+                - paragraph [ref=e73]: 1,020
+              - generic [ref=e74]:
+                - paragraph [ref=e75]: Lot Size
+                - paragraph [ref=e76]: —
+              - generic [ref=e77]:
+                - paragraph [ref=e78]: County
+                - paragraph [ref=e79]: Dallas
+            - generic [ref=e80]:
+              - paragraph [ref=e81]: Motivation Signals
+              - generic [ref=e82]:
+                - generic [ref=e83]: absentee
+                - generic [ref=e84]: vacant
+                - generic [ref=e85]: tax delinquent
+          - generic [ref=e86]:
+            - heading "Stage Control" [level=2] [ref=e87]
+            - generic [ref=e88]:
+              - generic [ref=e89]: Qualified
+              - button "Advance → Analyzed" [ref=e90] [cursor=pointer]
+          - generic [ref=e92]:
+            - generic [ref=e93]:
+              - heading "Deal Analysis" [level=2] [ref=e94]
+              - paragraph [ref=e95]: This lead has been qualified
+            - button "View Deal →" [ref=e96] [cursor=pointer]
+        - generic [ref=e97]:
+          - generic [ref=e98]:
+            - heading "Owner Info" [level=2] [ref=e99]
+            - generic [ref=e100]:
+              - generic [ref=e101]:
+                - paragraph [ref=e102]: Name
+                - paragraph [ref=e103]: Willie James
+              - generic [ref=e104]:
+                - paragraph [ref=e105]: Phone
+                - paragraph [ref=e106]: (214) 227-8841
+              - generic [ref=e107]:
+                - paragraph [ref=e108]: Email
+                - paragraph [ref=e109]: wjames@gmail.com
+              - generic [ref=e111]:
+                - generic [ref=e112]: Skip Trace
+                - generic [ref=e113]: Done
+          - generic [ref=e114]:
+            - generic [ref=e115]:
+              - heading "Conversations" [level=2] [ref=e116]
+              - generic [ref=e117]:
+                - button "+ Draft Outreach" [ref=e133] [cursor=pointer]
+                - button "+ Log Inbound" [ref=e119] [cursor=pointer]
+            - generic [ref=e135]:
+              - generic [ref=e136]:
+                - generic [ref=e137]: SMS
+                - generic [ref=e138]: AI
+              - paragraph [ref=e139]: Hi Willie, I noticed 817 Marsalis has been vacant and has some tax issues. I'd love to help take it off your hands. Would that interest you?
+              - paragraph [ref=e140]: May 24, 5:26 PM
+  - alert [ref=e12]

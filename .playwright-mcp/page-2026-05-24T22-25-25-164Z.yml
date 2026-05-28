@@ -1,0 +1,17 @@
+- generic [active] [ref=e1]:
+  - complementary [ref=e2]:
+    - generic [ref=e3]: WHOLESALE OS
+    - navigation [ref=e4]:
+      - link "Dashboard" [ref=e5] [cursor=pointer]:
+        - /url: /dashboard
+      - link "Buyers" [ref=e6] [cursor=pointer]:
+        - /url: /buyers
+      - link "Leads" [ref=e7] [cursor=pointer]:
+        - /url: /leads
+      - link "Deals" [ref=e8] [cursor=pointer]:
+        - /url: /deals
+      - link "Import" [ref=e9] [cursor=pointer]:
+        - /url: /import
+  - main [ref=e10]:
+    - generic [ref=e11]: Loading lead...
+  - alert [ref=e12]

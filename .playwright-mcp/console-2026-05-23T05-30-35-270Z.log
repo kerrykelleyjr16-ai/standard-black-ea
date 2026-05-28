@@ -1,0 +1,11 @@
+[     583ms] [ERROR] WebSocket connection to 'ws://localhost:5173/?token=DnVPdQzWH1Dt' failed: Error during WebSocket handshake: Unexpected response code: 400 @ http://localhost:5173/@vite/client:801
+[     637ms] [ERROR] WebSocket connection to 'ws://localhost:5173/?token=DnVPdQzWH1Dt' failed: Error during WebSocket handshake: Unexpected response code: 400 @ http://localhost:5173/@vite/client:814
+[     662ms] [ERROR] [vite] failed to connect to websocket.
+your current setup:
+  (browser) localhost:5173/ <--[HTTP]--> localhost:5173/ (server)
+  (browser) localhost:5173/ <--[WebSocket (failing)]--> localhost:5173/ (server)
+Check out your Vite / network configuration and https://vite.dev/config/server-options.html#server-hmr . @ http://localhost:5173/@vite/client:829
+[    3080ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ http://localhost:5173/node_modules/.vite/deps/chunk-SVG7M4VJ.js?v=a6569a5b:21606
+[   33058ms] [WARNING] ⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition. @ http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=a6569a5b:4433
+[   33128ms] [WARNING] ⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath. @ http://localhost:5173/node_modules/.vite/deps/react-router-dom.js?v=a6569a5b:4433
+[   34899ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5173/favicon.ico:0

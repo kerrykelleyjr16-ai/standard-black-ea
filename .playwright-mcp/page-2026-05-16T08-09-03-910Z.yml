@@ -1,0 +1,118 @@
+- generic [ref=e1]:
+  - generic [ref=e489]:
+    - banner [ref=e490]:
+      - generic [ref=e491]:
+        - generic [ref=e492]:
+          - button "Dashboard" [ref=e493] [cursor=pointer]:
+            - img [ref=e494]
+            - text: Dashboard
+          - generic [ref=e497]:
+            - generic [ref=e498]: Trading OS
+            - generic [ref=e499]: Standard Black · Options Division
+        - generic [ref=e500]:
+          - button "Trading Command Room" [ref=e501] [cursor=pointer]:
+            - img [ref=e502]
+            - generic [ref=e505]: Trading
+            - generic [ref=e506]: Command Room
+          - button "Trading AIOS Development OS" [active] [ref=e507] [cursor=pointer]:
+            - img [ref=e508]
+            - generic [ref=e518]: Trading AIOS
+            - generic [ref=e519]: Development OS
+    - generic [ref=e775]:
+      - generic [ref=e776]:
+        - generic [ref=e777]:
+          - generic [ref=e779]: Trading Rank
+          - generic [ref=e780]:
+            - generic [ref=e781]: 🪖
+            - generic [ref=e782]:
+              - generic [ref=e783]: Recruit
+              - generic [ref=e784]: ✓ On track for promotion
+          - generic [ref=e785]: "Next: ⭐ Cadet at 500 XP"
+        - generic [ref=e786]:
+          - generic [ref=e788]: Current XP
+          - generic [ref=e789]:
+            - generic [ref=e790]: "0"
+            - generic [ref=e791]: / 500 for ⭐ Cadet
+        - generic [ref=e793]:
+          - generic [ref=e795]: Discipline Score
+          - generic [ref=e796]:
+            - img [ref=e797]
+            - generic [ref=e800]:
+              - generic [ref=e801]: 100%
+              - generic [ref=e802]: Excellent discipline
+        - generic [ref=e803]:
+          - generic [ref=e805]: Promotion Status
+          - generic [ref=e806]: ✓ On Track
+          - generic [ref=e807]: 0 profitable · 0 rule breaks this week
+      - generic [ref=e808]:
+        - generic [ref=e809]:
+          - generic [ref=e811]: Trade Journal · 0 entries
+          - generic [ref=e813]:
+            - table [ref=e815]:
+              - rowgroup [ref=e816]:
+                - row "Ticker Setup Entry Exit Size P&L Grade Notes" [ref=e817]:
+                  - columnheader "Ticker" [ref=e818]
+                  - columnheader "Setup" [ref=e819]
+                  - columnheader "Entry" [ref=e820]
+                  - columnheader "Exit" [ref=e821]
+                  - columnheader "Size" [ref=e822]
+                  - columnheader "P&L" [ref=e823]
+                  - columnheader "Grade" [ref=e824]
+                  - columnheader "Notes" [ref=e825]
+                  - columnheader [ref=e826]
+              - rowgroup [ref=e827]:
+                - row "No trades logged yet" [ref=e828]:
+                  - cell "No trades logged yet" [ref=e829]
+            - button "Log Trade" [ref=e830] [cursor=pointer]:
+              - img [ref=e831]
+              - text: Log Trade
+        - generic [ref=e832]:
+          - generic [ref=e834]: Setup Grader
+          - generic [ref=e836]: Log trades with setup types to see grading
+        - generic [ref=e837]:
+          - generic [ref=e839]: Mistake Pattern Detector
+          - generic [ref=e841]: No patterns detected — clean execution
+      - generic [ref=e842]:
+        - generic [ref=e843]:
+          - generic [ref=e845]: Weekly Review Engine
+          - generic [ref=e847]:
+            - generic [ref=e848]:
+              - generic [ref=e849]:
+                - generic [ref=e850]: Trades This Week
+                - text: "0"
+              - generic [ref=e851]:
+                - generic [ref=e852]: Weekly P&L
+                - generic [ref=e853]: +$0
+              - generic [ref=e854]:
+                - generic [ref=e855]: Weekly Grade
+                - text: —
+            - generic [ref=e856]:
+              - generic [ref=e857]: Best Setup This Week
+              - text: —
+            - generic [ref=e858]:
+              - generic [ref=e859]: Top Mistake This Week
+              - text: None detected
+            - generic [ref=e860]:
+              - generic [ref=e861]: Rule Breaks
+              - text: "0"
+        - generic [ref=e862]:
+          - generic [ref=e864]: Strategy Performance Tracker
+          - generic [ref=e866]: No data yet — log trades with setup types
+        - generic [ref=e867]:
+          - generic [ref=e868]:
+            - generic [ref=e870]:
+              - img [ref=e871]
+              - generic [ref=e881]: Trading Coach
+              - generic [ref=e883]: "Focus: Get Started"
+            - paragraph [ref=e884]: Log your first trade to begin tracking your development. Complete the 4 Pillars checklist before entering any position.
+          - generic [ref=e885]:
+            - generic [ref=e886]:
+              - generic [ref=e887]: XP History
+              - generic [ref=e888]: 0 events
+            - generic [ref=e890]: No XP events yet
+      - generic [ref=e891]:
+        - generic [ref=e892]:
+          - generic [ref=e893]: XP & Rank Settings
+          - button "Edit Settings" [ref=e894] [cursor=pointer]
+        - generic [ref=e896]: Edit XP values, rank names, thresholds, promotion/demotion rules, and reset controls.
+  - generic [ref=e488]: "0.25"

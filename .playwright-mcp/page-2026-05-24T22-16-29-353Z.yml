@@ -1,0 +1,121 @@
+- generic [active] [ref=e1]:
+  - complementary [ref=e2]:
+    - generic [ref=e3]: WHOLESALE OS
+    - navigation [ref=e4]:
+      - link "Dashboard" [ref=e5] [cursor=pointer]:
+        - /url: /dashboard
+      - link "Buyers" [ref=e6] [cursor=pointer]:
+        - /url: /buyers
+      - link "Leads" [ref=e7] [cursor=pointer]:
+        - /url: /leads
+      - link "Deals" [ref=e8] [cursor=pointer]:
+        - /url: /deals
+      - link "Import" [ref=e9] [cursor=pointer]:
+        - /url: /import
+  - main [ref=e10]:
+    - generic [ref=e293]:
+      - button "← Back to Pipeline" [ref=e295] [cursor=pointer]
+      - generic [ref=e296]:
+        - generic [ref=e297]:
+          - generic [ref=e298]:
+            - heading "817 Marsalis Ave" [level=1] [ref=e299]
+            - paragraph [ref=e300]: Dallas, TX 75203
+          - generic [ref=e301]: PropStream
+        - generic [ref=e302]:
+          - generic [ref=e303]:
+            - generic [ref=e304]: New
+            - generic [ref=e305]: ›
+          - generic [ref=e306]:
+            - generic [ref=e307]: Skip Traced
+            - generic [ref=e308]: ›
+          - generic [ref=e309]:
+            - generic [ref=e310]: Contacted
+            - generic [ref=e311]: ›
+          - generic [ref=e312]:
+            - generic [ref=e313]: Responded
+            - generic [ref=e314]: ›
+          - generic [ref=e315]:
+            - generic [ref=e316]: Qualified
+            - generic [ref=e317]: ›
+          - generic [ref=e318]:
+            - generic [ref=e319]: Analyzed
+            - generic [ref=e320]: ›
+          - generic [ref=e321]:
+            - generic [ref=e322]: Matched
+            - generic [ref=e323]: ›
+          - generic [ref=e324]:
+            - generic [ref=e325]: Offer Made
+            - generic [ref=e326]: ›
+          - generic [ref=e327]:
+            - generic [ref=e328]: Under Contract
+            - generic [ref=e329]: ›
+          - generic [ref=e330]:
+            - generic [ref=e331]: Assigned
+            - generic [ref=e332]: ›
+          - generic [ref=e334]: Closed
+      - generic [ref=e335]:
+        - generic [ref=e336]:
+          - generic [ref=e337]:
+            - heading "Property Info" [level=2] [ref=e338]
+            - generic [ref=e339]:
+              - generic [ref=e340]:
+                - paragraph [ref=e341]: Type
+                - paragraph [ref=e342]: SFR
+              - generic [ref=e343]:
+                - paragraph [ref=e344]: Year Built
+                - paragraph [ref=e345]: "1952"
+              - generic [ref=e346]:
+                - paragraph [ref=e347]: Beds
+                - paragraph [ref=e348]: "3"
+              - generic [ref=e349]:
+                - paragraph [ref=e350]: Baths
+                - paragraph [ref=e351]: "1"
+              - generic [ref=e352]:
+                - paragraph [ref=e353]: Sqft
+                - paragraph [ref=e354]: 1,020
+              - generic [ref=e355]:
+                - paragraph [ref=e356]: Lot Size
+                - paragraph [ref=e357]: —
+              - generic [ref=e358]:
+                - paragraph [ref=e359]: County
+                - paragraph [ref=e360]: Dallas
+            - generic [ref=e361]:
+              - paragraph [ref=e362]: Motivation Signals
+              - generic [ref=e363]:
+                - generic [ref=e364]: absentee
+                - generic [ref=e365]: vacant
+                - generic [ref=e366]: tax delinquent
+          - generic [ref=e367]:
+            - heading "Stage Control" [level=2] [ref=e368]
+            - generic [ref=e369]:
+              - generic [ref=e370]: Qualified
+              - button "Advance → Analyzed" [ref=e371] [cursor=pointer]
+          - generic [ref=e373]:
+            - generic [ref=e374]:
+              - heading "Deal Analysis" [level=2] [ref=e375]
+              - paragraph [ref=e376]: This lead has been qualified
+            - button "View Deal →" [ref=e377] [cursor=pointer]
+        - generic [ref=e378]:
+          - generic [ref=e379]:
+            - heading "Owner Info" [level=2] [ref=e380]
+            - generic [ref=e381]:
+              - generic [ref=e382]:
+                - paragraph [ref=e383]: Name
+                - paragraph [ref=e384]: Willie James
+              - generic [ref=e385]:
+                - paragraph [ref=e386]: Phone
+                - paragraph [ref=e387]: (214) 227-8841
+              - generic [ref=e388]:
+                - paragraph [ref=e389]: Email
+                - paragraph [ref=e390]: wjames@gmail.com
+              - generic [ref=e392]:
+                - generic [ref=e393]: Skip Trace
+                - generic [ref=e394]: Done
+          - generic [ref=e395]:
+            - generic [ref=e396]:
+              - heading "Conversations" [level=2] [ref=e397]
+              - generic [ref=e398]:
+                - button "+ Draft Outreach" [ref=e399] [cursor=pointer]
+                - button "+ Log Inbound" [ref=e400] [cursor=pointer]
+            - paragraph [ref=e402]: No messages yet
+  - alert [ref=e32]

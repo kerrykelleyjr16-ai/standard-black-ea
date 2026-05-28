@@ -1,0 +1,215 @@
+- generic [ref=e4]:
+  - banner [ref=e5]:
+    - generic [ref=e6]:
+      - generic [ref=e7]:
+        - button "Dashboard" [ref=e8] [cursor=pointer]:
+          - img [ref=e9]
+          - text: Dashboard
+        - generic [ref=e12]:
+          - generic [ref=e13]: Trading OS
+          - generic [ref=e14]: Standard Black · Options Division
+      - generic [ref=e15]:
+        - button "Trading Command Room" [ref=e16] [cursor=pointer]:
+          - img [ref=e17]
+          - generic [ref=e20]: Trading
+          - generic [ref=e21]: Command Room
+        - button "Trading AIOS Development OS" [ref=e22] [cursor=pointer]:
+          - img [ref=e23]
+          - generic [ref=e33]: Trading AIOS
+          - generic [ref=e34]: Development OS
+  - generic [ref=e36]:
+    - generic [ref=e37]:
+      - generic [ref=e38]: Session Phase
+      - generic [ref=e39]:
+        - button "● Pre-Market Bias · Watchlist · Plan" [ref=e41] [cursor=pointer]:
+          - generic [ref=e42]: ● Pre-Market
+          - generic [ref=e43]: Bias · Watchlist · Plan
+        - button "Live Trading Execute · Track · Manage" [ref=e46] [cursor=pointer]:
+          - generic [ref=e47]: Live Trading
+          - generic [ref=e48]: Execute · Track · Manage
+        - button "Review Grade · Journal · Improve" [ref=e51] [cursor=pointer]:
+          - generic [ref=e52]: Review
+          - generic [ref=e53]: Grade · Journal · Improve
+    - generic [ref=e54]:
+      - generic [ref=e55]:
+        - generic [ref=e57]:
+          - generic [ref=e58]: Market Bias
+          - button "—" [ref=e59] [cursor=pointer]:
+            - img [ref=e60]
+            - generic [ref=e65]: —
+        - generic [ref=e66]:
+          - generic [ref=e67]:
+            - generic [ref=e68]: SPY
+            - generic [ref=e69]: Loading...
+            - generic [ref=e70]: Overall market sentiment
+          - generic [ref=e71]:
+            - generic [ref=e72]: QQQ
+            - generic [ref=e73]: Loading...
+            - generic [ref=e74]: Tech sentiment
+        - generic [ref=e75]:
+          - img [ref=e76]
+          - generic [ref=e77]: neutral
+          - generic [ref=e78]: Mixed signals · wait for clarity
+      - generic [ref=e79]:
+        - generic [ref=e81]: Trade Limit
+        - generic [ref=e82]: 0 / 4
+        - generic [ref=e83]: 4 trades remaining today
+      - generic [ref=e84]:
+        - generic [ref=e86]: 20/20 Rule · Risk Status
+        - textbox "Portfolio size $" [ref=e87]
+      - generic [ref=e88]:
+        - generic [ref=e90]: 4 Pillars Checklist
+        - generic [ref=e91] [cursor=pointer]:
+          - img [ref=e92]
+          - generic [ref=e94]: Risk management reviewed
+        - generic [ref=e95] [cursor=pointer]:
+          - img [ref=e96]
+          - generic [ref=e98]: Targeting high probability setups only
+        - generic [ref=e99] [cursor=pointer]:
+          - img [ref=e100]
+          - generic [ref=e102]: Discipline — no gut trades today
+        - generic [ref=e103] [cursor=pointer]:
+          - img [ref=e104]
+          - generic [ref=e106]: Patience — wait for the setup to come to me
+    - generic [ref=e107]:
+      - generic [ref=e108]:
+        - generic [ref=e109]:
+          - generic [ref=e110]: Daily Watchlist
+          - generic [ref=e111]:
+            - textbox "Add ticker…" [ref=e112]
+            - button "+ Add" [ref=e113] [cursor=pointer]
+        - generic [ref=e115]: No tickers added yet
+      - generic [ref=e116]:
+        - generic [ref=e118]: Trade Plan Builder
+        - generic [ref=e120]:
+          - generic [ref=e121]:
+            - generic [ref=e122]: Ticker
+            - textbox "SPY" [ref=e123]
+          - generic [ref=e124]:
+            - generic [ref=e125]: Setup Type
+            - textbox "Bear flag, H&S, etc." [ref=e126]
+          - generic [ref=e127]:
+            - generic [ref=e128]: Confluences Confirmed (0/2 min)
+            - spinbutton [ref=e129]: "0"
+          - generic [ref=e130]:
+            - generic [ref=e131]:
+              - generic [ref=e132]: Risk Amount $
+              - textbox "250" [ref=e133]
+            - generic [ref=e134]:
+              - generic [ref=e135]: Target $
+              - textbox "500" [ref=e136]
+      - generic [ref=e137]:
+        - generic [ref=e139]: Options Contract Tracker
+        - generic [ref=e141]:
+          - table [ref=e143]:
+            - rowgroup [ref=e144]:
+              - row "Ticker Setup Entry Exit Size P&L Notes" [ref=e145]:
+                - columnheader "Ticker" [ref=e146]
+                - columnheader "Setup" [ref=e147]
+                - columnheader "Entry" [ref=e148]
+                - columnheader "Exit" [ref=e149]
+                - columnheader "Size" [ref=e150]
+                - columnheader "P&L" [ref=e151]
+                - columnheader "Notes" [ref=e152]
+                - columnheader [ref=e153]
+            - rowgroup [ref=e154]:
+              - row "No trades logged yet" [ref=e155]:
+                - cell "No trades logged yet" [ref=e156]
+          - button "Log Trade" [ref=e157] [cursor=pointer]:
+            - img [ref=e158]
+            - text: Log Trade
+    - generic [ref=e159]:
+      - generic [ref=e160]:
+        - generic [ref=e161]:
+          - generic [ref=e162]: Strategy Vault
+          - generic [ref=e163]: 7 setups
+        - generic [ref=e165]:
+          - generic [ref=e167] [cursor=pointer]:
+            - generic [ref=e168]:
+              - img [ref=e169]
+              - generic [ref=e171]: 20/20 RuleRisk Management
+            - generic [ref=e172]:
+              - button [ref=e173]:
+                - img [ref=e174]
+              - button [ref=e176]:
+                - img [ref=e177]
+          - generic [ref=e181] [cursor=pointer]:
+            - generic [ref=e182]:
+              - img [ref=e183]
+              - generic [ref=e185]: 4 Pillars Daily CheckDiscipline
+            - generic [ref=e186]:
+              - button [ref=e187]:
+                - img [ref=e188]
+              - button [ref=e190]:
+                - img [ref=e191]
+          - generic [ref=e195] [cursor=pointer]:
+            - generic [ref=e196]:
+              - img [ref=e197]
+              - generic [ref=e199]: SPY/QQQ Market ReadMarket Read
+            - generic [ref=e200]:
+              - button [ref=e201]:
+                - img [ref=e202]
+              - button [ref=e204]:
+                - img [ref=e205]
+          - generic [ref=e209] [cursor=pointer]:
+            - generic [ref=e210]:
+              - img [ref=e211]
+              - generic [ref=e213]: Bear FlagChart Pattern
+            - generic [ref=e214]:
+              - button [ref=e215]:
+                - img [ref=e216]
+              - button [ref=e218]:
+                - img [ref=e219]
+          - generic [ref=e223] [cursor=pointer]:
+            - generic [ref=e224]:
+              - img [ref=e225]
+              - generic [ref=e227]: Head & ShouldersChart Pattern
+            - generic [ref=e228]:
+              - button [ref=e229]:
+                - img [ref=e230]
+              - button [ref=e232]:
+                - img [ref=e233]
+          - generic [ref=e237] [cursor=pointer]:
+            - generic [ref=e238]:
+              - img [ref=e239]
+              - generic [ref=e241]: Confluence ChecklistEntry Rule
+            - generic [ref=e242]:
+              - button [ref=e243]:
+                - img [ref=e244]
+              - button [ref=e246]:
+                - img [ref=e247]
+          - generic [ref=e251] [cursor=pointer]:
+            - generic [ref=e252]:
+              - img [ref=e253]
+              - generic [ref=e255]: Fundamental Stock FilterAnalysis
+            - generic [ref=e256]:
+              - button [ref=e257]:
+                - img [ref=e258]
+              - button [ref=e260]:
+                - img [ref=e261]
+          - button "Add Setup" [ref=e264] [cursor=pointer]:
+            - img [ref=e265]
+            - text: Add Setup
+      - generic [ref=e266]:
+        - generic [ref=e267]:
+          - generic [ref=e268]: Trade Reviews · All Time
+          - generic [ref=e269]: 0 logged
+        - generic [ref=e271]:
+          - table [ref=e273]:
+            - rowgroup [ref=e274]:
+              - row "Ticker Setup Entry Exit Size P&L Grade Notes" [ref=e275]:
+                - columnheader "Ticker" [ref=e276]
+                - columnheader "Setup" [ref=e277]
+                - columnheader "Entry" [ref=e278]
+                - columnheader "Exit" [ref=e279]
+                - columnheader "Size" [ref=e280]
+                - columnheader "P&L" [ref=e281]
+                - columnheader "Grade" [ref=e282]
+                - columnheader "Notes" [ref=e283]
+                - columnheader [ref=e284]
+            - rowgroup [ref=e285]:
+              - row "No trades logged yet" [ref=e286]:
+                - cell "No trades logged yet" [ref=e287]
+          - button "Log Trade" [ref=e288] [cursor=pointer]:
+            - img [ref=e289]
+            - text: Log Trade
