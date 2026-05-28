@@ -98,7 +98,7 @@ export default function Dashboard() {
         </div>
 
         {/* Main Grid */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1.6fr) minmax(0, 1fr)', gap: 20 }}>
+        <div className="sb-main-grid" style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1.6fr) minmax(0, 1fr)', gap: 20 }}>
 
           {/* Left column */}
           <div style={{ display: 'grid', gap: 20 }}>
@@ -123,7 +123,7 @@ export default function Dashboard() {
             </Panel>
 
             {/* Charts */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+            <div className="sb-chart-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
               <Panel title="Fund I · Capital Raise (YTD)">
                 <div style={{ height: 180 }}>
                   <ResponsiveContainer width="100%" height="100%">
@@ -229,6 +229,13 @@ export default function Dashboard() {
           </div>
           <div>Standard Black OS v0.1 · {new Date().toISOString().slice(0, 10)}</div>
         </div>
+
+        <style>{`
+          @media (max-width: 767px) {
+            .sb-main-grid { grid-template-columns: 1fr !important; }
+            .sb-chart-grid { grid-template-columns: 1fr !important; }
+          }
+        `}</style>
       </div>
 
       <ConfigPanel
