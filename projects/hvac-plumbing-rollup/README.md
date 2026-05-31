@@ -47,7 +47,7 @@ Until then: **learn, watch, and prepare** — don't deploy capital.
 ## What to Do Now (pre-activation, near-zero cost)
 1. **Sharpen the screen.** The `acquisition-analyzer` skill is now narrowed to HVAC/plumbing. Use it for reps.
 2. **Build a comps file.** Track every HVAC/plumbing business for sale you come across (BizBuySell, broker listings) — price, revenue, EBITDA, multiple. Build pattern recognition before spending a dollar.
-3. **Pick a target metro.** Decide the first geography (default: DFW — Kerry's market, hot climate = strong HVAC demand).
+3. **Target metros — LOCKED: DFW (Dallas–Fort Worth) and Phoenix, AZ.** Both are extreme-heat markets (year-round HVAC demand) and among the fastest-growing Sun Belt metros. DFW is Kerry's home market; Phoenix is the second beachhead. Own one metro before expanding the other.
 4. **Study one expert playbook.** Pick a proven home-services roll-up model and learn it cold, the way the note business was learned via Desi Arnez.
 5. **Map the entity overlap.** Coordinate with the entity-structure project so the fund vehicle reuses that legal work.
 6. **Run practice deals.** Push 3–5 real listings through the seven-step evaluation order (`references/company-evaluation-frameworks.md`) and log them in `decisions/log.md`. Reps build instinct.
@@ -59,6 +59,7 @@ Until then: **learn, watch, and prepare** — don't deploy capital.
 - `projects/entity-structure/` — shared legal/entity architecture
 
 ## Open Items
-- Confirm first target metro (DFW assumed)
+- ~~Confirm target metros~~ — DONE: DFW and Phoenix, AZ (2026-05-31)
+- Decide which metro is the anchor/first beachhead (DFW likely — home market)
 - Select the home-services roll-up playbook to study
 - Define fund economics (target raise, hold period, return targets) — defer to activation

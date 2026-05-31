@@ -60,7 +60,7 @@ This is where *you* learn to do a deal — searcher scale, not PE scale.
 3. **Ongoing:** Build the **comps file** — log every HVAC/plumbing business for sale (BizBuySell, brokers): price, revenue, EBITDA, multiple, location.
 4. **Ongoing:** Reverse-engineer **Apex** specifically — read everything on how they screen and integrate add-ons.
 5. **By end:** Run **3–5 real listings** through the seven-step evaluation order (`company-evaluation-frameworks.md`) and log them in `decisions/log.md`. Reps build instinct.
-6. **Decide:** Confirm the **first target metro** (default: DFW).
+6. **Target metros LOCKED:** DFW and Phoenix, AZ. Build the comps file for both; decide which is the anchor beachhead (DFW likely — home market).
 
 ---
 
