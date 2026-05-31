@@ -17,7 +17,7 @@ The design principle throughout is simple: prioritize ownership, cash flow, down
 
 - Establish a durable personal and operating reserve base before taking unnecessary portfolio risk.
 - Build and scale a mortgage note platform that can grow from a first fund into a multi-fund ecosystem.
-- Acquire service-based operating businesses such as HVAC, plumbing, construction, and related companies.
+- Acquire and roll up service-based operating businesses — **focused on HVAC and plumbing only** — into a regional platform (the next major venture after the note fund; see `projects/hvac-plumbing-rollup/`).
 - Use AI and system design to keep the human team lean while increasing throughput and consistency.
 - Transition over time from individual deal execution into family-office style ownership, governance, and capital allocation.
 
@@ -95,14 +95,14 @@ The residential mortgage note platform is the clearest current center of gravity
 
 Your operating-company lane is not random diversification. It is a control-and-cash-flow sleeve that can eventually reinforce the larger capital stack.
 
-### Recurring target sectors
+### Target sectors — FOCUSED
 
-- HVAC
-- Plumbing
-- Construction
-- Property management
-- Trucking
-- Related service businesses
+The operating-company lane is intentionally narrowed to two trades:
+
+- **HVAC**
+- **Plumbing**
+
+Construction, trucking, property management, and other service businesses are **out of scope** for now — non-discretionary, recession-resistant, recurring-revenue trades win the focus. They may return once the HVAC/plumbing platform matures. See `projects/hvac-plumbing-rollup/` for the roll-up thesis and `references/company-evaluation-frameworks.md` for the evaluation discipline.
 
 ### Acquisition scorecard
 

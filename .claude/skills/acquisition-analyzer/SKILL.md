@@ -1,6 +1,6 @@
 # Skill: Acquisition Analyzer
 
-**Invoke when:** Kerry is evaluating a potential operating company acquisition — HVAC, plumbing, construction, trucking, or property management.
+**Invoke when:** Kerry is evaluating a potential operating company acquisition — **HVAC or plumbing only** (the focused roll-up targets; see `projects/hvac-plumbing-rollup/`).
 
 ---
 
@@ -10,12 +10,8 @@
 - Asking price or deal structure
 - Why Kerry is looking at it
 
-## Target Sectors (Phase III+)
-- HVAC
-- Plumbing
-- Commercial construction
-- Trucking / logistics
-- Property management
+## Target Sectors — FOCUSED
+**HVAC and plumbing only.** Construction, trucking, and property management are intentionally out of scope (cyclical / capital-heavy / off-thesis). If a deal isn't HVAC or plumbing, pass — focus is the strategy.
 
 ## Screening Criteria (Quick Disqualifiers)
 Stop early if:
