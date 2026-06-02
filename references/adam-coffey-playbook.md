@@ -16,7 +16,7 @@ Every dollar of revenue must produce:
 His non-negotiable rule: **if it doesn't work at one truck, it never works at 50 or 500.** Most businesses fail because they chase revenue instead of unit economics and assume scale will fix margins. It won't. Profitability has to be true at the smallest unit first.
 
 **How we apply it:**
-- It becomes a **screening filter** in the comps tracker — any target that can't hit (or be fixed to hit) 30-20-10 is suspect. Add it to the disqualifier logic.
+- It becomes a **measurement/grade** in the comps tracker — not a disqualifier. We score how close each company sits to the 30-20-10 standard (A–F). Below-standard isn't a "no"; if the gap is fixable (e.g., high SG&A), that's the value-creation upside per his margin-expansion system. See the 30-20-10 Grade in `projects/hvac-plumbing-rollup/comps-tracker-guide.md`.
 - It's the **post-acquisition operating standard** — when we buy a shop, the first job is getting every truck to 30-20-10, then add more trucks.
 - It reframes the whole game: we're buying **earnings quality**, not revenue. Ties directly to the hedge-fund "cash is truth" lens.
 
@@ -62,7 +62,7 @@ Owners who treat the sale as a last-minute transaction leak value and lose lever
 > **Build from the smallest unit up. Win on earnings quality and systems, not revenue. Buy cheap, de-risk, combine, sell at a premium. Engineer the exit from day one.**
 
 ## Direct Action Items for Standard Black
-1. **Add the 30-20-10 test** to the comps tracker as a screening and operating standard.
+1. **Add the 30-20-10 test** to the comps tracker as a **graded measurement** (A–F, how close to the standard) — and as the operating standard once we own a shop. *(Done — see comps tracker.)*
 2. **Read his books in order** — *Empire Builder* first (it's the scaling roadmap for exactly our stage).
 3. **Frame every acquisition around de-risking** to lift the multiple, per System 4.
 4. **Model the multiple arbitrage** on real DFW/Phoenix comps once we have 10+ logged — show the buy-at-3x / sell-at-8x+ spread explicitly.
