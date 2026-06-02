@@ -40,6 +40,7 @@ This is where *you* learn to do a deal — searcher scale, not PE scale.
    - Apple Podcasts: https://podcasts.apple.com/us/podcast/acquiring-minds/id1569715379
    - Episode list: https://acquiringminds.co/episodes
 2. **Book: *Buy Then Build* by Walker Deibel** — the bible for acquisition entrepreneurs ("acquire instead of start from scratch"). Forbes top-7 entrepreneur read. Read this first.
+2b. **Adam Coffey's books — the HVAC roll-up blueprint** (he ran CoolSys, an HVAC roll-up, to $1B+). Read in order: ***Empire Builder*** (scaling $0→$1B), ***The Private Equity Playbook*** (the buyer's game), ***The Exit-Strategy Playbook*** (selling at max value). Full breakdown of his systems and how we apply them: `references/adam-coffey-playbook.md`. **Highest-priority study after Buy Then Build.**
 3. **Walker Deibel's Acquisition Lab** — paid done-with-you buy-side program if you want structured support later (defer until activation).
 4. **Case study — first-time plumbing acquisition** (Charles Barr / DiMartino Plumbing, via Acquiring Minds) — a real first plumbing buy: financials, deal structure, lessons.
 
