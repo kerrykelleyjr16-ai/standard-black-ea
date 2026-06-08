@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { Settings, ExternalLink, Menu, X } from 'lucide-react'
+import { Settings, ExternalLink, Menu, X, LogOut } from 'lucide-react'
 import { C, f } from '../tokens.js'
+import { supabase } from '../wholesale/lib/supabase'
 
 const NAV_LINKS = [
   { to: '/trading-os', label: 'Trading OS' },
@@ -18,6 +19,8 @@ export default function Header({ onConfigOpen }) {
   }, [])
 
   const ts = now.toLocaleTimeString('en-US', { hour12: false })
+
+  const signOut = () => supabase.auth.signOut()
 
   return (
     <header style={{
@@ -131,6 +134,23 @@ export default function Header({ onConfigOpen }) {
             <Settings size={12} /> Config
           </button>
 
+          {/* Sign out */}
+          <button
+            onClick={signOut}
+            className="desktop-nav"
+            title="Sign out"
+            style={{
+              background: 'transparent', border: `1px solid ${C.border}`,
+              padding: '6px 10px', borderRadius: 2, cursor: 'pointer',
+              display: 'flex', alignItems: 'center', gap: 6,
+              color: C.sub, fontFamily: f.mono, fontSize: 11, transition: 'all 0.15s',
+            }}
+            onMouseEnter={e => { e.currentTarget.style.borderColor = C.borderHi; e.currentTarget.style.color = C.text }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = C.border; e.currentTarget.style.color = C.sub }}
+          >
+            <LogOut size={12} />
+          </button>
+
           {/* Mobile hamburger — visible only on mobile */}
           <button
             className="mobile-menu-btn"
@@ -199,6 +219,17 @@ export default function Header({ onConfigOpen }) {
             }}
           >
             <Settings size={12} /> Config
+          </button>
+          <button
+            onClick={() => { setMobileOpen(false); signOut() }}
+            style={{
+              background: 'transparent', border: 'none', cursor: 'pointer',
+              fontFamily: f.mono, fontSize: 12, letterSpacing: '0.1em', textTransform: 'uppercase',
+              color: C.sub, padding: '10px 0', textAlign: 'left',
+              display: 'flex', alignItems: 'center', gap: 6,
+            }}
+          >
+            <LogOut size={12} /> Sign out
           </button>
         </div>
       )}
