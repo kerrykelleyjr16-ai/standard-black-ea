@@ -9,7 +9,7 @@ const NAV_ITEMS = [
 
 export default function WholesaleNav() {
   return (
-    <div style={{
+    <div className="wholesale-nav" style={{
       borderBottom: '1px solid #222222',
       background: 'rgba(5,5,5,0.95)',
       backdropFilter: 'blur(8px)',
@@ -17,10 +17,17 @@ export default function WholesaleNav() {
       alignItems: 'center',
       paddingLeft: 24,
       overflowX: 'auto',
+      WebkitOverflowScrolling: 'touch',
       position: 'sticky',
       top: 0,
       zIndex: 10,
     }}>
+      <style>{`
+        @media (max-width: 767px) {
+          .wholesale-nav { padding-left: 14px !important; }
+          .wholesale-nav::-webkit-scrollbar { display: none; }
+        }
+      `}</style>
       <Link
         to="/"
         style={{

@@ -56,9 +56,9 @@ export default function Deals() {
         className="min-h-screen font-mono"
         style={{ background: '#0a0a0a', color: '#e5e5e5' }}
       >
-        <div className="max-w-5xl mx-auto px-6 py-10">
+        <div className="max-w-5xl mx-auto px-4 py-6 md:px-6 md:py-10 pb-[90px] md:pb-10">
           {/* Header */}
-          <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center justify-between gap-3 mb-6 md:mb-8">
             <div>
               <h1 className="text-2xl font-bold tracking-tight" style={{ color: '#e5e5e5' }}>
                 Deals
@@ -112,7 +112,7 @@ export default function Deals() {
                 return (
                   <Link key={deal.id} to={`/wholesale/deals/${deal.id}`} className="block">
                     <Card className="hover:border-[#555] transition-colors cursor-pointer">
-                      <div className="flex items-start justify-between gap-4">
+                      <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-3 md:gap-4">
                         {/* Left: Address + badges */}
                         <div className="flex-1 min-w-0">
                           <p
@@ -140,7 +140,7 @@ export default function Deals() {
                         </div>
 
                         {/* Right: Numbers */}
-                        <div className="flex gap-6 text-right shrink-0">
+                        <div className="grid grid-cols-5 gap-3 md:flex md:gap-6 text-left md:text-right shrink-0 pt-2 md:pt-0 border-t md:border-t-0" style={{ borderColor: '#1a1a1a' }}>
                           <div>
                             <p className="text-xs mb-0.5" style={{ color: '#666' }}>
                               ARV

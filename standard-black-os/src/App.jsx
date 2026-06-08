@@ -12,6 +12,7 @@ import Buyers from './pages/wholesale/Buyers.tsx'
 import NewBuyer from './pages/wholesale/NewBuyer.tsx'
 import BuyerDetail from './pages/wholesale/BuyerDetail.tsx'
 import AuthGate from './lib/AuthGate.jsx'
+import MobileTabBar from './components/MobileTabBar.jsx'
 import { C } from './tokens.js'
 
 export default function App() {
@@ -34,6 +35,7 @@ export default function App() {
           <Route path="/wholesale/buyers/:id" element={<BuyerDetail />} />
         </Routes>
       </div>
+      <MobileTabBar />
       </BrowserRouter>
     </AuthGate>
   )

@@ -109,7 +109,7 @@ export default function LeadDetail() {
     <>
       <WholesaleNav />
       <div className="min-h-screen font-mono" style={{ background: '#050505', color: '#F5F1E8' }}>
-        <div className="max-w-3xl mx-auto px-6 py-8">
+        <div className="max-w-3xl mx-auto px-4 py-6 md:px-6 md:py-8 pb-[90px] md:pb-8">
 
           {/* Back */}
           <button
@@ -159,7 +159,7 @@ export default function LeadDetail() {
           {/* Property Details */}
           <Card className="mb-5">
             <p className="text-xs uppercase tracking-widest mb-3" style={{ color: '#555' }}>Property Details</p>
-            <div className="grid grid-cols-3 gap-4 text-sm">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-sm">
               {lead.property_type && <div><p className="text-xs mb-1" style={{ color: '#555' }}>Type</p><p style={{ color: '#F5F1E8' }}>{lead.property_type}</p></div>}
               {lead.beds != null && <div><p className="text-xs mb-1" style={{ color: '#555' }}>Beds</p><p style={{ color: '#F5F1E8' }}>{lead.beds}</p></div>}
               {lead.baths != null && <div><p className="text-xs mb-1" style={{ color: '#555' }}>Baths</p><p style={{ color: '#F5F1E8' }}>{lead.baths}</p></div>}

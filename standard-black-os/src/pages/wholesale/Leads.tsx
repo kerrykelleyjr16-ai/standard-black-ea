@@ -64,7 +64,7 @@ export default function Leads() {
       <div className="min-h-screen font-mono" style={{ background: '#0a0a0a', color: '#e5e5e5' }}>
         {/* Header */}
         <div
-          className="flex items-center justify-between px-8 py-5 border-b"
+          className="flex items-center justify-between gap-3 px-4 py-4 md:px-8 md:py-5 border-b"
           style={{ borderColor: '#333' }}
         >
           <div>
@@ -115,7 +115,7 @@ export default function Leads() {
         </div>
 
         {/* Lead list */}
-        <div className="px-8 py-6 space-y-2">
+        <div className="px-4 py-5 md:px-8 md:py-6 space-y-2 pb-[90px] md:pb-6">
           {loading && (
             <p className="text-sm" style={{ color: '#666' }}>Loading leads...</p>
           )}

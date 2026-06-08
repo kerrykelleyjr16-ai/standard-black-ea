@@ -6,6 +6,7 @@ export default function SkillButton({ skill, running, onClick }) {
   const isPlanned = skill.status === 'planned';
   return (
     <button
+      className="sb-skill-btn"
       onClick={() => !isPlanned && !running && onClick(skill)}
       disabled={running || isPlanned}
       style={{
@@ -25,7 +26,7 @@ export default function SkillButton({ skill, running, onClick }) {
           {skill.name}
           {isPlanned && <Pill tone="planned">planned</Pill>}
         </div>
-        <div style={{ fontFamily: f.mono, fontSize: 10, color: C.mute, letterSpacing: '0.04em' }}>
+        <div style={{ fontFamily: f.mono, fontSize: 10, color: C.mute, letterSpacing: '0.04em', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
           /{skill.id} · {skill.runs} runs · {skill.last}
         </div>
       </div>
@@ -39,6 +40,12 @@ export default function SkillButton({ skill, running, onClick }) {
           {running ? <Pause size={10} style={{ color: C.bg }} /> : <Play size={10} style={{ color: C.gold }} />}
         </div>
       )}
+
+      <style>{`
+        @media (max-width: 767px) {
+          .sb-skill-btn { min-height: 56px; padding: 12px 14px !important; }
+        }
+      `}</style>
     </button>
   );
 }

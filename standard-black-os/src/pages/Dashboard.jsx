@@ -86,10 +86,10 @@ export default function Dashboard() {
     }}>
       <Header onConfigOpen={() => setConfigOpen(true)} />
 
-      <div style={{ padding: 24, display: 'grid', gap: 20, maxWidth: 1600, margin: '0 auto' }}>
+      <div className="sb-main-content" style={{ padding: 24, display: 'grid', gap: 20, maxWidth: 1600, margin: '0 auto' }}>
 
         {/* KPI Strip */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 14 }}>
+        <div className="sb-kpi-strip" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 14 }}>
           <StatCard label="Capital Raised · Fund I" value="$0" sub="Target $1M–$5M · accredited" accent={C.gold} mini={FUND_SERIES} />
           <StatCard label="Note OS Sprint" value="2 / 6" sub="Sprint 1 complete · Supabase pending" accent={C.gold} />
           <StatCard label="SB Creations · Sites" value="1" sub="Delivered · 100 visits" accent={C.gold} mini={CREATIONS_SERIES} />
@@ -105,9 +105,9 @@ export default function Dashboard() {
             <Panel
               title="Ventures"
               action={
-                <div style={{ display: 'flex', gap: 6 }}>
+                <div className="sb-filter-pills" style={{ display: 'flex', gap: 6 }}>
                   {VENTURE_FILTERS.map(t => (
-                    <button key={t} onClick={() => setSelectedVenture(t)} style={{
+                    <button key={t} onClick={() => setSelectedVenture(t)} className="sb-filter-pill" style={{
                       fontFamily: f.mono, fontSize: 10, letterSpacing: '0.08em', textTransform: 'uppercase',
                       padding: '4px 10px', borderRadius: 2,
                       background: selectedVenture === t ? 'rgba(201,162,74,0.1)' : 'transparent',
@@ -125,7 +125,7 @@ export default function Dashboard() {
             {/* Charts */}
             <div className="sb-chart-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
               <Panel title="Fund I · Capital Raise (YTD)">
-                <div style={{ height: 180 }}>
+                <div className="sb-chart-box" style={{ height: 180 }}>
                   <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={FUND_SERIES} margin={{ top: 5, right: 5, left: -20, bottom: 0 }}>
                       <defs>
@@ -144,7 +144,7 @@ export default function Dashboard() {
                 </div>
               </Panel>
               <Panel title="SB Creations · Sites Delivered">
-                <div style={{ height: 180 }}>
+                <div className="sb-chart-box" style={{ height: 180 }}>
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={CREATIONS_SERIES} margin={{ top: 5, right: 5, left: -20, bottom: 0 }}>
                       <CartesianGrid stroke={C.border} strokeDasharray="2 4" vertical={false} />
@@ -216,12 +216,12 @@ export default function Dashboard() {
         <AIOSAgent data={data} persist={persist} />
 
         {/* Footer */}
-        <div style={{
+        <div className="sb-footer" style={{
           borderTop: `1px solid ${C.border}`, paddingTop: 14, marginTop: 6,
           display: 'flex', justifyContent: 'space-between', alignItems: 'center',
           fontFamily: f.mono, fontSize: 10, letterSpacing: '0.08em', color: C.mute, textTransform: 'uppercase',
         }}>
-          <div style={{ display: 'flex', gap: 18 }}>
+          <div className="sb-footer-status" style={{ display: 'flex', gap: 18 }}>
             <span><Database size={10} style={{ display: 'inline', marginRight: 6, verticalAlign: 'middle', color: C.green }} />Vault · synced</span>
             <span><Cpu size={10} style={{ display: 'inline', marginRight: 6, verticalAlign: 'middle', color: C.green }} />Claude Code · connected</span>
             <span><Radio size={10} style={{ display: 'inline', marginRight: 6, verticalAlign: 'middle', color: C.green }} />6 MCP servers</span>
@@ -234,6 +234,50 @@ export default function Dashboard() {
           @media (max-width: 767px) {
             .sb-main-grid { grid-template-columns: 1fr !important; }
             .sb-chart-grid { grid-template-columns: 1fr !important; }
+
+            /* Tighter page padding + bottom clearance for fixed tab bar */
+            .sb-main-content {
+              padding: 14px !important;
+              gap: 14px !important;
+              padding-bottom: 90px !important;
+            }
+
+            /* KPI strip: single column, full-width cards that breathe */
+            .sb-kpi-strip {
+              grid-template-columns: 1fr !important;
+              gap: 10px !important;
+            }
+
+            /* Ventures filter pills: horizontal scroll instead of overflow/wrap squeeze */
+            .sb-filter-pills {
+              flex-wrap: nowrap;
+              overflow-x: auto;
+              -webkit-overflow-scrolling: touch;
+              scrollbar-width: none;
+              max-width: 100%;
+              padding-bottom: 2px;
+            }
+            .sb-filter-pills::-webkit-scrollbar { display: none; }
+            .sb-filter-pill {
+              flex: 0 0 auto;
+              min-height: 30px;
+              padding: 6px 12px !important;
+            }
+
+            /* Charts: trim height a touch so they don't dominate the viewport */
+            .sb-chart-box { height: 150px !important; }
+
+            /* Footer: stack vertically, wrap status items, smaller text */
+            .sb-footer {
+              flex-direction: column;
+              align-items: flex-start;
+              gap: 10px;
+              font-size: 9px !important;
+            }
+            .sb-footer-status {
+              flex-wrap: wrap;
+              gap: 8px 14px !important;
+            }
           }
         `}</style>
       </div>

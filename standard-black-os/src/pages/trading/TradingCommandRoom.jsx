@@ -69,7 +69,7 @@ export default function TradingCommandRoom({ data, persist }) {
       <SessionFlowBar phase={data.sessionPhase} onPhaseChange={phase => persist({ ...data, sessionPhase: phase })} />
 
       {/* Top Row — 4 stat cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14, marginBottom: 20 }}>
+      <div className="cr-stat-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14, marginBottom: 20 }}>
         <MarketBiasCard onBiasUpdate={b => persist({ ...data, marketBias: b })} />
 
         {/* Trade Limit */}
@@ -117,7 +117,7 @@ export default function TradingCommandRoom({ data, persist }) {
       </div>
 
       {/* Middle — 3-column grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 20, marginBottom: 20 }}>
+      <div className="cr-mid-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 20, marginBottom: 20 }}>
 
         {/* Daily Watchlist */}
         <Panel title="Daily Watchlist" action={
@@ -130,7 +130,7 @@ export default function TradingCommandRoom({ data, persist }) {
         }>
           {data.watchlist.length === 0 && <div style={{ color: C.mute, fontSize: 12, padding: '10px 0' }}>No tickers added yet</div>}
           {data.watchlist.map(w => (
-            <div key={w.id} style={{ display: 'flex', alignItems: 'center', gap: 8, paddingBottom: 8, borderBottom: `1px solid ${C.border}`, marginBottom: 8 }}>
+            <div key={w.id} className="cr-watch-row" style={{ display: 'flex', alignItems: 'center', gap: 8, paddingBottom: 8, borderBottom: `1px solid ${C.border}`, marginBottom: 8 }}>
               <span style={{ fontFamily: f.mono, fontSize: 13, color: C.text, fontWeight: 700, minWidth: 50 }}>{w.ticker}</span>
               <select value={w.bias} onChange={e => updateWatchlistItem(w.id, 'bias', e.target.value)}
                 style={{ ...inputStyle, flex: 1, fontSize: 10, padding: '3px 6px' }}>
@@ -191,7 +191,7 @@ export default function TradingCommandRoom({ data, persist }) {
       </div>
 
       {/* Bottom — Strategy Vault + Trade Reviews */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+      <div className="cr-bottom-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
         <Panel title="Strategy Vault" action={
           <span style={{ fontFamily: f.mono, fontSize: 10, color: C.mute }}>{data.setups.length} setups</span>
         }>
@@ -203,6 +203,25 @@ export default function TradingCommandRoom({ data, persist }) {
           <TradeLogTable trades={data.trades} onUpdate={updateTrades} showGrade={true} />
         </Panel>
       </div>
+
+      <style>{`
+        @media (max-width: 767px) {
+          .cr-stat-grid,
+          .cr-mid-grid,
+          .cr-bottom-grid {
+            grid-template-columns: 1fr !important;
+            gap: 14px !important;
+            margin-bottom: 14px !important;
+          }
+          /* Watchlist row stacks so ticker/bias/notes/remove read top-to-bottom */
+          .cr-watch-row {
+            flex-wrap: wrap;
+            gap: 6px !important;
+          }
+          .cr-watch-row > select { flex: 1 1 100% !important; min-height: 34px; }
+          .cr-watch-row > input { flex: 1 1 100% !important; min-height: 34px; }
+        }
+      `}</style>
     </div>
   );
 }

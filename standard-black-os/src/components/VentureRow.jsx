@@ -12,6 +12,7 @@ export default function VentureRow({ venture }) {
 
   return (
     <div
+      className="sb-venture-row"
       style={{
         display: 'grid', gridTemplateColumns: 'auto 1fr auto auto',
         gap: 14, alignItems: 'center', padding: '14px 16px',
@@ -36,7 +37,7 @@ export default function VentureRow({ venture }) {
           {venture.sub}
         </div>
       </div>
-      <div style={{ textAlign: 'right', minWidth: 110 }}>
+      <div className="sb-venture-kpi" style={{ textAlign: 'right', minWidth: 110 }}>
         <div style={{ fontFamily: f.mono, fontSize: 10, color: C.mute, textTransform: 'uppercase', letterSpacing: '0.08em' }}>
           {venture.kpi.label}
         </div>
@@ -48,6 +49,7 @@ export default function VentureRow({ venture }) {
         </div>
       </div>
       <button
+        className="sb-venture-open"
         onClick={() => venture.id === 'trading-os' ? navigate('/trading-os') : navigate(`/venture/${venture.id}`)}
         style={{
           fontFamily: f.mono, fontSize: 10, letterSpacing: '0.12em', textTransform: 'uppercase',
@@ -60,6 +62,33 @@ export default function VentureRow({ venture }) {
       >
         Open <ChevronRight size={12} />
       </button>
+
+      <style>{`
+        @media (max-width: 767px) {
+          .sb-venture-row {
+            grid-template-columns: auto 1fr !important;
+            grid-template-areas: "icon info" "kpi open" !important;
+            row-gap: 12px !important;
+            column-gap: 12px !important;
+            padding: 14px !important;
+          }
+          .sb-venture-row > div:nth-child(1) { grid-area: icon; }
+          .sb-venture-row > div:nth-child(2) { grid-area: info; }
+          .sb-venture-kpi {
+            grid-area: kpi;
+            text-align: left !important;
+            min-width: 0 !important;
+            align-self: center;
+          }
+          .sb-venture-open {
+            grid-area: open;
+            justify-self: end;
+            align-self: center;
+            min-height: 44px;
+            padding: 10px 16px !important;
+          }
+        }
+      `}</style>
     </div>
   );
 }

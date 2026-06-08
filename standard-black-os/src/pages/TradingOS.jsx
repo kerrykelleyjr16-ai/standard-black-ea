@@ -31,7 +31,7 @@ export default function TradingOS() {
         background: 'rgba(5,5,5,0.9)', backdropFilter: 'blur(8px)',
         position: 'sticky', top: 0, zIndex: 10,
       }}>
-        <div style={{ padding: '14px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div className="trade-header-bar" style={{ padding: '14px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
             <button
               onClick={() => navigate('/')}
@@ -55,13 +55,14 @@ export default function TradingOS() {
             </div>
           </div>
 
-          <div style={{ display: 'flex', gap: 4 }}>
+          <div className="trade-tab-row" style={{ display: 'flex', gap: 4 }}>
             {TABS.map(tab => {
               const Icon = tab.icon;
               const active = activeTab === tab.id;
               return (
                 <button
                   key={tab.id}
+                  className="trade-tab-btn"
                   onClick={() => setActiveTab(tab.id)}
                   style={{
                     display: 'flex', alignItems: 'center', gap: 8,
@@ -75,7 +76,7 @@ export default function TradingOS() {
                 >
                   <Icon size={12} />
                   <span>{tab.label}</span>
-                  <span style={{ color: active ? 'rgba(201,162,74,0.5)' : C.mute, fontSize: 9 }}>
+                  <span className="trade-tab-sub" style={{ color: active ? 'rgba(201,162,74,0.5)' : C.mute, fontSize: 9 }}>
                     {tab.sub}
                   </span>
                 </button>
@@ -85,10 +86,39 @@ export default function TradingOS() {
         </div>
       </header>
 
-      <div style={{ padding: 24, maxWidth: 1600, margin: '0 auto' }}>
+      <div className="trade-main-content" style={{ padding: 24, maxWidth: 1600, margin: '0 auto' }}>
         {activeTab === 'trading' && <TradingCommandRoom data={data} persist={persist} />}
         {activeTab === 'aios' && <TradingAIOS data={data} persist={persist} />}
       </div>
+
+      <style>{`
+        @media (max-width: 767px) {
+          /* Header reflows to two rows; tabs become full-width scrollable */
+          .trade-header-bar {
+            flex-direction: column;
+            align-items: stretch !important;
+            gap: 12px;
+            padding: 12px 16px !important;
+          }
+          .trade-tab-row {
+            width: 100%;
+            gap: 8px !important;
+          }
+          .trade-tab-btn {
+            flex: 1 1 0;
+            justify-content: center;
+            min-height: 44px;
+            padding: 8px 10px !important;
+          }
+          .trade-tab-sub { display: none !important; }
+
+          /* Tighter page padding + bottom clearance for fixed tab bar */
+          .trade-main-content {
+            padding: 16px !important;
+            padding-bottom: 90px !important;
+          }
+        }
+      `}</style>
     </div>
   );
 }

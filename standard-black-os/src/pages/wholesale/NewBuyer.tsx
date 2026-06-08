@@ -169,10 +169,10 @@ export default function NewBuyer() {
   return (
     <>
       <WholesaleNav />
-      <div className="p-8 font-mono" style={{ background: '#0a0a0a', minHeight: '100vh' }}>
+      <div className="p-4 md:p-8 pb-[90px] md:pb-8 font-mono" style={{ background: '#0a0a0a', minHeight: '100vh' }}>
         <div className="max-w-3xl mx-auto">
           {/* Header */}
-          <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center justify-between gap-3 mb-8">
             <div>
               <h1 className="text-xl font-medium" style={{ color: '#e5e5e5' }}>Add Buyer</h1>
               <p className="text-xs mt-1" style={{ color: '#666' }}>New buyer profile and buy box</p>
@@ -196,7 +196,7 @@ export default function NewBuyer() {
             <Card className="mb-6">
               <SectionHeading>Identity</SectionHeading>
 
-              <div className="grid grid-cols-2 gap-4 mb-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                 <div>
                   <label style={labelStyle}>Name *</label>
                   <input
@@ -221,7 +221,7 @@ export default function NewBuyer() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4 mb-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                 <div>
                   <label style={labelStyle}>Phone</label>
                   <input
@@ -310,7 +310,7 @@ export default function NewBuyer() {
               </div>
 
               {/* Price Range */}
-              <div className="grid grid-cols-2 gap-4 mb-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                 <div>
                   <label style={labelStyle}>Min Price ($)</label>
                   <input
@@ -336,7 +336,7 @@ export default function NewBuyer() {
               </div>
 
               {/* Condition Max + Beds/Baths */}
-              <div className="grid grid-cols-3 gap-4 mb-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
                 <div>
                   <label style={labelStyle}>Condition Max</label>
                   <select
@@ -391,7 +391,7 @@ export default function NewBuyer() {
               </div>
 
               {/* Margin + ROI + Cap Rate */}
-              <div className="grid grid-cols-3 gap-4 mb-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
                 <div>
                   <label style={labelStyle}>Target Margin (%)</label>
                   <input
@@ -431,7 +431,7 @@ export default function NewBuyer() {
               </div>
 
               {/* Max Rehab + Financing + POF */}
-              <div className="grid grid-cols-3 gap-4 mb-0">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-0">
                 <div>
                   <label style={labelStyle}>Max Rehab ($)</label>
                   <input

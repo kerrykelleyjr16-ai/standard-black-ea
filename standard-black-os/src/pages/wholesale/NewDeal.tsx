@@ -122,9 +122,9 @@ export default function NewDeal() {
         className="min-h-screen font-mono"
         style={{ background: '#0a0a0a', color: '#e5e5e5' }}
       >
-        <div className="max-w-2xl mx-auto px-6 py-10">
+        <div className="max-w-2xl mx-auto px-4 py-6 md:px-6 md:py-10 pb-[90px] md:pb-10">
           {/* Header */}
-          <div className="mb-8">
+          <div className="mb-6 md:mb-8">
             <h1 className="text-2xl font-bold tracking-tight" style={{ color: '#e5e5e5' }}>
               New Deal
             </h1>

@@ -44,9 +44,9 @@ export default function Buyers() {
   return (
     <>
       <WholesaleNav />
-      <div className="p-8 font-mono" style={{ minHeight: '100vh', background: '#0a0a0a' }}>
+      <div className="p-4 md:p-8 pb-[90px] md:pb-8 font-mono" style={{ minHeight: '100vh', background: '#0a0a0a' }}>
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between gap-3 mb-6">
           <div>
             <h1 className="text-xl font-medium" style={{ color: '#e5e5e5' }}>Buyers</h1>
             {!loading && (
@@ -78,10 +78,10 @@ export default function Buyers() {
           </div>
         )}
 
-        {/* Table */}
+        {/* Table — desktop only */}
         {!loading && buyers.length > 0 && (
           <div
-            className="rounded-lg overflow-hidden"
+            className="hidden md:block rounded-lg overflow-hidden"
             style={{ border: '1px solid #333', background: '#0f0f0f' }}
           >
             {/* Table header */}
@@ -166,6 +166,73 @@ export default function Buyers() {
                     />
                     {buyer.active ? 'Active' : 'Inactive'}
                   </span>
+                </div>
+              )
+            })}
+          </div>
+        )}
+
+        {/* Stacked cards — mobile only */}
+        {!loading && buyers.length > 0 && (
+          <div className="md:hidden flex flex-col gap-3">
+            {buyers.map(buyer => {
+              const muted = !buyer.active
+              return (
+                <div
+                  key={buyer.id}
+                  onClick={() => navigate(`/wholesale/buyers/${buyer.id}`)}
+                  className="rounded-lg p-4 cursor-pointer"
+                  style={{ border: '1px solid #333', background: '#0f0f0f' }}
+                >
+                  {/* Name + status */}
+                  <div className="flex items-start justify-between gap-3 mb-2">
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium truncate" style={{ color: muted ? '#555' : '#e5e5e5' }}>
+                        {buyer.name}
+                      </p>
+                      {buyer.company && (
+                        <p className="text-xs mt-0.5 truncate" style={{ color: muted ? '#444' : '#aaa' }}>
+                          {buyer.company}
+                        </p>
+                      )}
+                    </div>
+                    <span
+                      className="flex items-center gap-1 text-xs shrink-0"
+                      style={{ color: buyer.active ? '#7fff7b' : '#555' }}
+                    >
+                      <span
+                        className="inline-block w-1.5 h-1.5 rounded-full"
+                        style={{ background: buyer.active ? '#7fff7b' : '#555' }}
+                      />
+                      {buyer.active ? 'Active' : 'Inactive'}
+                    </span>
+                  </div>
+
+                  {/* Strategy + margin */}
+                  <div className="flex items-center gap-2 flex-wrap mb-3">
+                    {buyer.strategy ? (
+                      <Badge label={strategyLabel(buyer.strategy)} color={muted ? 'gray' : 'blue'} />
+                    ) : null}
+                    <span className="text-xs" style={{ color: muted ? '#444' : '#C9A24A' }}>
+                      {formatPercent(buyer.target_margin)} margin
+                    </span>
+                  </div>
+
+                  {/* Details grid */}
+                  <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-xs">
+                    <div>
+                      <p className="uppercase tracking-wider mb-0.5" style={{ color: '#555' }}>Markets</p>
+                      <p style={{ color: muted ? '#444' : '#aaa' }}>{marketDisplay(buyer.target_markets)}</p>
+                    </div>
+                    <div>
+                      <p className="uppercase tracking-wider mb-0.5" style={{ color: '#555' }}>Price Range</p>
+                      <p style={{ color: muted ? '#444' : '#aaa' }}>
+                        {buyer.min_price || buyer.max_price
+                          ? `${formatCurrency(buyer.min_price)} – ${formatCurrency(buyer.max_price)}`
+                          : '—'}
+                      </p>
+                    </div>
+                  </div>
                 </div>
               )
             })}

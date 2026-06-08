@@ -99,7 +99,7 @@ export default function TradingAIOS({ data, persist }) {
   return (
     <div>
       {/* Top Row */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14, marginBottom: 20 }}>
+      <div className="aios-stat-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14, marginBottom: 20 }}>
         <RankCard xp={data.xp} ranks={data.ranks} promotionStatus={data.promotionStatus} demotionWarning={data.demotionWarning} />
         <XPProgressBar xp={data.xp} ranks={data.ranks} />
         <DisciplineRing score={data.disciplineScore} />
@@ -119,7 +119,7 @@ export default function TradingAIOS({ data, persist }) {
       </div>
 
       {/* Middle */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 20, marginBottom: 20 }}>
+      <div className="aios-mid-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 20, marginBottom: 20 }}>
 
         <Panel title={`Trade Journal · ${data.trades.length} entries`} dense>
           <TradeLogTable trades={data.trades} onUpdate={updateJournalTrades} />
@@ -162,11 +162,11 @@ export default function TradingAIOS({ data, persist }) {
       </div>
 
       {/* Bottom */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 20, marginBottom: 20 }}>
+      <div className="aios-bottom-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 20, marginBottom: 20 }}>
 
         <Panel title="Weekly Review Engine">
           <div style={{ display: 'grid', gap: 10 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <div className="aios-weekly-stats" style={{ display: 'flex', justifyContent: 'space-between' }}>
               <div><span style={smallLabel}>Trades This Week</span><span style={{ fontFamily: f.display, fontSize: 22, color: C.text }}>{weeklyTrades.length}</span></div>
               <div><span style={smallLabel}>Weekly P&L</span><span style={{ fontFamily: f.display, fontSize: 22, color: weeklyPnL >= 0 ? C.green : C.red }}>{weeklyPnL >= 0 ? '+' : ''}${weeklyPnL.toFixed(0)}</span></div>
               <div><span style={smallLabel}>Weekly Grade</span><span style={{ fontFamily: f.display, fontSize: 22, color: gradeColor(weeklyGrade) }}>{weeklyGrade}</span></div>
@@ -232,7 +232,7 @@ export default function TradingAIOS({ data, persist }) {
           <div style={{ display: 'grid', gap: 20 }}>
             <div>
               <div style={{ fontFamily: f.mono, fontSize: 10, color: C.mute, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 12 }}>XP Per Action</div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}>
+              <div className="aios-xp-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}>
                 {Object.entries(xpValsDraft).map(([key, val]) => (
                   <div key={key}>
                     <span style={smallLabel}>{key.replace(/([A-Z])/g, ' $1').trim()}</span>
@@ -245,7 +245,7 @@ export default function TradingAIOS({ data, persist }) {
             <div>
               <div style={{ fontFamily: f.mono, fontSize: 10, color: C.mute, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 12 }}>Rank Names & XP Thresholds</div>
               {ranksDraft.map((rank, i) => (
-                <div key={rank.id} style={{ display: 'grid', gridTemplateColumns: '80px 1fr 120px', gap: 10, marginBottom: 8, alignItems: 'center' }}>
+                <div key={rank.id} className="aios-rank-row" style={{ display: 'grid', gridTemplateColumns: '80px 1fr 120px', gap: 10, marginBottom: 8, alignItems: 'center' }}>
                   <span style={{ fontFamily: f.mono, fontSize: 18 }}>{rank.badge}</span>
                   <input value={rank.name} onChange={e => setRanksDraft(r => r.map((x, j) => j === i ? { ...x, name: e.target.value } : x))} style={{ ...inputStyle }} />
                   <input type="number" value={rank.xpMin} onChange={e => setRanksDraft(r => r.map((x, j) => j === i ? { ...x, xpMin: parseInt(e.target.value) || 0 } : x))} placeholder="Min XP" style={{ ...inputStyle }} />
@@ -270,14 +270,14 @@ export default function TradingAIOS({ data, persist }) {
 
             <div>
               <div style={{ fontFamily: f.mono, fontSize: 10, color: C.mute, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 10 }}>Manual XP Adjustment</div>
-              <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+              <div className="aios-xp-adjust" style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
                 <input type="number" value={xpAdjust} onChange={e => setXpAdjust(e.target.value)} placeholder="Amount" style={{ ...inputStyle, width: 120 }} />
                 <button onClick={() => manualAdjustXP('add')} style={{ fontFamily: f.mono, fontSize: 10, color: C.green, background: 'transparent', border: `1px solid ${C.green}33`, padding: '6px 14px', borderRadius: 2, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6 }}><Plus size={11} /> Add XP</button>
                 <button onClick={() => manualAdjustXP('subtract')} style={{ fontFamily: f.mono, fontSize: 10, color: C.red, background: 'transparent', border: `1px solid ${C.red}33`, padding: '6px 14px', borderRadius: 2, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6 }}><Minus size={11} /> Remove XP</button>
               </div>
             </div>
 
-            <div style={{ display: 'flex', gap: 10, alignItems: 'center', paddingTop: 10, borderTop: `1px solid ${C.border}` }}>
+            <div className="aios-settings-actions" style={{ display: 'flex', gap: 10, alignItems: 'center', paddingTop: 10, borderTop: `1px solid ${C.border}` }}>
               <button onClick={saveSettings} style={{ fontFamily: f.mono, fontSize: 11, color: C.green, background: 'transparent', border: `1px solid ${C.green}33`, padding: '8px 20px', borderRadius: 2, cursor: 'pointer' }}>Save Settings</button>
               {!showResetConfirm
                 ? <button onClick={() => setShowResetConfirm(true)} style={{ fontFamily: f.mono, fontSize: 11, color: C.red, background: 'transparent', border: `1px solid ${C.red}33`, padding: '8px 20px', borderRadius: 2, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6 }}><RotateCcw size={11} /> Reset Trading AIOS Rankings</button>
@@ -291,6 +291,33 @@ export default function TradingAIOS({ data, persist }) {
           </div>
         )}
       </Panel>
+
+      <style>{`
+        @media (max-width: 767px) {
+          .aios-stat-grid,
+          .aios-mid-grid,
+          .aios-bottom-grid {
+            grid-template-columns: 1fr !important;
+            gap: 14px !important;
+            margin-bottom: 14px !important;
+          }
+          /* Weekly review stats stack so each number gets its own row */
+          .aios-weekly-stats {
+            flex-wrap: wrap;
+            gap: 12px;
+          }
+          .aios-weekly-stats > div { flex: 1 1 45%; }
+          /* Settings sub-grids collapse */
+          .aios-xp-grid { grid-template-columns: 1fr 1fr !important; }
+          .aios-rank-row { grid-template-columns: 44px 1fr !important; }
+          .aios-rank-row > input[type="number"] { grid-column: 2 !important; }
+          /* Button rows wrap with comfortable tap targets */
+          .aios-xp-adjust { flex-wrap: wrap; }
+          .aios-xp-adjust > button { flex: 1 1 40%; justify-content: center; min-height: 44px; }
+          .aios-settings-actions { flex-wrap: wrap; }
+          .aios-settings-actions > button { min-height: 44px; }
+        }
+      `}</style>
     </div>
   );
 }

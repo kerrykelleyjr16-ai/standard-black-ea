@@ -39,8 +39,8 @@ export default function ConfigPanel({ open, onClose, ventures, automations, onSa
         style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 40 }}
       />
       {/* Panel */}
-      <div style={{
-        position: 'fixed', top: 0, right: 0, bottom: 0, width: 420,
+      <div className="sb-config-panel" style={{
+        position: 'fixed', top: 0, right: 0, bottom: 0, width: 420, maxWidth: '100vw',
         background: C.surface, borderLeft: `1px solid ${C.border}`,
         zIndex: 50, display: 'flex', flexDirection: 'column', overflow: 'hidden',
       }}>
@@ -213,6 +213,12 @@ export default function ConfigPanel({ open, onClose, ventures, automations, onSa
           </div>
         )}
       </div>
+
+      <style>{`
+        @media (max-width: 767px) {
+          .sb-config-panel { width: 100vw !important; }
+        }
+      `}</style>
     </>
   );
 }

@@ -374,7 +374,7 @@ const CONNECTORS = [
 
 function ConnectorsStrip() {
   return (
-    <div style={{
+    <div className="sb-connectors" style={{
       borderTop: `1px solid ${C.border}`, padding: '10px 20px',
       display: 'flex', alignItems: 'center', gap: 20,
       background: `${C.gold}04`,
@@ -391,7 +391,7 @@ function ConnectorsStrip() {
           </span>
         </div>
       ))}
-      <span style={{ marginLeft: 'auto', fontFamily: f.mono, fontSize: 9, color: C.mute }}>
+      <span className="sb-connectors-meta" style={{ marginLeft: 'auto', fontFamily: f.mono, fontSize: 9, color: C.mute }}>
         Claude Haiku 4.5 · Claude Code MCP
       </span>
     </div>
@@ -436,29 +436,30 @@ export default function AIOSAgent({ data, persist }) {
     <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 4, overflow: 'hidden' }}>
 
       {/* Header */}
-      <div style={{
+      <div className="sb-aios-header" style={{
         padding: '14px 20px', borderBottom: `1px solid ${C.border}`,
         display: 'flex', alignItems: 'center', gap: 10, background: `${C.gold}08`,
       }}>
-        <Brain size={14} style={{ color: C.gold }} />
+        <Brain size={14} style={{ color: C.gold, flexShrink: 0 }} />
         <span style={{ fontFamily: f.mono, fontSize: 11, letterSpacing: '0.14em', textTransform: 'uppercase', color: C.gold }}>
           Standard Black AIOS · Super Agent
         </span>
-        <span style={{ marginLeft: 'auto', fontFamily: f.mono, fontSize: 9, color: C.mute }}>
+        <span className="sb-aios-header-meta" style={{ marginLeft: 'auto', fontFamily: f.mono, fontSize: 9, color: C.mute }}>
           Claude Haiku 4.5 · live context
         </span>
       </div>
 
-      <div style={{ padding: 20 }}>
+      <div className="sb-aios-body" style={{ padding: 20 }}>
 
         {/* Chat Input */}
-        <div style={{ display: 'flex', gap: 10, marginBottom: (response || error) ? 14 : 20 }}>
+        <div className="sb-aios-input-row" style={{ display: 'flex', gap: 10, marginBottom: (response || error) ? 14 : 20 }}>
           <input
             value={input}
             onChange={e => setInput(e.target.value)}
             onKeyDown={e => e.key === 'Enter' && handleSubmit()}
             disabled={loading}
             placeholder="Ask the Standard Black AIOS anything — briefing, priorities, deals, trades, tasks, risks..."
+            className="sb-aios-input"
             style={{
               flex: 1, background: '#1A1A1A', border: `1px solid ${C.border}`, borderRadius: 3,
               color: loading ? C.mute : C.text, fontFamily: f.body, fontSize: 13, padding: '10px 14px',
@@ -466,12 +467,13 @@ export default function AIOSAgent({ data, persist }) {
             }}
           />
           <button
+            className="sb-aios-send"
             onClick={handleSubmit}
             disabled={loading}
             style={{
               background: `${C.gold}14`, border: `1px solid ${C.goldDim}`, borderRadius: 3,
               color: loading ? C.mute : C.gold, cursor: loading ? 'default' : 'pointer',
-              padding: '10px 16px', display: 'flex', alignItems: 'center', gap: 6,
+              padding: '10px 16px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
               fontFamily: f.mono, fontSize: 11, whiteSpace: 'nowrap', opacity: loading ? 0.7 : 1,
             }}
           >
@@ -511,7 +513,7 @@ export default function AIOSAgent({ data, persist }) {
         )}
 
         {/* 8-Card Grid */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14 }}>
+        <div className="sb-aios-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14 }}>
           <BriefingCard data={data} trading={trading} />
           <PrioritiesCard data={data} />
           <FollowUpsCard followUps={aios.followUps} onAdd={addFollowUp} onToggle={toggleFollowUp} />
@@ -526,7 +528,29 @@ export default function AIOSAgent({ data, persist }) {
       {/* Connectors */}
       <ConnectorsStrip />
 
-      <style>{`@keyframes spin { from { transform: rotate(0deg) } to { transform: rotate(360deg) } }`}</style>
+      <style>{`
+        @keyframes spin { from { transform: rotate(0deg) } to { transform: rotate(360deg) } }
+        @media (max-width: 767px) {
+          /* Header: let the title wrap, drop the meta tag so it doesn't crowd */
+          .sb-aios-header { flex-wrap: wrap; padding: 12px 14px !important; gap: 8px; }
+          .sb-aios-header-meta { display: none; }
+
+          /* Body padding tighter */
+          .sb-aios-body { padding: 14px !important; }
+
+          /* Input + Send stack full width with proper tap height */
+          .sb-aios-input-row { flex-direction: column; gap: 8px; }
+          .sb-aios-input { width: 100%; min-height: 46px; }
+          .sb-aios-send { width: 100%; min-height: 46px; padding: 12px 16px !important; }
+
+          /* 8-card grid: 2-up on phone so cards are readable, not squeezed */
+          .sb-aios-grid { grid-template-columns: 1fr 1fr !important; gap: 10px !important; }
+
+          /* Connectors strip wraps instead of overflowing */
+          .sb-connectors { flex-wrap: wrap; gap: 10px 14px !important; padding: 12px 14px !important; }
+          .sb-connectors-meta { margin-left: 0 !important; flex-basis: 100%; }
+        }
+      `}</style>
     </div>
   )
 }

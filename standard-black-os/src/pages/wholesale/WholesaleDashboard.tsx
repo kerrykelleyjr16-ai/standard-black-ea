@@ -118,12 +118,12 @@ export default function WholesaleDashboard() {
       <WholesaleNav />
       <div className="min-h-screen font-mono" style={{ background: '#0a0a0a', color: '#e5e5e5' }}>
         {/* Header */}
-        <div className="px-8 py-5 border-b" style={{ borderColor: '#333' }}>
+        <div className="px-4 py-4 md:px-8 md:py-5 border-b" style={{ borderColor: '#333' }}>
           <h1 className="text-lg font-semibold" style={{ color: '#e5e5e5' }}>Dashboard</h1>
           <p className="text-xs mt-0.5" style={{ color: '#666' }}>Standard Black Wholesale OS</p>
         </div>
 
-        <div className="px-8 py-6 space-y-5">
+        <div className="px-4 py-5 md:px-8 md:py-6 space-y-5 pb-[90px] md:pb-6">
 
           {/* Stat tiles */}
           <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">

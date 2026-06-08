@@ -230,7 +230,7 @@ export default function DealDetail() {
         className="min-h-screen font-mono"
         style={{ background: '#0a0a0a', color: '#e5e5e5' }}
       >
-        <div className="max-w-3xl mx-auto px-6 py-10">
+        <div className="max-w-3xl mx-auto px-4 py-6 md:px-6 md:py-10 pb-[90px] md:pb-10">
 
           {/* Header */}
           <div className="mb-8">

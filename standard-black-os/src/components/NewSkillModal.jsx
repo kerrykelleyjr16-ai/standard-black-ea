@@ -83,10 +83,11 @@ export default function NewSkillModal({ open, onClose, onRegister }) {
   return (
     <>
       <div onClick={handleClose} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 40 }} />
-      <div style={{
+      <div className="sb-newskill-modal" style={{
         position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%,-50%)',
-        width: 480, background: C.surface, border: `1px solid ${C.border}`, borderRadius: 4,
-        zIndex: 50, overflow: 'hidden',
+        width: 480, maxWidth: 'calc(100vw - 24px)', maxHeight: 'calc(100vh - 24px)', overflowY: 'auto',
+        background: C.surface, border: `1px solid ${C.border}`, borderRadius: 4,
+        zIndex: 50,
       }}>
         {/* Header */}
         <div style={{
@@ -106,7 +107,7 @@ export default function NewSkillModal({ open, onClose, onRegister }) {
           </button>
         </div>
 
-        <div style={{ padding: 24 }}>
+        <div className="sb-newskill-body" style={{ padding: 24 }}>
           {step === 1 && (
             <div>
               <p style={{ fontFamily: f.body, fontSize: 13, color: C.sub, marginBottom: 20, lineHeight: 1.6 }}>
@@ -234,6 +235,12 @@ export default function NewSkillModal({ open, onClose, onRegister }) {
           )}
         </div>
       </div>
+
+      <style>{`
+        @media (max-width: 767px) {
+          .sb-newskill-body { padding: 16px !important; }
+        }
+      `}</style>
     </>
   );
 }
