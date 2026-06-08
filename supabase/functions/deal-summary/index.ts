@@ -98,6 +98,14 @@ Write 3-4 sentences covering: property snapshot, why this is a good deal (use th
       }),
     })
 
+    if (!response.ok) {
+      const errorBody = await response.text()
+      return new Response(JSON.stringify({ error: `Anthropic API error (${response.status}): ${errorBody}` }), {
+        status: 502,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    }
+
     const data = await response.json()
     const summary = data.content?.[0]?.text ?? 'Summary unavailable'
 

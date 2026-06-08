@@ -48,7 +48,7 @@ Deno.serve(async (req: Request) => {
 
       if (accountSid && authToken && fromNumber) {
         const credentials = btoa(`${accountSid}:${authToken}`)
-        await fetch(`https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`, {
+        const twilioResponse = await fetch(`https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`, {
           method: 'POST',
           headers: {
             'Authorization': `Basic ${credentials}`,
@@ -60,6 +60,17 @@ Deno.serve(async (req: Request) => {
             Body: body,
           }).toString(),
         })
+
+        if (!twilioResponse.ok) {
+          const errorBody = await twilioResponse.text()
+          return new Response(JSON.stringify({
+            success: false,
+            error: `Twilio send failed (${twilioResponse.status}): ${errorBody}`,
+          }), {
+            status: 502,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          })
+        }
       }
     }
 
