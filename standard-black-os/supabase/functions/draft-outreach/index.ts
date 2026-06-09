@@ -85,14 +85,6 @@ Body: [2-3 warm, direct sentences]`
       }),
     })
 
-    if (!response.ok) {
-      const errorBody = await response.text()
-      return new Response(JSON.stringify({ error: `Anthropic API error (${response.status}): ${errorBody}` }), {
-        status: 502,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      })
-    }
-
     const data = await response.json()
     const text = data.content?.[0]?.text ?? ''
 
