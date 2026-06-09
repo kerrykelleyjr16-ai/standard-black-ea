@@ -73,6 +73,8 @@ export interface Deal {
   matched_buyer_ids: string[]
   analysis_notes: string | null
   analyzed_at: string | null
+  mao_approved_at: string | null
+  offer_approved_at: string | null
 }
 
 export interface CompRecord {
@@ -101,4 +103,21 @@ export interface BuyerMatchScore {
   score: number
   hard_pass: boolean
   reasons: string[]
+}
+
+export type TaskType =
+  | 'call' | 'text' | 'approve_mao' | 'approve_offer'
+  | 'contact_buyer' | 'analyze' | 'other'
+export type TaskStatus = 'open' | 'done' | 'dismissed'
+
+export interface Task {
+  id: string
+  type: TaskType
+  lead_id: string | null
+  deal_id: string | null
+  title: string
+  detail: string | null
+  status: TaskStatus
+  due_date: string | null
+  created_at: string
 }
