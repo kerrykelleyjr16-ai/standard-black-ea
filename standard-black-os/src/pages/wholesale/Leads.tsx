@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '@wholesale/lib/supabase'
 import type { Lead, LeadStage } from '@wholesale/lib/types'
+import { parsePropStreamCsv } from '@wholesale/lib/csvImport'
 import Badge from '@wholesale/components/ui/Badge'
 import Button from '@wholesale/components/ui/Button'
 import WholesaleNav from '@wholesale/components/WholesaleNav'
@@ -42,18 +43,50 @@ export default function Leads() {
   const [leads, setLeads] = useState<Lead[]>([])
   const [loading, setLoading] = useState(true)
   const [activeStage, setActiveStage] = useState<LeadStage | 'All'>('All')
+  const [importMsg, setImportMsg] = useState<string | null>(null)
+  const [importing, setImporting] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  async function fetchLeads() {
+    const { data, error } = await supabase
+      .from('leads')
+      .select('*')
+      .order('created_at', { ascending: false })
+    if (!error && data) setLeads(data as Lead[])
+    setLoading(false)
+  }
 
   useEffect(() => {
-    async function fetchLeads() {
-      const { data, error } = await supabase
-        .from('leads')
-        .select('*')
-        .order('created_at', { ascending: false })
-      if (!error && data) setLeads(data as Lead[])
-      setLoading(false)
-    }
     fetchLeads()
   }, [])
+
+  async function handleCsvImport(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    // Reset input so same file can be re-selected if needed
+    e.target.value = ''
+    setImporting(true)
+    setImportMsg(null)
+    try {
+      const text = await file.text()
+      const rows = parsePropStreamCsv(text)
+      if (rows.length === 0) {
+        setImportMsg('No rows parsed — check the CSV format.')
+        return
+      }
+      const { error } = await supabase.from('leads').insert(rows)
+      if (error) {
+        setImportMsg(`Import error: ${error.message}`)
+      } else {
+        setImportMsg(`Imported ${rows.length} lead${rows.length === 1 ? '' : 's'}.`)
+        await fetchLeads()
+      }
+    } catch (err) {
+      setImportMsg(`Failed to read file: ${String(err)}`)
+    } finally {
+      setImporting(false)
+    }
+  }
 
   const stageCount = (stage: LeadStage) => leads.filter(l => l.stage === stage).length
   const filtered = activeStage === 'All' ? leads : leads.filter(l => l.stage === activeStage)
@@ -75,10 +108,37 @@ export default function Leads() {
               {loading ? '—' : `${leads.length} leads in pipeline`}
             </p>
           </div>
-          <Button onClick={() => navigate('/wholesale/leads/import')} size="sm">
-            + Import Leads
-          </Button>
+          <div className="flex items-center gap-2">
+            {/* Hidden file input — triggered by the button below */}
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".csv"
+              className="hidden"
+              onChange={handleCsvImport}
+            />
+            <Button
+              onClick={() => fileInputRef.current?.click()}
+              size="sm"
+              disabled={importing}
+              variant="ghost"
+            >
+              {importing ? 'Importing…' : 'Import PropStream CSV'}
+            </Button>
+            <Button onClick={() => navigate('/wholesale/leads/import')} size="sm">
+              + Import Leads
+            </Button>
+          </div>
         </div>
+        {/* CSV import feedback */}
+        {importMsg && (
+          <div
+            className="px-4 py-2 text-xs font-mono md:px-8"
+            style={{ background: '#0f0f0f', borderBottom: '1px solid #333', color: importMsg.startsWith('Import') || importMsg.startsWith('Failed') ? '#f87171' : '#7fff7b' }}
+          >
+            {importMsg}
+          </div>
+        )}
 
         {/* Stage filter tabs */}
         <div
