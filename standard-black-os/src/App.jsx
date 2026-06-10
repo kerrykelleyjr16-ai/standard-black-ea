@@ -11,6 +11,8 @@ import DealDetail from './pages/wholesale/DealDetail.tsx'
 import Buyers from './pages/wholesale/Buyers.tsx'
 import NewBuyer from './pages/wholesale/NewBuyer.tsx'
 import BuyerDetail from './pages/wholesale/BuyerDetail.tsx'
+import CommandCenter from './pages/wholesale/CommandCenter.tsx'
+import Tasks from './pages/wholesale/Tasks.tsx'
 import AuthGate from './lib/AuthGate.jsx'
 import MobileTabBar from './components/MobileTabBar.jsx'
 import { C } from './tokens.js'
@@ -33,6 +35,8 @@ export default function App() {
           <Route path="/wholesale/buyers" element={<Buyers />} />
           <Route path="/wholesale/buyers/new" element={<NewBuyer />} />
           <Route path="/wholesale/buyers/:id" element={<BuyerDetail />} />
+          <Route path="/wholesale/command" element={<CommandCenter />} />
+          <Route path="/wholesale/tasks" element={<Tasks />} />
         </Routes>
       </div>
       <MobileTabBar />

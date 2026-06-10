@@ -1,10 +1,12 @@
 import { Link, NavLink } from 'react-router-dom'
 
 const NAV_ITEMS = [
+  { to: '/wholesale/command', label: 'Command' },
   { to: '/wholesale/dashboard', label: 'Dashboard' },
   { to: '/wholesale/leads', label: 'Leads' },
   { to: '/wholesale/deals', label: 'Deals' },
   { to: '/wholesale/buyers', label: 'Buyers' },
+  { to: '/wholesale/tasks', label: 'Tasks' },
 ]
 
 export default function WholesaleNav() {
