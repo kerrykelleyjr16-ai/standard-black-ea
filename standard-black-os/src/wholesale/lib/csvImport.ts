@@ -90,10 +90,10 @@ export function parsePropStreamCsv(csvText: string): LeadInsertRow[] {
         }
       }
 
-      // Check motivation signals
+      // Check motivation signals — store the underscore key the UI color maps use
       for (const keyword of MOTIVATION_KEYWORDS) {
         if (headerLower === keyword && isTruthy(cell)) {
-          signals.push(keyword)
+          signals.push(keyword.replace(/[\s-]+/g, '_'))
         }
       }
     }
