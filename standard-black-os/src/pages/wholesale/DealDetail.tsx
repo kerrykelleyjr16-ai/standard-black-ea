@@ -3,7 +3,8 @@ import { Link, useParams } from 'react-router-dom'
 import { supabase } from '@wholesale/lib/supabase'
 import { calculateMAO, formatCurrency, formatPercent } from '@wholesale/lib/mao'
 import { scoreAllBuyersForDeal } from '@wholesale/lib/matching'
-import { isMaoApproved } from '@wholesale/lib/gates'
+import { rankDispoBuyers } from '@wholesale/lib/dispo'
+import { isMaoApproved, canDraftOffer, isOfferApproved } from '@wholesale/lib/gates'
 import { createTask } from '@wholesale/lib/tasks'
 import Badge from '@wholesale/components/ui/Badge'
 import Button from '@wholesale/components/ui/Button'
@@ -62,6 +63,20 @@ export default function DealDetail() {
   const [dealSummary, setDealSummary] = useState<string | null>(null)
   const [summaryError, setSummaryError] = useState<string | null>(null)
 
+  // Offer drafting (W7)
+  const [draftingOffer, setDraftingOffer] = useState(false)
+  const [draftedLetter, setDraftedLetter] = useState<string | null>(null)
+  const [draftedPrice, setDraftedPrice] = useState<string>('')
+  const [offerDraftError, setOfferDraftError] = useState<string | null>(null)
+  const [approvingOffer, setApprovingOffer] = useState(false)
+
+  // Disposition (W8)
+  const [dispoRanked, setDispoRanked] = useState<BuyerMatchScore[] | null>(null)
+  const [draftingDispo, setDraftingDispo] = useState(false)
+  const [dispoBlast, setDispoBlast] = useState<string | null>(null)
+  const [dispoError, setDispoError] = useState<string | null>(null)
+  const [assigningBuyer, setAssigningBuyer] = useState<string | null>(null)
+
   // Surface a pending-MAO approval in the cockpit task queue (once per deal)
   const ensureMaoTask = useCallback(async (d: DealWithLead) => {
     if (d.mao == null || d.mao_approved_at != null) return
@@ -79,6 +94,26 @@ export default function DealDetail() {
       lead_id: d.lead_id,
       title: `Approve MAO — ${d.leads?.address ?? 'deal'}`,
       detail: `Effective MAO ${formatCurrency(d.mao_override ?? d.mao)}`,
+    })
+  }, [])
+
+  // Ensure an approve_offer cockpit task exists (once per deal, when offer drafted but not approved)
+  const ensureOfferTask = useCallback(async (d: DealWithLead) => {
+    if (d.offer_approved_at != null) return
+    const { data: existing } = await supabase
+      .from('tasks')
+      .select('id')
+      .eq('deal_id', d.id)
+      .eq('type', 'approve_offer')
+      .eq('status', 'open')
+      .limit(1)
+    if (existing && existing.length > 0) return
+    await createTask({
+      type: 'approve_offer',
+      deal_id: d.id,
+      lead_id: d.lead_id,
+      title: `Approve Offer — ${d.leads?.address ?? 'deal'}`,
+      detail: `Review and approve the drafted offer before marking Offer Made`,
     })
   }, [])
 
@@ -184,6 +219,164 @@ export default function DealDetail() {
       )
     }
     setRemovingOverride(false)
+  }, [deal])
+
+  // Draft offer via edge function (W7)
+  const handleDraftOffer = useCallback(async () => {
+    if (!deal) return
+    setDraftingOffer(true)
+    setOfferDraftError(null)
+    try {
+      const { data, error } = await supabase.functions.invoke('draft-offer', {
+        body: { dealId: deal.id },
+      })
+      if (error) throw error
+      setDraftedLetter(data.letter ?? '')
+      setDraftedPrice(data.offer_price != null ? String(data.offer_price) : '')
+      // Surface an approve_offer task in the cockpit
+      await ensureOfferTask(deal).catch(() => {})
+    } catch (err) {
+      setOfferDraftError(err instanceof Error ? err.message : 'Failed to draft offer')
+    } finally {
+      setDraftingOffer(false)
+    }
+  }, [deal, ensureOfferTask])
+
+  // Approve offer and advance lead stage to 'Offer Made' (W7)
+  const handleApproveOffer = useCallback(async () => {
+    if (!deal) return
+    setApprovingOffer(true)
+    try {
+      const priceVal = parseFloat(draftedPrice.replace(/[^0-9.]/g, ''))
+      const offerPrice = isNaN(priceVal) ? null : priceVal
+      const ts = new Date().toISOString()
+
+      const { error: dealError } = await supabase
+        .from('deals')
+        .update({ offer_price: offerPrice, offer_approved_at: ts })
+        .eq('id', deal.id)
+      if (dealError) throw dealError
+
+      const { error: leadError } = await supabase
+        .from('leads')
+        .update({ stage: 'Offer Made' })
+        .eq('id', deal.lead_id)
+      if (leadError) throw leadError
+
+      // Close open approve_offer tasks for this deal
+      await supabase
+        .from('tasks')
+        .update({ status: 'done' })
+        .eq('deal_id', deal.id)
+        .eq('type', 'approve_offer')
+        .eq('status', 'open')
+
+      setDeal((prev) =>
+        prev
+          ? {
+              ...prev,
+              offer_price: offerPrice,
+              offer_approved_at: ts,
+              leads: prev.leads ? { ...prev.leads, stage: 'Offer Made' } : prev.leads,
+            }
+          : prev
+      )
+    } catch (err) {
+      setOfferDraftError(err instanceof Error ? err.message : 'Failed to approve offer')
+    } finally {
+      setApprovingOffer(false)
+    }
+  }, [deal, draftedPrice])
+
+  // Load dispo ranked buyers (W8) — called lazily when section mounts
+  const handleLoadDispoRanking = useCallback(async () => {
+    if (!deal) return
+    try {
+      const { data: leadData } = await supabase.from('leads').select('*').eq('id', deal.lead_id).single()
+      const { data: buyerData } = await supabase.from('buyers').select('*').eq('active', true)
+      if (!leadData || !buyerData) return
+      const ranked = rankDispoBuyers(buyerData as Buyer[], deal, leadData as Lead)
+      setDispoRanked(ranked)
+    } catch {
+      // fail silently; user can retry
+    }
+  }, [deal])
+
+  // Draft disposition blast via edge function (W8)
+  const handleDraftDispo = useCallback(async () => {
+    if (!deal) return
+    setDraftingDispo(true)
+    setDispoError(null)
+    try {
+      const { data, error } = await supabase.functions.invoke('draft-dispo', {
+        body: { dealId: deal.id },
+      })
+      if (error) throw error
+      setDispoBlast(data.blast ?? '')
+
+      // Create contact_buyer tasks for top 3 ranked buyers (avoid duplicates)
+      if (dispoRanked && dispoRanked.length > 0) {
+        const top3 = dispoRanked.slice(0, 3)
+        for (const match of top3) {
+          const { data: existing } = await supabase
+            .from('tasks')
+            .select('id')
+            .eq('deal_id', deal.id)
+            .eq('type', 'contact_buyer')
+            .eq('status', 'open')
+            .eq('detail', match.buyer.id)
+            .limit(1)
+          if (existing && existing.length > 0) continue
+          await createTask({
+            type: 'contact_buyer',
+            deal_id: deal.id,
+            lead_id: deal.lead_id,
+            title: `Contact buyer: ${match.buyer.name}`,
+            detail: match.buyer.id,
+          }).catch(() => {})
+        }
+      }
+    } catch (err) {
+      setDispoError(err instanceof Error ? err.message : 'Failed to draft dispo blast')
+    } finally {
+      setDraftingDispo(false)
+    }
+  }, [deal, dispoRanked])
+
+  // Mark deal as Assigned to a specific buyer (W8)
+  const handleMarkAssigned = useCallback(async (buyerId: string) => {
+    if (!deal) return
+    setAssigningBuyer(buyerId)
+    try {
+      const existingIds: string[] = deal.matched_buyer_ids ?? []
+      const updatedIds = existingIds.includes(buyerId)
+        ? existingIds
+        : [...existingIds, buyerId]
+
+      await supabase
+        .from('deals')
+        .update({ matched_buyer_ids: updatedIds })
+        .eq('id', deal.id)
+
+      await supabase
+        .from('leads')
+        .update({ stage: 'Assigned' })
+        .eq('id', deal.lead_id)
+
+      setDeal((prev) =>
+        prev
+          ? {
+              ...prev,
+              matched_buyer_ids: updatedIds,
+              leads: prev.leads ? { ...prev.leads, stage: 'Assigned' } : prev.leads,
+            }
+          : prev
+      )
+    } catch {
+      // fail silently
+    } finally {
+      setAssigningBuyer(null)
+    }
   }, [deal])
 
   // Run matching — client-side using matching lib
@@ -561,6 +754,205 @@ export default function DealDetail() {
               </p>
             )}
           </Card>
+
+          {/* Offer Drafting (W7) — only visible when MAO approved */}
+          {canDraftOffer(deal) && (
+            <Card className="mb-5">
+              <div className="flex items-center justify-between mb-3">
+                <div>
+                  <p className="text-sm font-medium" style={{ color: '#e5e5e5' }}>
+                    Offer Draft
+                  </p>
+                  {isOfferApproved(deal) && (
+                    <p className="text-xs mt-0.5" style={{ color: '#7fff7b' }}>
+                      Offer approved — lead marked Offer Made
+                    </p>
+                  )}
+                </div>
+                <div className="flex items-center gap-2">
+                  {isOfferApproved(deal) ? (
+                    <>
+                      <Badge label="Offer Approved" color="green" />
+                      <span className="text-xs" style={{ color: '#666' }}>
+                        {new Date(deal.offer_approved_at!).toLocaleString()}
+                      </span>
+                    </>
+                  ) : (
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      onClick={handleDraftOffer}
+                      disabled={draftingOffer}
+                    >
+                      {draftingOffer ? 'Drafting...' : 'Draft Offer'}
+                    </Button>
+                  )}
+                </div>
+              </div>
+
+              {offerDraftError && (
+                <p className="text-xs mb-3" style={{ color: '#ff7b7b' }}>{offerDraftError}</p>
+              )}
+
+              {draftedLetter && !isOfferApproved(deal) && (
+                <div>
+                  <div
+                    className="rounded-lg p-4 mb-4"
+                    style={{ background: '#0f0f0f', border: '1px solid #333' }}
+                  >
+                    <p
+                      className="text-xs uppercase tracking-widest mb-2"
+                      style={{ color: '#C9A24A' }}
+                    >
+                      Drafted Offer Letter
+                    </p>
+                    <pre
+                      className="text-xs leading-relaxed whitespace-pre-wrap font-mono"
+                      style={{ color: '#e5e5e5' }}
+                    >
+                      {draftedLetter}
+                    </pre>
+                  </div>
+
+                  <div className="mb-4">
+                    <label className="block text-xs mb-1" style={{ color: '#aaa' }}>
+                      Offer Price (editable)
+                    </label>
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      value={draftedPrice}
+                      onChange={(e) => setDraftedPrice(e.target.value)}
+                      className="w-full rounded px-3 py-2 text-sm font-mono"
+                      style={{
+                        background: '#0a0a0a',
+                        border: '1px solid #333',
+                        color: '#e5e5e5',
+                        outline: 'none',
+                      }}
+                    />
+                  </div>
+
+                  <Button
+                    variant="primary"
+                    onClick={handleApproveOffer}
+                    disabled={approvingOffer}
+                  >
+                    {approvingOffer ? 'Approving...' : 'Approve & Mark Offer Made'}
+                  </Button>
+                </div>
+              )}
+            </Card>
+          )}
+
+          {/* Disposition (W8) — visible when Offer Approved or Under Contract */}
+          {(isOfferApproved(deal) || deal.leads?.stage === 'Under Contract') && (
+            <Card className="mb-5">
+              <div className="flex items-center justify-between mb-3">
+                <div>
+                  <p className="text-sm font-medium" style={{ color: '#e5e5e5' }}>
+                    Disposition
+                  </p>
+                  <p className="text-xs mt-0.5" style={{ color: '#666' }}>
+                    Rank buyers and draft a blast to your cash buyer list
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  {dispoRanked == null && (
+                    <Button variant="ghost" size="sm" onClick={handleLoadDispoRanking}>
+                      Load Rankings
+                    </Button>
+                  )}
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    onClick={handleDraftDispo}
+                    disabled={draftingDispo}
+                  >
+                    {draftingDispo ? 'Drafting...' : 'Draft Dispo Blast'}
+                  </Button>
+                </div>
+              </div>
+
+              {dispoError && (
+                <p className="text-xs mb-3" style={{ color: '#ff7b7b' }}>{dispoError}</p>
+              )}
+
+              {dispoBlast && (
+                <div
+                  className="rounded-lg p-4 mb-4"
+                  style={{ background: '#0f0f0f', border: '1px solid #333' }}
+                >
+                  <p
+                    className="text-xs uppercase tracking-widest mb-2"
+                    style={{ color: '#C9A24A' }}
+                  >
+                    Disposition Blast
+                  </p>
+                  <p className="text-sm leading-relaxed" style={{ color: '#e5e5e5' }}>
+                    {dispoBlast}
+                  </p>
+                </div>
+              )}
+
+              {dispoRanked != null && (
+                <div>
+                  <p className="text-xs mb-2 uppercase tracking-widest" style={{ color: '#666' }}>
+                    Ranked Buyers ({dispoRanked.length})
+                  </p>
+                  {dispoRanked.length === 0 ? (
+                    <p className="text-xs" style={{ color: '#555' }}>
+                      No qualified buyers found. Add buyers to the database to run dispo.
+                    </p>
+                  ) : (
+                    <div className="flex flex-col gap-2">
+                      {dispoRanked.map((m, idx) => (
+                        <div
+                          key={m.buyer.id}
+                          className="rounded px-3 py-3 flex items-center justify-between gap-3"
+                          style={{ background: '#0a0a0a', border: '1px solid #333' }}
+                        >
+                          <div className="flex items-center gap-2 min-w-0">
+                            <span className="text-xs" style={{ color: '#555' }}>#{idx + 1}</span>
+                            <span className="text-sm font-medium truncate" style={{ color: '#e5e5e5' }}>
+                              {m.buyer.name}
+                            </span>
+                            {m.buyer.company && (
+                              <span className="text-xs" style={{ color: '#555' }}>
+                                {m.buyer.company}
+                              </span>
+                            )}
+                            <span
+                              className="text-sm font-bold tabular-nums"
+                              style={{ color: scoreColor(m.score) }}
+                            >
+                              {m.score}
+                            </span>
+                          </div>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleMarkAssigned(m.buyer.id)}
+                            disabled={
+                              assigningBuyer === m.buyer.id ||
+                              deal.leads?.stage === 'Assigned'
+                            }
+                          >
+                            {deal.leads?.stage === 'Assigned' &&
+                            deal.matched_buyer_ids?.includes(m.buyer.id)
+                              ? 'Assigned'
+                              : assigningBuyer === m.buyer.id
+                              ? 'Assigning...'
+                              : 'Mark Assigned'}
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+            </Card>
+          )}
 
           {/* Run Matching */}
           <Card className="mb-5">
