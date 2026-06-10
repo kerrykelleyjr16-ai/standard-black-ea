@@ -3,6 +3,8 @@ import { Link, useParams } from 'react-router-dom'
 import { supabase } from '@wholesale/lib/supabase'
 import { calculateMAO, formatCurrency, formatPercent } from '@wholesale/lib/mao'
 import { scoreAllBuyersForDeal } from '@wholesale/lib/matching'
+import { isMaoApproved } from '@wholesale/lib/gates'
+import { createTask } from '@wholesale/lib/tasks'
 import Badge from '@wholesale/components/ui/Badge'
 import Button from '@wholesale/components/ui/Button'
 import Card from '@wholesale/components/ui/Card'
@@ -49,6 +51,9 @@ export default function DealDetail() {
   const [savingOverride, setSavingOverride] = useState(false)
   const [removingOverride, setRemovingOverride] = useState(false)
 
+  // MAO approval gate
+  const [approvingMao, setApprovingMao] = useState(false)
+
   // Matching
   const [matching, setMatching] = useState(false)
   const [scores, setScores] = useState<BuyerMatchScore[] | null>(null)
@@ -56,6 +61,26 @@ export default function DealDetail() {
   const [generatingSummary, setGeneratingSummary] = useState(false)
   const [dealSummary, setDealSummary] = useState<string | null>(null)
   const [summaryError, setSummaryError] = useState<string | null>(null)
+
+  // Surface a pending-MAO approval in the cockpit task queue (once per deal)
+  const ensureMaoTask = useCallback(async (d: DealWithLead) => {
+    if (d.mao == null || d.mao_approved_at != null) return
+    const { data: existing } = await supabase
+      .from('tasks')
+      .select('id')
+      .eq('deal_id', d.id)
+      .eq('type', 'approve_mao')
+      .eq('status', 'open')
+      .limit(1)
+    if (existing && existing.length > 0) return
+    await createTask({
+      type: 'approve_mao',
+      deal_id: d.id,
+      lead_id: d.lead_id,
+      title: `Approve MAO — ${d.leads?.address ?? 'deal'}`,
+      detail: `Effective MAO ${formatCurrency(d.mao_override ?? d.mao)}`,
+    })
+  }, [])
 
   const fetchDeal = useCallback(async () => {
     if (!id) return
@@ -71,9 +96,10 @@ export default function DealDetail() {
       const d = data as DealWithLead
       setDeal(d)
       setOfferInput(d.offer_price != null ? String(d.offer_price) : '')
+      ensureMaoTask(d).catch(() => {})
     }
     setLoading(false)
-  }, [id])
+  }, [id, ensureMaoTask])
 
   useEffect(() => {
     fetchDeal()
@@ -96,6 +122,29 @@ export default function DealDetail() {
     }
     setSavingOffer(false)
   }, [deal, offerInput])
+
+  // Approve MAO — the human judgment gate (W5)
+  const handleApproveMao = useCallback(async () => {
+    if (!deal) return
+    setApprovingMao(true)
+    const ts = new Date().toISOString()
+    const { error } = await supabase
+      .from('deals')
+      .update({ mao_approved_at: ts })
+      .eq('id', deal.id)
+
+    if (!error) {
+      setDeal((prev) => (prev ? { ...prev, mao_approved_at: ts } : prev))
+      // Close out the open cockpit task for this approval
+      await supabase
+        .from('tasks')
+        .update({ status: 'done' })
+        .eq('deal_id', deal.id)
+        .eq('type', 'approve_mao')
+        .eq('status', 'open')
+    }
+    setApprovingMao(false)
+  }, [deal])
 
   // Save MAO override
   const handleSaveOverride = useCallback(async () => {
@@ -319,6 +368,32 @@ export default function DealDetail() {
                 Offer price is more than 10% over MAO — deal is tight.
               </p>
             )}
+
+            {/* MAO approval gate (W5) */}
+            <div className="mt-4 flex items-center gap-3 flex-wrap">
+              {isMaoApproved(deal) ? (
+                <>
+                  <Badge label="MAO Approved" color="green" />
+                  <span className="text-xs" style={{ color: '#666' }}>
+                    {new Date(deal.mao_approved_at!).toLocaleString()}
+                  </span>
+                </>
+              ) : (
+                <>
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    onClick={handleApproveMao}
+                    disabled={approvingMao || effectiveMao == null}
+                  >
+                    {approvingMao ? 'Approving...' : `Approve MAO ${effectiveMao != null ? formatCurrency(effectiveMao) : ''}`}
+                  </Button>
+                  <span className="text-xs" style={{ color: '#ffff7b' }}>
+                    Approval required before an offer can be drafted
+                  </span>
+                </>
+              )}
+            </div>
           </Card>
 
           {/* MAO Override */}
