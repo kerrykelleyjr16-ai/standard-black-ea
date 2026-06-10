@@ -14,6 +14,17 @@ Format: Name | Trigger | Action | Tool | Status | Approved By | Date
 
 ---
 
+## Wholesale OS — Edge Functions (W-series POC)
+
+| Name | Purpose | Human Gate | Status | Date |
+|---|---|---|---|---|
+| `score-inbound` | Scores seller inbound SMS by motivation (0–100), detects STOP opt-outs, returns sentiment + qualifying questions | None — fully automated | Built, pending deploy | 2026-06-09 |
+| `draft-offer` | Generates a cash offer letter for a deal; blocked (409) until Kerry approves the MAO | Kerry must approve MAO before offer can be drafted | Built, pending deploy | 2026-06-09 |
+| `draft-dispo` | Generates a buyer blast message for a deal ready for disposition | None — review output before sending | Built, pending deploy | 2026-06-09 |
+| `morning-brief` | Scheduled cron (7 AM CT) that builds a pipeline Digest: leads by stage, open tasks, pending approvals; email delivery deferred until provider key added | None — read-only snapshot | Built, pending deploy | 2026-06-09 |
+
+---
+
 ## Planned Automations (Not Yet Active)
 
 | Name | Trigger | Action | Tool | Priority |
