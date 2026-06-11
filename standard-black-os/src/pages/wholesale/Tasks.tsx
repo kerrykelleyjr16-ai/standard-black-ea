@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { listTasks, setTaskStatus } from '@wholesale/lib/tasks'
+import { listTasksSafe, setTaskStatus } from '@wholesale/lib/tasks'
 import type { Task } from '@wholesale/lib/types'
 import Badge from '@wholesale/components/ui/Badge'
 import Button from '@wholesale/components/ui/Button'
+import EmptyState from '@wholesale/components/ui/EmptyState'
 import WholesaleNav from '@wholesale/components/WholesaleNav'
 
 const TYPE_LABELS: Record<Task['type'], string> = {
@@ -44,10 +45,12 @@ export default function Tasks() {
   const [loading, setLoading] = useState(true)
   const [showClosed, setShowClosed] = useState(false)
   const [acting, setActing] = useState<string | null>(null)
+  const [unavailable, setUnavailable] = useState(false)
 
   async function fetchTasks() {
-    const data = await listTasks()
+    const { tasks: data, unavailable: offline } = await listTasksSafe()
     setTasks(data)
+    setUnavailable(offline)
     setLoading(false)
   }
 
@@ -102,7 +105,14 @@ export default function Tasks() {
             <p className="text-sm" style={{ color: '#666' }}>Loading tasks...</p>
           )}
 
-          {!loading && displayTasks.length === 0 && (
+          {!loading && unavailable && (
+            <EmptyState
+              title="Task queue offline"
+              body="Task tables are not provisioned in this environment yet."
+            />
+          )}
+
+          {!loading && !unavailable && displayTasks.length === 0 && (
             <div
               className="rounded-lg px-6 py-10 text-center"
               style={{ background: '#0f0f0f', border: '1px solid #222', color: '#555' }}

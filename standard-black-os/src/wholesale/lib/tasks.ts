@@ -20,6 +20,33 @@ export async function listTasks(): Promise<Task[]> {
   return sortTasks((data ?? []) as Task[])
 }
 
+let warnedUnavailable = false
+
+/**
+ * Graceful task-queue fetch: when the `tasks` table is not provisioned in the
+ * environment (e.g. 0001_poc_tasks_and_gates.sql not yet applied remotely),
+ * returns `unavailable: true` instead of throwing — and warns once.
+ */
+export async function listTasksSafe(): Promise<{ tasks: Task[]; unavailable: boolean }> {
+  try {
+    const { data, error } = await supabase.from('tasks').select('*')
+    if (error) {
+      if (!warnedUnavailable) {
+        console.warn('Task queue unavailable (tasks table not provisioned yet):', error.message)
+        warnedUnavailable = true
+      }
+      return { tasks: [], unavailable: true }
+    }
+    return { tasks: sortTasks((data ?? []) as Task[]), unavailable: false }
+  } catch (err) {
+    if (!warnedUnavailable) {
+      console.warn('Task queue unavailable:', err)
+      warnedUnavailable = true
+    }
+    return { tasks: [], unavailable: true }
+  }
+}
+
 export async function createTask(input: {
   type: TaskType; title: string; detail?: string
   lead_id?: string | null; deal_id?: string | null; due_date?: string | null

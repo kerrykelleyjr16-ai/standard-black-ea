@@ -20,7 +20,7 @@ import { C } from './tokens.js'
 export default function App() {
   return (
     <AuthGate>
-      <BrowserRouter>
+      <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <div style={{ minHeight: '100vh', background: C.bg }}>
         <Routes>
           <Route path="/" element={<Dashboard />} />

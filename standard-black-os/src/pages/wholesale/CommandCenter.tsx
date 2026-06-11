@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom'
 import { supabase } from '@wholesale/lib/supabase'
 import { buildDigest } from '@wholesale/lib/digest'
 import type { Digest } from '@wholesale/lib/digest'
-import type { Lead, Task } from '@wholesale/lib/types'
+import { listTasksSafe } from '@wholesale/lib/tasks'
+import type { Lead } from '@wholesale/lib/types'
 import WholesaleNav from '@wholesale/components/WholesaleNav'
 
 const DEALS_IN_FLIGHT_STAGES = new Set<Lead['stage']>([
@@ -31,16 +32,18 @@ export default function CommandCenter() {
   const [loading, setLoading] = useState(true)
   const [digest, setDigest] = useState<Digest | null>(null)
   const [dealsInFlight, setDealsInFlight] = useState(0)
+  const [tasksUnavailable, setTasksUnavailable] = useState(false)
 
   useEffect(() => {
     async function load() {
-      const [{ data: leadsData }, { data: tasksData }] = await Promise.all([
+      const [{ data: leadsData }, tasksResult] = await Promise.all([
         supabase.from('leads').select('*'),
-        supabase.from('tasks').select('*'),
+        listTasksSafe(),
       ])
 
       const leads = (leadsData ?? []) as Lead[]
-      const tasks = (tasksData ?? []) as Task[]
+      const tasks = tasksResult.tasks
+      setTasksUnavailable(tasksResult.unavailable)
 
       const d = buildDigest(leads, tasks)
       setDigest(d)
@@ -130,6 +133,13 @@ export default function CommandCenter() {
               <p className="text-[10px] mt-1" style={{ color: '#555' }}>View pipeline →</p>
             </button>
           </div>
+
+          {/* Task queue offline note (tasks table not provisioned in this environment) */}
+          {!loading && tasksUnavailable && (
+            <p className="text-xs" style={{ color: '#555' }}>
+              Task queue offline — task tables are not provisioned in this environment yet.
+            </p>
+          )}
 
           {/* Leads by stage */}
           <div
