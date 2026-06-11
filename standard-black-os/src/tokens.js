@@ -14,6 +14,7 @@ export const C = {
   dim:     "#333333",
   gold:    "#C9A24A",
   goldHi:  "#E8BE6A",
+  goldDeep:"#8a6d2f",
   goldDim: "rgba(201,162,74,0.2)",
   green:   "#3ea676",
   red:     "#c0504d",

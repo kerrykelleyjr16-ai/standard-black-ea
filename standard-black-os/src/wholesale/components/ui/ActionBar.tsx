@@ -1,13 +1,14 @@
 import React from 'react'
 import { C, f } from '../../../tokens.js'
+import { goldGradient } from './styles'
 
 export function PrimaryButton({ label, onClick, disabled }: { label: string; onClick?: () => void; disabled?: boolean }) {
   return (
     <button onClick={onClick} disabled={disabled} style={{
       borderRadius: 12, border: 'none',
-      background: `linear-gradient(to right, ${C.gold}, #8a6d2f)`,
+      background: goldGradient,
       padding: '12px 16px', fontFamily: f.body, fontSize: 14, fontWeight: 600,
-      color: '#050505', cursor: disabled ? 'default' : 'pointer', opacity: disabled ? 0.5 : 1,
+      color: C.bg, cursor: disabled ? 'default' : 'pointer', opacity: disabled ? 0.5 : 1,
       boxShadow: '0 10px 15px -3px rgba(0,0,0,0.3)', whiteSpace: 'nowrap',
     }}>{label}</button>
   )

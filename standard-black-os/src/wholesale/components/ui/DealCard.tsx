@@ -3,6 +3,7 @@ import { C, f } from '../../../tokens.js'
 import EntityCard from './EntityCard'
 import StatusBadge from './StatusBadge'
 import Metric from './Metric'
+import { microLabel } from './styles'
 import { formatCurrency } from '../../lib/mao'
 import type { Deal, Lead } from '../../lib/types'
 
@@ -39,7 +40,7 @@ export default function DealCard({ deal, onClick }: { deal: DealCardDeal; onClic
         <Metric label="Buyers" value={`${matchedCount} matched`} />
       </div>
       <div style={{ marginTop: 20, borderTop: `1px solid ${C.borderSoft}`, paddingTop: 16 }}>
-        <p style={{ fontFamily: f.mono, fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.16em', color: C.mute }}>Next Action</p>
+        <p style={microLabel}>Next Action</p>
         <div style={{ marginTop: 8, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
           <p style={{ fontFamily: f.body, fontSize: 14, color: C.sub }}>{nextAction(deal)}</p>
           <span style={{ flexShrink: 0, fontFamily: f.body, fontSize: 14, fontWeight: 500, color: C.gold }}>View Deal</span>

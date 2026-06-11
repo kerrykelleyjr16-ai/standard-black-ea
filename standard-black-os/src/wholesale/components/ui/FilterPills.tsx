@@ -1,5 +1,6 @@
 import React from 'react'
 import { C, f } from '../../../tokens.js'
+import { goldGradient } from './styles'
 
 export type FilterPill = { label: string; value: string; count?: number }
 
@@ -16,7 +17,7 @@ export default function FilterPills({ filters, active, onChange }: {
             fontFamily: f.mono, fontSize: 12, fontWeight: 500, cursor: 'pointer',
             transition: 'all 0.15s',
             ...(isActive
-              ? { background: `linear-gradient(to right, ${C.gold}, #8a6d2f)`, color: '#050505', border: '1px solid transparent' }
+              ? { background: goldGradient, color: C.bg, border: '1px solid transparent' }
               : { background: C.surface, color: C.gold, border: `1px solid ${C.borderGold}` }),
           }}>
             {filter.label}{typeof filter.count === 'number' ? ` ${filter.count}` : ''}

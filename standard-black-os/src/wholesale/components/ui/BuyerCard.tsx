@@ -3,6 +3,7 @@ import { C, f } from '../../../tokens.js'
 import EntityCard from './EntityCard'
 import StatusBadge from './StatusBadge'
 import TagBadge from './TagBadge'
+import { microLabel } from './styles'
 import { formatCurrency, formatPercent } from '../../lib/mao'
 import type { Buyer } from '../../lib/types'
 
@@ -42,11 +43,11 @@ export default function BuyerCard({ buyer, onClick }: { buyer: Buyer; onClick?: 
       </div>
       <div style={{ marginTop: 16, display: 'grid', gap: 12 }}>
         <div>
-          <p style={{ fontFamily: f.mono, fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.16em', color: C.mute }}>Markets</p>
+          <p style={microLabel}>Markets</p>
           <p style={{ marginTop: 4, fontFamily: f.body, fontSize: 14, color: C.sub }}>{marketDisplay(buyer.target_markets)}</p>
         </div>
         <div>
-          <p style={{ fontFamily: f.mono, fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.16em', color: C.mute }}>Price Range</p>
+          <p style={microLabel}>Price Range</p>
           <p style={{ marginTop: 4, fontFamily: f.body, fontSize: 14, color: C.sub }}>{priceRange(buyer)}</p>
         </div>
       </div>

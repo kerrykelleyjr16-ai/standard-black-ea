@@ -23,7 +23,7 @@ function timeAgo(dateStr: string): string {
 
 export default function LeadCard({ lead, onClick }: { lead: Lead; onClick?: () => void }) {
   const signals = (lead.motivation_signals ?? []).map(formatSignal)
-  const priority = getLeadPriority({ status: lead.stage, tags: signals })
+  const priority = getLeadPriority({ status: lead.stage, tags: lead.motivation_signals })
   const priorityColor = priority === 'Hot' ? C.danger : priority === 'Warm' ? C.warning : C.blue
   return (
     <EntityCard onClick={onClick}>
