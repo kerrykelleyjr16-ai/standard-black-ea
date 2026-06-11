@@ -20,3 +20,6 @@ body {
 
 a { color: inherit; text-decoration: none; }
 button { font-family: inherit; }
+
+.sb-hide-scrollbar::-webkit-scrollbar { display: none; }
+.sb-hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
