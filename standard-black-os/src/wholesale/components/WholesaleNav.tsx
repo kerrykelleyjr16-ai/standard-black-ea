@@ -1,4 +1,5 @@
 import { Link, NavLink } from 'react-router-dom'
+import { C, f } from '../../tokens.js'
 
 const NAV_ITEMS = [
   { to: '/wholesale/command', label: 'Command' },
@@ -11,67 +12,69 @@ const NAV_ITEMS = [
 
 export default function WholesaleNav() {
   return (
-    <div className="wholesale-nav" style={{
-      borderBottom: '1px solid #222222',
-      background: 'rgba(5,5,5,0.95)',
-      backdropFilter: 'blur(8px)',
-      display: 'flex',
-      alignItems: 'center',
-      paddingLeft: 24,
-      overflowX: 'auto',
-      WebkitOverflowScrolling: 'touch',
+    <header style={{
       position: 'sticky',
       top: 0,
-      zIndex: 10,
+      zIndex: 50,
+      borderBottom: `1px solid ${C.borderSoft}`,
+      background: 'rgba(5,5,5,0.9)',
+      backdropFilter: 'blur(16px)',
+      WebkitBackdropFilter: 'blur(16px)',
+      padding: '14px 16px 0',
+      paddingTop: 'calc(env(safe-area-inset-top) + 14px)',
     }}>
-      <style>{`
-        @media (max-width: 767px) {
-          .wholesale-nav { padding-left: 14px !important; }
-          .wholesale-nav::-webkit-scrollbar { display: none; }
-        }
-      `}</style>
-      <Link
-        to="/"
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 6,
-          fontFamily: "'JetBrains Mono', 'SF Mono', Menlo, monospace",
-          fontSize: 11,
-          color: 'rgba(245,241,232,0.65)',
-          letterSpacing: '0.06em',
-          padding: '13px 16px 13px 0',
-          borderRight: '1px solid #222222',
-          marginRight: 16,
-          textDecoration: 'none',
-          whiteSpace: 'nowrap',
-        }}
-      >
-        ← Standard Black OS
+      {/* Tier 1: brand */}
+      <Link to="/" style={{ display: 'inline-block', textDecoration: 'none' }}>
+        <p style={{
+          fontFamily: f.mono, fontSize: 11, letterSpacing: '0.25em',
+          textTransform: 'uppercase', color: C.mute, whiteSpace: 'nowrap',
+        }}>
+          ← Standard Black OS
+        </p>
+        <p style={{
+          marginTop: 4, fontFamily: f.mono, fontSize: 10, letterSpacing: '0.3em',
+          textTransform: 'uppercase', color: C.gold, opacity: 0.8, whiteSpace: 'nowrap',
+        }}>
+          Acquisition Command Center
+        </p>
       </Link>
 
-      {NAV_ITEMS.map(({ to, label }) => (
-        <NavLink
-          key={to}
-          to={to}
-          style={({ isActive }: { isActive: boolean }) => ({
-            display: 'flex',
-            alignItems: 'center',
-            fontFamily: "'JetBrains Mono', 'SF Mono', Menlo, monospace",
-            fontSize: 11,
-            letterSpacing: '0.08em',
-            textTransform: 'uppercase' as const,
-            padding: '14px 16px',
-            textDecoration: 'none',
-            color: isActive ? '#C9A24A' : 'rgba(245,241,232,0.65)',
-            borderBottom: isActive ? '2px solid #C9A24A' : '2px solid transparent',
-            whiteSpace: 'nowrap' as const,
-            transition: 'color 0.15s',
-          })}
-        >
-          {label}
-        </NavLink>
-      ))}
-    </div>
+      {/* Tier 2: scrollable tabs */}
+      <nav className="sb-hide-scrollbar" style={{
+        marginTop: 10, display: 'flex', gap: 4, overflowX: 'auto',
+        WebkitOverflowScrolling: 'touch',
+      }}>
+        {NAV_ITEMS.map(({ to, label }) => (
+          <NavLink
+            key={to}
+            to={to}
+            onMouseEnter={(e) => {
+              const el = e.currentTarget
+              if (!el.getAttribute('aria-current')) el.style.color = C.sub
+            }}
+            onMouseLeave={(e) => {
+              const el = e.currentTarget
+              if (!el.getAttribute('aria-current')) el.style.color = C.mute
+            }}
+            style={({ isActive }: { isActive: boolean }) => ({
+              display: 'flex',
+              alignItems: 'center',
+              fontFamily: f.mono,
+              fontSize: 11,
+              letterSpacing: '0.12em',
+              textTransform: 'uppercase' as const,
+              padding: '12px 14px',
+              textDecoration: 'none',
+              color: isActive ? C.gold : C.mute,
+              borderBottom: isActive ? `2px solid ${C.gold}` : '2px solid transparent',
+              whiteSpace: 'nowrap' as const,
+              transition: 'color 0.15s',
+            })}
+          >
+            {label}
+          </NavLink>
+        ))}
+      </nav>
+    </header>
   )
 }
