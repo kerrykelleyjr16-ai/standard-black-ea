@@ -1,9 +1,13 @@
 export const C = {
   bg:      "#050505",
+  panel:   "#0E0E0E",
   surface: "#111111",
   surface2:"#1A1A1A",
+  cardSoft:"#151515",
   border:  "#222222",
   borderHi:"#333333",
+  borderGold: "rgba(201,162,74,0.18)",
+  borderSoft: "rgba(255,255,255,0.10)",
   text:    "#F5F1E8",
   sub:     "rgba(245,241,232,0.65)",
   mute:    "rgba(245,241,232,0.35)",
@@ -13,6 +17,11 @@ export const C = {
   goldDim: "rgba(201,162,74,0.2)",
   green:   "#3ea676",
   red:     "#c0504d",
+  success: "#4ADE80",
+  warning: "#FACC15",
+  danger:  "#F87171",
+  blue:    "#60A5FA",
+  purple:  "#C084FC",
 };
 
 export const f = {
