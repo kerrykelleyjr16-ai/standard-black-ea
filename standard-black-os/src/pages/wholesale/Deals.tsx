@@ -1,27 +1,36 @@
-import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useEffect, useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { supabase } from '@wholesale/lib/supabase'
-import { formatCurrency } from '@wholesale/lib/mao'
-import Badge from '@wholesale/components/ui/Badge'
-import Button from '@wholesale/components/ui/Button'
-import Card from '@wholesale/components/ui/Card'
-import type { Deal, Lead, RepairLevel } from '@wholesale/lib/types'
-import WholesaleNav from '@wholesale/components/WholesaleNav'
+import type { Deal, Lead } from '@wholesale/lib/types'
+import { C, f } from '../../tokens.js'
+import DesktopShell from '@wholesale/components/ui/DesktopShell'
+import PageHeader from '@wholesale/components/ui/PageHeader'
+import FilterPills, { type FilterPill } from '@wholesale/components/ui/FilterPills'
+import DealCard, { type DealCardDeal } from '@wholesale/components/ui/DealCard'
+import EmptyState from '@wholesale/components/ui/EmptyState'
+import { PrimaryButton, SecondaryButton } from '@wholesale/components/ui/ActionBar'
 
 type DealWithLead = Deal & {
   leads: Pick<Lead, 'address' | 'city' | 'zip' | 'stage'> | null
 }
 
-const repairBadgeColor: Record<RepairLevel, 'green' | 'yellow' | 'red'> = {
-  light: 'green',
-  moderate: 'yellow',
-  heavy: 'red',
+type DealPhase = 'Needs MAO' | 'Needs Offer' | 'Ready to Dispo'
+
+// Derived from existing approval timestamps — mirrors DealCard's nextAction.
+function dealPhase(deal: Deal): DealPhase {
+  if (deal.mao_approved_at == null) return 'Needs MAO'
+  if (deal.offer_approved_at == null) return 'Needs Offer'
+  return 'Ready to Dispo'
 }
 
+const PHASES: DealPhase[] = ['Needs MAO', 'Needs Offer', 'Ready to Dispo']
+
 export default function Deals() {
+  const navigate = useNavigate()
   const [deals, setDeals] = useState<DealWithLead[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [activePhase, setActivePhase] = useState<DealPhase | 'All'>('All')
 
   useEffect(() => {
     async function fetchDeals() {
@@ -49,160 +58,71 @@ export default function Deals() {
     fetchDeals()
   }, [])
 
+  const phaseCount = (phase: DealPhase) => deals.filter(d => dealPhase(d) === phase).length
+
+  const filters: FilterPill[] = useMemo(() => [
+    { label: 'All', value: 'All', count: deals.length },
+    ...PHASES.map(phase => ({ label: phase, value: phase, count: phaseCount(phase) })),
+  ], [deals])
+
+  const filtered = useMemo(
+    () => (activePhase === 'All' ? deals : deals.filter(d => dealPhase(d) === activePhase)),
+    [deals, activePhase],
+  )
+
   return (
-    <>
-      <WholesaleNav />
-      <div
-        className="min-h-screen font-mono"
-        style={{ background: '#0a0a0a', color: '#e5e5e5' }}
-      >
-        <div className="max-w-5xl mx-auto px-4 py-6 md:px-6 md:py-10 pb-[90px] md:pb-10">
-          {/* Header */}
-          <div className="flex items-center justify-between gap-3 mb-6 md:mb-8">
-            <div>
-              <h1 className="text-2xl font-bold tracking-tight" style={{ color: '#e5e5e5' }}>
-                Deals
-              </h1>
-              <p className="text-sm mt-1" style={{ color: '#666' }}>
-                Qualified leads ready for buyer matching
-              </p>
-            </div>
-            <Link to="/wholesale/deals/new">
-              <Button variant="primary">+ New Deal</Button>
-            </Link>
-          </div>
+    <DesktopShell>
+      <PageHeader
+        eyebrow="Disposition Desk"
+        title="Deals Pipeline"
+        subtitle="Qualified acquisition opportunities ready for buyer matching, assignment, and disposition."
+        primaryAction="+ New Deal"
+        onPrimary={() => navigate('/wholesale/deals/new')}
+      />
 
-          {/* States */}
-          {loading && (
-            <p className="text-sm" style={{ color: '#666' }}>
-              Loading deals...
-            </p>
-          )}
-
-          {error && (
-            <p className="text-sm" style={{ color: '#ff7b7b' }}>
-              Error: {error}
-            </p>
-          )}
-
-          {!loading && !error && deals.length === 0 && (
-            <Card>
-              <div className="text-center py-12">
-                <p className="text-sm mb-2" style={{ color: '#666' }}>
-                  No deals yet.
-                </p>
-                <p className="text-sm" style={{ color: '#aaa' }}>
-                  Qualify a lead to create your first deal.
-                </p>
-              </div>
-            </Card>
-          )}
-
-          {/* Deal Cards */}
-          {!loading && !error && deals.length > 0 && (
-            <div className="flex flex-col gap-4">
-              {deals.map((deal) => {
-                const lead = deal.leads
-                const effectiveMao = deal.mao_override ?? deal.mao
-                const offerOverMao =
-                  deal.offer_price != null && effectiveMao != null
-                    ? deal.offer_price > effectiveMao
-                    : false
-
-                return (
-                  <Link key={deal.id} to={`/wholesale/deals/${deal.id}`} className="block">
-                    <Card className="hover:border-[#555] transition-colors cursor-pointer">
-                      <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-3 md:gap-4">
-                        {/* Left: Address + badges */}
-                        <div className="flex-1 min-w-0">
-                          <p
-                            className="font-semibold text-sm truncate"
-                            style={{ color: '#e5e5e5' }}
-                          >
-                            {lead?.address ?? 'Unknown address'}
-                            {lead?.city ? `, ${lead.city}` : ''}
-                          </p>
-                          <p className="text-xs mt-0.5" style={{ color: '#666' }}>
-                            {lead?.zip ?? ''}
-                          </p>
-                          <div className="flex gap-2 mt-2 flex-wrap">
-                            {deal.repair_level && (
-                              <Badge
-                                label={deal.repair_level}
-                                color={repairBadgeColor[deal.repair_level]}
-                              />
-                            )}
-                            {lead?.stage && <Badge label={lead.stage} color="blue" />}
-                            {deal.mao_override != null && (
-                              <Badge label="Override Active" color="yellow" />
-                            )}
-                          </div>
-                        </div>
-
-                        {/* Right: Numbers */}
-                        <div className="grid grid-cols-5 gap-3 md:flex md:gap-6 text-left md:text-right shrink-0 pt-2 md:pt-0 border-t md:border-t-0" style={{ borderColor: '#1a1a1a' }}>
-                          <div>
-                            <p className="text-xs mb-0.5" style={{ color: '#666' }}>
-                              ARV
-                            </p>
-                            <p className="text-sm font-medium" style={{ color: '#e5e5e5' }}>
-                              {formatCurrency(deal.arv)}
-                            </p>
-                          </div>
-                          <div>
-                            <p className="text-xs mb-0.5" style={{ color: '#666' }}>
-                              MAO
-                            </p>
-                            <p
-                              className="text-sm font-medium"
-                              style={{ color: deal.mao_override != null ? '#ffff7b' : '#7fff7b' }}
-                            >
-                              {formatCurrency(effectiveMao)}
-                            </p>
-                          </div>
-                          <div>
-                            <p className="text-xs mb-0.5" style={{ color: '#666' }}>
-                              Offer
-                            </p>
-                            <p
-                              className="text-sm font-medium"
-                              style={{ color: offerOverMao ? '#ff7b7b' : '#e5e5e5' }}
-                            >
-                              {formatCurrency(deal.offer_price)}
-                            </p>
-                          </div>
-                          <div>
-                            <p className="text-xs mb-0.5" style={{ color: '#666' }}>
-                              Fee
-                            </p>
-                            <p className="text-sm font-medium" style={{ color: '#aaa' }}>
-                              {formatCurrency(deal.assignment_fee)}
-                            </p>
-                          </div>
-                          <div>
-                            <p className="text-xs mb-0.5" style={{ color: '#666' }}>
-                              Buyers
-                            </p>
-                            <p
-                              className="text-sm font-medium"
-                              style={{
-                                color:
-                                  (deal.matched_buyer_ids?.length ?? 0) > 0 ? '#7fff7b' : '#666',
-                              }}
-                            >
-                              {deal.matched_buyer_ids?.length ?? 0}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    </Card>
-                  </Link>
-                )
-              })}
+      {error ? (
+        <p style={{ marginTop: 24, fontFamily: f.mono, fontSize: 13, color: C.danger }}>Error: {error}</p>
+      ) : loading ? (
+        <p style={{ marginTop: 24, fontFamily: f.body, fontSize: 14, color: C.mute }}>Loading deals…</p>
+      ) : deals.length === 0 ? (
+        <EmptyState
+          icon="$"
+          title="No Active Deals Yet"
+          body="Qualified leads will appear here once they are ready for buyer matching, assignment, or disposition."
+          actions={
+            <>
+              <PrimaryButton label="Review Qualified Leads" onClick={() => navigate('/wholesale/leads')} />
+              <SecondaryButton label="Create Deal" onClick={() => navigate('/wholesale/deals/new')} />
+            </>
+          }
+        />
+      ) : (
+        <>
+          <FilterPills filters={filters} active={activePhase} onChange={(v) => setActivePhase(v as DealPhase | 'All')} />
+          {filtered.length === 0 ? (
+            <EmptyState
+              icon="$"
+              title="No Deals in This Phase"
+              body="Nothing matches the selected phase right now. Switch phases to see other deals."
+            />
+          ) : (
+            <div style={{
+              marginTop: 24,
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 340px), 1fr))',
+              gap: 16,
+            }}>
+              {filtered.map(deal => (
+                <DealCard
+                  key={deal.id}
+                  deal={deal as DealCardDeal}
+                  onClick={() => navigate(`/wholesale/deals/${deal.id}`)}
+                />
+              ))}
             </div>
           )}
-        </div>
-      </div>
-    </>
+        </>
+      )}
+    </DesktopShell>
   )
 }
