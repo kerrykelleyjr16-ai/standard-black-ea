@@ -1,11 +1,15 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { listTasksSafe, setTaskStatus } from '@wholesale/lib/tasks'
 import type { Task } from '@wholesale/lib/types'
-import Badge from '@wholesale/components/ui/Badge'
-import Button from '@wholesale/components/ui/Button'
+import { C, f } from '../../tokens.js'
+import DesktopShell from '@wholesale/components/ui/DesktopShell'
+import PageHeader from '@wholesale/components/ui/PageHeader'
+import FilterPills, { type FilterPill } from '@wholesale/components/ui/FilterPills'
+import EntityCard from '@wholesale/components/ui/EntityCard'
+import StatusBadge from '@wholesale/components/ui/StatusBadge'
 import EmptyState from '@wholesale/components/ui/EmptyState'
-import WholesaleNav from '@wholesale/components/WholesaleNav'
+import { PrimaryButton, SecondaryButton } from '@wholesale/components/ui/ActionBar'
 
 const TYPE_LABELS: Record<Task['type'], string> = {
   call: 'Call',
@@ -19,13 +23,13 @@ const TYPE_LABELS: Record<Task['type'], string> = {
 
 const APPROVAL_TYPES = new Set<Task['type']>(['approve_mao', 'approve_offer'])
 
-function typeBadgeColor(type: Task['type']): 'red' | 'yellow' | 'blue' | 'cyan' | 'purple' | 'green' | 'gray' {
-  if (APPROVAL_TYPES.has(type)) return 'red'
-  if (type === 'call') return 'yellow'
-  if (type === 'text') return 'cyan'
-  if (type === 'contact_buyer') return 'blue'
-  if (type === 'analyze') return 'purple'
-  return 'gray'
+function typeColor(type: Task['type']): string {
+  if (APPROVAL_TYPES.has(type)) return C.danger
+  if (type === 'call') return C.warning
+  if (type === 'text') return C.blue
+  if (type === 'contact_buyer') return C.blue
+  if (type === 'analyze') return C.purple
+  return C.sub
 }
 
 function timeAgo(dateStr: string): string {
@@ -70,154 +74,88 @@ export default function Tasks() {
 
   const openTasks = tasks.filter((t) => t.status === 'open')
   const closedTasks = tasks.filter((t) => t.status !== 'open')
-
   const displayTasks = showClosed ? tasks : openTasks
 
+  const filters: FilterPill[] = useMemo(() => [
+    { label: 'Open', value: 'open', count: openTasks.length },
+    { label: 'All', value: 'all', count: tasks.length },
+  ], [tasks])
+
   return (
-    <>
-      <WholesaleNav />
-      <div className="min-h-screen font-mono" style={{ background: '#0a0a0a', color: '#e5e5e5' }}>
-        {/* Header */}
-        <div
-          className="flex items-center justify-between gap-3 px-4 py-4 md:px-8 md:py-5 border-b"
-          style={{ borderColor: '#333' }}
-        >
-          <div>
-            <h1 className="text-lg font-semibold tracking-wide" style={{ color: '#C9A24A' }}>
-              Task Queue
-            </h1>
-            <p className="text-xs mt-0.5" style={{ color: '#666' }}>
-              {loading ? '—' : `${openTasks.length} open${closedTasks.length > 0 ? ` · ${closedTasks.length} closed` : ''}`}
-            </p>
-          </div>
-          <Button
-            size="sm"
-            variant="ghost"
-            onClick={() => setShowClosed((v) => !v)}
-          >
-            {showClosed ? 'Hide closed' : 'Show closed'}
-          </Button>
-        </div>
+    <DesktopShell>
+      <PageHeader
+        eyebrow="Operator Queue"
+        title="Tasks"
+        subtitle={loading ? 'Loading queue…' : `${openTasks.length} open${closedTasks.length > 0 ? ` · ${closedTasks.length} closed` : ''}`}
+      />
 
-        {/* Task list */}
-        <div className="px-4 py-5 md:px-8 md:py-6 space-y-2 pb-[90px] md:pb-6">
-          {loading && (
-            <p className="text-sm" style={{ color: '#666' }}>Loading tasks...</p>
-          )}
+      {!loading && !unavailable && tasks.length > 0 && (
+        <FilterPills
+          filters={filters}
+          active={showClosed ? 'all' : 'open'}
+          onChange={(v) => setShowClosed(v === 'all')}
+        />
+      )}
 
-          {!loading && unavailable && (
-            <EmptyState
-              title="Task queue offline"
-              body="Task tables are not provisioned in this environment yet."
-            />
-          )}
-
-          {!loading && !unavailable && displayTasks.length === 0 && (
-            <div
-              className="rounded-lg px-6 py-10 text-center"
-              style={{ background: '#0f0f0f', border: '1px solid #222', color: '#555' }}
-            >
-              <p className="text-sm">
-                {showClosed ? 'No tasks yet.' : 'Queue clear — no open tasks.'}
-              </p>
-            </div>
-          )}
-
-          {!loading && displayTasks.map((task) => {
+      {loading ? (
+        <p style={{ marginTop: 24, fontFamily: f.body, fontSize: 14, color: C.mute }}>Loading tasks…</p>
+      ) : unavailable ? (
+        <EmptyState
+          icon="!"
+          title="Task queue offline"
+          body="Task tables are not provisioned in this environment yet."
+        />
+      ) : displayTasks.length === 0 ? (
+        <EmptyState
+          icon="✓"
+          title={showClosed ? 'No Tasks Yet' : 'Queue Clear'}
+          body={showClosed ? 'Tasks will appear here as the pipeline generates work.' : 'No open tasks right now. Nicely done.'}
+        />
+      ) : (
+        <div style={{ marginTop: 24, display: 'grid', gap: 12 }}>
+          {displayTasks.map((task) => {
             const isClosed = task.status !== 'open'
             const isActing = acting === task.id
-
             return (
-              <div
-                key={task.id}
-                className="rounded-lg px-5 py-4"
-                style={{
-                  background: '#0f0f0f',
-                  border: `1px solid ${isClosed ? '#1a1a1a' : '#333'}`,
-                  opacity: isClosed ? 0.45 : 1,
-                }}
-              >
-                <div className="flex items-start justify-between gap-4">
-                  {/* Left: title + detail + link */}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap mb-1">
-                      <span
-                        className="text-sm font-medium"
-                        style={{ color: isClosed ? '#666' : '#e5e5e5' }}
-                      >
-                        {task.title}
-                      </span>
-                      <Badge
-                        label={TYPE_LABELS[task.type] ?? task.type}
-                        color={typeBadgeColor(task.type)}
-                      />
+              <EntityCard key={task.id} style={{ opacity: isClosed ? 0.5 : 1 }}>
+                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
+                  <div style={{ minWidth: 0, flex: 1 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                      <span style={{ fontFamily: f.body, fontSize: 15, fontWeight: 600, color: isClosed ? C.mute : C.text }}>{task.title}</span>
+                      <StatusBadge label={TYPE_LABELS[task.type] ?? task.type} color={typeColor(task.type)} />
+                      {isClosed && <StatusBadge label={task.status} color={C.mute} />}
                     </div>
-
                     {task.detail && (
-                      <p className="text-xs mb-1.5" style={{ color: '#888' }}>
-                        {task.detail}
-                      </p>
+                      <p style={{ marginTop: 6, fontFamily: f.body, fontSize: 13, color: C.sub }}>{task.detail}</p>
                     )}
-
-                    <div className="flex items-center gap-3 flex-wrap">
+                    <div style={{ marginTop: 10, display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
                       {task.lead_id && (
-                        <button
-                          onClick={() => navigate(`/wholesale/leads/${task.lead_id}`)}
-                          className="text-[10px] hover:opacity-70"
-                          style={{ color: '#7fff7b' }}
-                        >
-                          View Lead →
-                        </button>
+                        <button onClick={() => navigate(`/wholesale/leads/${task.lead_id}`)} style={{
+                          border: 'none', background: 'transparent', cursor: 'pointer',
+                          fontFamily: f.mono, fontSize: 11, color: C.success,
+                        }}>View Lead →</button>
                       )}
                       {task.deal_id && (
-                        <button
-                          onClick={() => navigate(`/wholesale/deals/${task.deal_id}`)}
-                          className="text-[10px] hover:opacity-70"
-                          style={{ color: '#C9A24A' }}
-                        >
-                          View Deal →
-                        </button>
+                        <button onClick={() => navigate(`/wholesale/deals/${task.deal_id}`)} style={{
+                          border: 'none', background: 'transparent', cursor: 'pointer',
+                          fontFamily: f.mono, fontSize: 11, color: C.gold,
+                        }}>View Deal →</button>
                       )}
-                      <span className="text-[10px]" style={{ color: '#444' }}>
-                        {timeAgo(task.created_at)}
-                      </span>
-                      {isClosed && (
-                        <span
-                          className="text-[10px] uppercase tracking-widest"
-                          style={{ color: '#444' }}
-                        >
-                          {task.status}
-                        </span>
-                      )}
+                      <span style={{ fontFamily: f.mono, fontSize: 11, color: C.mute }}>{timeAgo(task.created_at)}</span>
                     </div>
                   </div>
-
-                  {/* Right: action buttons (open tasks only) */}
                   {!isClosed && (
-                    <div className="flex items-center gap-2 shrink-0">
-                      <Button
-                        size="sm"
-                        disabled={isActing}
-                        onClick={() => handleStatus(task.id, 'done')}
-                      >
-                        {isActing ? '...' : 'Done'}
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        disabled={isActing}
-                        onClick={() => handleStatus(task.id, 'dismissed')}
-                      >
-                        Dismiss
-                      </Button>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
+                      <PrimaryButton label={isActing ? '…' : 'Done'} onClick={() => handleStatus(task.id, 'done')} disabled={isActing} />
+                      <SecondaryButton label="Dismiss" onClick={() => handleStatus(task.id, 'dismissed')} disabled={isActing} />
                     </div>
                   )}
                 </div>
-              </div>
+              </EntityCard>
             )
           })}
         </div>
-      </div>
-    </>
+      )}
+    </DesktopShell>
   )
 }

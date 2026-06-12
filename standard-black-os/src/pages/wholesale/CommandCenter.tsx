@@ -5,7 +5,11 @@ import { buildDigest } from '@wholesale/lib/digest'
 import type { Digest } from '@wholesale/lib/digest'
 import { listTasksSafe } from '@wholesale/lib/tasks'
 import type { Lead } from '@wholesale/lib/types'
-import WholesaleNav from '@wholesale/components/WholesaleNav'
+import { C, f } from '../../tokens.js'
+import DesktopShell from '@wholesale/components/ui/DesktopShell'
+import PageHeader from '@wholesale/components/ui/PageHeader'
+import DetailPanel from '@wholesale/components/ui/DetailPanel'
+import Metric from '@wholesale/components/ui/Metric'
 
 const DEALS_IN_FLIGHT_STAGES = new Set<Lead['stage']>([
   'Analyzed', 'Matched', 'Offer Made', 'Under Contract',
@@ -17,14 +21,32 @@ const STAGES: Lead['stage'][] = [
   'Under Contract', 'Assigned', 'Closed',
 ]
 
-function Skeleton({ className }: { className: string }) {
-  return <div className={className} style={{ background: '#1a1a1a', borderRadius: 4 }} />
-}
-
 function todayLabel(): string {
   return new Date().toLocaleDateString('en-US', {
     weekday: 'long', month: 'long', day: 'numeric', year: 'numeric',
   })
+}
+
+function statValue(n: number | string, color: string) {
+  return <span style={{ fontFamily: f.display, fontSize: 26, fontWeight: 700, color }}>{n}</span>
+}
+
+function StatTile({ label, value, hint, onClick }: {
+  label: string; value: React.ReactNode; hint: string; onClick?: () => void
+}) {
+  const inner = (
+    <>
+      <Metric label={label} value={value} />
+      <p style={{ marginTop: 6, fontFamily: f.mono, fontSize: 10, color: C.mute }}>{hint}</p>
+    </>
+  )
+  if (!onClick) return <div>{inner}</div>
+  return (
+    <button onClick={onClick} style={{
+      display: 'block', width: '100%', textAlign: 'left',
+      border: 'none', background: 'transparent', padding: 0, cursor: 'pointer',
+    }}>{inner}</button>
+  )
 }
 
 export default function CommandCenter() {
@@ -53,161 +75,90 @@ export default function CommandCenter() {
     load()
   }, [])
 
+  const totalLeads = Object.values(digest?.leadsByStage ?? {}).reduce((s, n) => s + n, 0)
+  const pendingApprovals = digest?.pendingApprovals ?? 0
+
   return (
-    <>
-      <WholesaleNav />
-      <div className="min-h-screen font-mono" style={{ background: '#0a0a0a', color: '#e5e5e5' }}>
-        {/* Header */}
-        <div className="px-4 py-4 md:px-8 md:py-5 border-b" style={{ borderColor: '#333' }}>
-          <h1 className="text-lg font-semibold" style={{ color: '#e5e5e5' }}>Command Center</h1>
-          <p className="text-xs mt-0.5" style={{ color: '#666' }}>{todayLabel()}</p>
-        </div>
+    <DesktopShell>
+      <PageHeader eyebrow="Operator Console" title="Command Center" subtitle={todayLabel()} />
 
-        <div className="px-4 py-5 md:px-8 md:py-6 space-y-5 pb-[90px] md:pb-6">
-
-          {/* Top stat row */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            {/* Open Tasks */}
-            <button
-              onClick={() => navigate('/wholesale/tasks')}
-              className="rounded-lg px-4 py-4 text-left hover:opacity-80 transition-opacity"
-              style={{ background: '#0f0f0f', border: '1px solid #333' }}
-            >
-              <p className="text-[10px] uppercase tracking-widest mb-2" style={{ color: '#555' }}>Open Tasks</p>
-              {loading
-                ? <Skeleton className="h-7 w-12" />
-                : <p className="text-2xl font-bold tabular-nums" style={{ color: '#C9A24A' }}>
-                    {digest?.openTasks ?? 0}
-                  </p>
-              }
-              <p className="text-[10px] mt-1" style={{ color: '#555' }}>View queue →</p>
-            </button>
-
-            {/* Pending Approvals */}
-            <button
-              onClick={() => navigate('/wholesale/tasks')}
-              className="rounded-lg px-4 py-4 text-left hover:opacity-80 transition-opacity"
-              style={{ background: '#0f0f0f', border: '1px solid #333' }}
-            >
-              <p className="text-[10px] uppercase tracking-widest mb-2" style={{ color: '#555' }}>Pending Approvals</p>
-              {loading
-                ? <Skeleton className="h-7 w-12" />
-                : <p
-                    className="text-2xl font-bold tabular-nums"
-                    style={{ color: (digest?.pendingApprovals ?? 0) > 0 ? '#f87171' : '#e5e5e5' }}
-                  >
-                    {digest?.pendingApprovals ?? 0}
-                  </p>
-              }
-              <p className="text-[10px] mt-1" style={{ color: '#555' }}>MAO / offer gates →</p>
-            </button>
-
-            {/* Deals In Flight */}
-            <div
-              className="rounded-lg px-4 py-4"
-              style={{ background: '#0f0f0f', border: '1px solid #333' }}
-            >
-              <p className="text-[10px] uppercase tracking-widest mb-2" style={{ color: '#555' }}>Deals In Flight</p>
-              {loading
-                ? <Skeleton className="h-7 w-12" />
-                : <p className="text-2xl font-bold tabular-nums" style={{ color: '#7fff7b' }}>
-                    {dealsInFlight}
-                  </p>
-              }
-              <p className="text-[10px] mt-1" style={{ color: '#555' }}>Analyzed → Under Contract</p>
-            </div>
-
-            {/* Total Leads */}
-            <button
-              onClick={() => navigate('/wholesale/leads')}
-              className="rounded-lg px-4 py-4 text-left hover:opacity-80 transition-opacity"
-              style={{ background: '#0f0f0f', border: '1px solid #333' }}
-            >
-              <p className="text-[10px] uppercase tracking-widest mb-2" style={{ color: '#555' }}>Total Leads</p>
-              {loading
-                ? <Skeleton className="h-7 w-12" />
-                : <p className="text-2xl font-bold tabular-nums" style={{ color: '#e5e5e5' }}>
-                    {Object.values(digest?.leadsByStage ?? {}).reduce((s, n) => s + n, 0)}
-                  </p>
-              }
-              <p className="text-[10px] mt-1" style={{ color: '#555' }}>View pipeline →</p>
-            </button>
-          </div>
-
-          {/* Task queue offline note (tasks table not provisioned in this environment) */}
-          {!loading && tasksUnavailable && (
-            <p className="text-xs" style={{ color: '#555' }}>
-              Task queue offline — task tables are not provisioned in this environment yet.
-            </p>
-          )}
-
-          {/* Leads by stage */}
-          <div
-            className="rounded-lg px-5 py-5"
-            style={{ background: '#0f0f0f', border: '1px solid #333' }}
-          >
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xs uppercase tracking-widest" style={{ color: '#666' }}>Pipeline by Stage</h2>
-              <button
-                onClick={() => navigate('/wholesale/leads')}
-                className="text-[10px] hover:opacity-80"
-                style={{ color: '#C9A24A' }}
-              >
-                View all →
-              </button>
-            </div>
-
-            {loading ? (
-              <div className="space-y-3">
-                {STAGES.slice(0, 6).map(s => (
-                  <Skeleton key={s} className="h-3 w-full" />
-                ))}
-              </div>
-            ) : (
-              <div className="space-y-2.5">
-                {STAGES.map(stage => {
-                  const count = digest?.leadsByStage[stage] ?? 0
-                  const total = Object.values(digest?.leadsByStage ?? {}).reduce((s, n) => s + n, 0)
-                  const pct = total > 0 ? (count / total) * 100 : 0
-                  const isEmpty = count === 0
-                  const isInFlight = DEALS_IN_FLIGHT_STAGES.has(stage)
-                  return (
-                    <button
-                      key={stage}
-                      onClick={() => navigate('/wholesale/leads')}
-                      className="w-full text-left group"
-                    >
-                      <div className="flex items-center justify-between mb-0.5">
-                        <span className="text-xs" style={{ color: isEmpty ? '#444' : '#aaa' }}>
-                          {stage}
-                        </span>
-                        <span
-                          className="text-xs tabular-nums"
-                          style={{ color: isEmpty ? '#333' : isInFlight ? '#C9A24A' : '#7fff7b' }}
-                        >
-                          {count}
-                        </span>
-                      </div>
-                      <div className="w-full rounded-full" style={{ background: '#1a1a1a', height: '3px' }}>
-                        <div
-                          className="rounded-full"
-                          style={{
-                            width: `${pct}%`,
-                            height: '3px',
-                            background: isEmpty ? '#222' : isInFlight ? '#C9A24A' : '#7fff7b',
-                            minWidth: count > 0 ? '4px' : '0',
-                          }}
-                        />
-                      </div>
-                    </button>
-                  )
-                })}
-              </div>
-            )}
-          </div>
-
-        </div>
+      <div style={{
+        marginTop: 24, display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 12,
+      }}>
+        <StatTile
+          label="Open Tasks"
+          value={statValue(loading ? '—' : digest?.openTasks ?? 0, C.gold)}
+          hint="View queue →"
+          onClick={() => navigate('/wholesale/tasks')}
+        />
+        <StatTile
+          label="Pending Approvals"
+          value={statValue(loading ? '—' : pendingApprovals, pendingApprovals > 0 ? C.danger : C.text)}
+          hint="MAO / offer gates →"
+          onClick={() => navigate('/wholesale/tasks')}
+        />
+        <StatTile
+          label="Deals In Flight"
+          value={statValue(loading ? '—' : dealsInFlight, C.success)}
+          hint="Analyzed → Under Contract"
+        />
+        <StatTile
+          label="Total Leads"
+          value={statValue(loading ? '—' : totalLeads, C.text)}
+          hint="View pipeline →"
+          onClick={() => navigate('/wholesale/leads')}
+        />
       </div>
-    </>
+
+      {!loading && tasksUnavailable && (
+        <p style={{ marginTop: 16, fontFamily: f.mono, fontSize: 12, color: C.mute }}>
+          Task queue offline — task tables are not provisioned in this environment yet.
+        </p>
+      )}
+
+      <div style={{ marginTop: 24 }}>
+        <DetailPanel
+          title="Pipeline by Stage"
+          action={
+            <button onClick={() => navigate('/wholesale/leads')} style={{
+              border: 'none', background: 'transparent', cursor: 'pointer',
+              fontFamily: f.mono, fontSize: 11, color: C.gold,
+            }}>View all →</button>
+          }
+        >
+          {loading ? (
+            <p style={{ fontFamily: f.body, fontSize: 14, color: C.mute }}>Loading pipeline…</p>
+          ) : (
+            <div style={{ display: 'grid', gap: 12 }}>
+              {STAGES.map(stage => {
+                const count = digest?.leadsByStage[stage] ?? 0
+                const pct = totalLeads > 0 ? (count / totalLeads) * 100 : 0
+                const isEmpty = count === 0
+                const isInFlight = DEALS_IN_FLIGHT_STAGES.has(stage)
+                const barColor = isEmpty ? C.dim : isInFlight ? C.gold : C.success
+                return (
+                  <button key={stage} onClick={() => navigate('/wholesale/leads')} style={{
+                    display: 'block', width: '100%', textAlign: 'left',
+                    border: 'none', background: 'transparent', padding: 0, cursor: 'pointer',
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
+                      <span style={{ fontFamily: f.body, fontSize: 13, color: isEmpty ? C.mute : C.sub }}>{stage}</span>
+                      <span style={{ fontFamily: f.mono, fontSize: 13, color: barColor }}>{count}</span>
+                    </div>
+                    <div style={{ width: '100%', height: 4, borderRadius: 999, background: C.surface2 }}>
+                      <div style={{
+                        width: `${pct}%`, height: 4, borderRadius: 999,
+                        background: barColor, minWidth: count > 0 ? 4 : 0,
+                      }} />
+                    </div>
+                  </button>
+                )
+              })}
+            </div>
+          )}
+        </DetailPanel>
+      </div>
+    </DesktopShell>
   )
 }

@@ -3,7 +3,11 @@ import { useNavigate } from 'react-router-dom'
 import { supabase } from '@wholesale/lib/supabase'
 import { formatCurrency } from '@wholesale/lib/mao'
 import type { LeadStage } from '@wholesale/lib/types'
-import WholesaleNav from '@wholesale/components/WholesaleNav'
+import { C, f } from '../../tokens.js'
+import DesktopShell from '@wholesale/components/ui/DesktopShell'
+import PageHeader from '@wholesale/components/ui/PageHeader'
+import DetailPanel from '@wholesale/components/ui/DetailPanel'
+import Metric from '@wholesale/components/ui/Metric'
 
 const STAGES: LeadStage[] = [
   'New', 'Skip Traced', 'Contacted', 'Responded',
@@ -22,9 +26,9 @@ type DealRow = {
 }
 
 const REPAIR_COLOR: Record<string, string> = {
-  light: '#7fff7b',
-  moderate: '#ffff7b',
-  heavy: '#ff7b7b',
+  light: C.success,
+  moderate: C.warning,
+  heavy: C.danger,
 }
 
 function timeAgo(dateStr: string): string {
@@ -38,9 +42,16 @@ function timeAgo(dateStr: string): string {
   return `${Math.floor(days / 30)}mo ago`
 }
 
-function Skeleton({ className }: { className: string }) {
-  return <div className={className} style={{ background: '#1a1a1a', borderRadius: 4 }} />
+function statValue(n: React.ReactNode, color: string) {
+  return <span style={{ fontFamily: f.display, fontSize: 26, fontWeight: 700, color }}>{n}</span>
 }
+
+const sectionAction = (label: string, onClick: () => void) => (
+  <button onClick={onClick} style={{
+    border: 'none', background: 'transparent', cursor: 'pointer',
+    fontFamily: f.mono, fontSize: 11, color: C.gold,
+  }}>{label}</button>
+)
 
 export default function WholesaleDashboard() {
   const navigate = useNavigate()
@@ -113,248 +124,131 @@ export default function WholesaleDashboard() {
     .sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime())
     .slice(0, 8)
 
+  const dash = loading ? '—' : undefined
+
   return (
-    <>
-      <WholesaleNav />
-      <div className="min-h-screen font-mono" style={{ background: '#0a0a0a', color: '#e5e5e5' }}>
-        {/* Header */}
-        <div className="px-4 py-4 md:px-8 md:py-5 border-b" style={{ borderColor: '#333' }}>
-          <h1 className="text-lg font-semibold" style={{ color: '#e5e5e5' }}>Dashboard</h1>
-          <p className="text-xs mt-0.5" style={{ color: '#666' }}>Standard Black Wholesale OS</p>
-        </div>
+    <DesktopShell>
+      <PageHeader eyebrow="Executive Desk" title="Wholesale Dashboard" subtitle="Standard Black Wholesale OS" />
 
-        <div className="px-4 py-5 md:px-8 md:py-6 space-y-5 pb-[90px] md:pb-6">
-
-          {/* Stat tiles */}
-          <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
-            {/* Total Leads */}
-            <div className="rounded-lg px-4 py-4" style={{ background: '#0f0f0f', border: '1px solid #333' }}>
-              <p className="text-[10px] uppercase tracking-widest mb-2" style={{ color: '#555' }}>Total Leads</p>
-              {loading
-                ? <Skeleton className="h-7 w-12" />
-                : <p className="text-2xl font-bold tabular-nums" style={{ color: '#e5e5e5' }}>{leads.length}</p>
-              }
-            </div>
-
-            {/* Active Deals */}
-            <div className="rounded-lg px-4 py-4" style={{ background: '#0f0f0f', border: '1px solid #333' }}>
-              <p className="text-[10px] uppercase tracking-widest mb-2" style={{ color: '#555' }}>Active Deals</p>
-              {loading
-                ? <Skeleton className="h-7 w-12" />
-                : <p className="text-2xl font-bold tabular-nums" style={{ color: '#e5e5e5' }}>{deals.length}</p>
-              }
-            </div>
-
-            {/* Active Buyers */}
-            <div className="rounded-lg px-4 py-4" style={{ background: '#0f0f0f', border: '1px solid #333' }}>
-              <p className="text-[10px] uppercase tracking-widest mb-2" style={{ color: '#555' }}>Active Buyers</p>
-              {loading
-                ? <Skeleton className="h-7 w-12" />
-                : <p className="text-2xl font-bold tabular-nums" style={{ color: '#7fff7b' }}>{activeBuyers}</p>
-              }
-            </div>
-
-            {/* Potential Fees */}
-            <div className="rounded-lg px-4 py-4" style={{ background: '#0f0f0f', border: '1px solid #333' }}>
-              <p className="text-[10px] uppercase tracking-widest mb-2" style={{ color: '#555' }}>Potential Fees</p>
-              {loading
-                ? <Skeleton className="h-7 w-20" />
-                : <p className="text-2xl font-bold tabular-nums" style={{ color: '#7fff7b' }}>{formatCurrency(potentialFees)}</p>
-              }
-            </div>
-
-            {/* Closed Deals */}
-            <div className="rounded-lg px-4 py-4" style={{ background: '#0f0f0f', border: '1px solid #333' }}>
-              <p className="text-[10px] uppercase tracking-widest mb-2" style={{ color: '#555' }}>Closed Deals</p>
-              {loading ? (
-                <>
-                  <Skeleton className="h-7 w-10 mb-1" />
-                  <Skeleton className="h-3 w-20" />
-                </>
-              ) : (
-                <>
-                  <p className="text-2xl font-bold tabular-nums" style={{ color: '#e5e5e5' }}>
-                    {closedDeals.length}
-                  </p>
-                  <p className="text-[10px] mt-1" style={{ color: '#7fff7b' }}>
-                    {formatCurrency(feesEarned)} earned
-                  </p>
-                </>
+      {/* Stat tiles */}
+      <div style={{
+        marginTop: 24, display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 12,
+      }}>
+        <Metric label="Total Leads" value={statValue(dash ?? leads.length, C.text)} />
+        <Metric label="Active Deals" value={statValue(dash ?? deals.length, C.text)} />
+        <Metric label="Active Buyers" value={statValue(dash ?? activeBuyers, C.success)} />
+        <Metric label="Potential Fees" value={statValue(dash ?? formatCurrency(potentialFees), C.success)} />
+        <Metric
+          label="Closed Deals"
+          value={
+            <span>
+              {statValue(dash ?? closedDeals.length, C.text)}
+              {!loading && (
+                <span style={{ marginLeft: 8, fontFamily: f.mono, fontSize: 11, color: C.success }}>
+                  {formatCurrency(feesEarned)} earned
+                </span>
               )}
-            </div>
-          </div>
+            </span>
+          }
+        />
+      </div>
 
-          {/* Pipeline + Recent Deals */}
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
-
-            {/* Pipeline Funnel */}
-            <div
-              className="lg:col-span-3 rounded-lg px-5 py-5"
-              style={{ background: '#0f0f0f', border: '1px solid #333' }}
-            >
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xs uppercase tracking-widest" style={{ color: '#666' }}>Lead Pipeline</h2>
-                <button
-                  onClick={() => navigate('/wholesale/leads')}
-                  className="text-[10px] hover:opacity-80"
-                  style={{ color: '#C9A24A' }}
-                >
-                  View all →
-                </button>
-              </div>
-
-              {loading ? (
-                <div className="space-y-3">
-                  {STAGES.slice(0, 6).map(s => (
-                    <div key={s}>
-                      <Skeleton className="h-3 w-full mb-1" />
+      {/* Pipeline + Recent Deals */}
+      <div style={{
+        marginTop: 24, display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 320px), 1fr))', gap: 16,
+      }}>
+        <DetailPanel title="Lead Pipeline" action={sectionAction('View all →', () => navigate('/wholesale/leads'))}>
+          {loading ? (
+            <p style={{ fontFamily: f.body, fontSize: 14, color: C.mute }}>Loading pipeline…</p>
+          ) : (
+            <div style={{ display: 'grid', gap: 12 }}>
+              {STAGES.map(stage => {
+                const count = stageCounts[stage]
+                const pct = (count / maxStageCount) * 100
+                const isEmpty = count === 0
+                const barColor = isEmpty ? C.dim : C.gold
+                return (
+                  <button key={stage} onClick={() => navigate('/wholesale/leads')} style={{
+                    display: 'block', width: '100%', textAlign: 'left',
+                    border: 'none', background: 'transparent', padding: 0, cursor: 'pointer',
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
+                      <span style={{ fontFamily: f.body, fontSize: 13, color: isEmpty ? C.mute : C.sub }}>{stage}</span>
+                      <span style={{ fontFamily: f.mono, fontSize: 13, color: isEmpty ? C.mute : C.gold }}>{count}</span>
                     </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="space-y-2.5">
-                  {STAGES.map(stage => {
-                    const count = stageCounts[stage]
-                    const pct = (count / maxStageCount) * 100
-                    const isEmpty = count === 0
-                    return (
-                      <button
-                        key={stage}
-                        onClick={() => navigate('/wholesale/leads')}
-                        className="w-full text-left group"
-                      >
-                        <div className="flex items-center justify-between mb-0.5">
-                          <span className="text-xs" style={{ color: isEmpty ? '#444' : '#aaa' }}>
-                            {stage}
-                          </span>
-                          <span
-                            className="text-xs tabular-nums"
-                            style={{ color: isEmpty ? '#333' : '#7fff7b' }}
-                          >
-                            {count}
-                          </span>
-                        </div>
-                        <div className="w-full rounded-full" style={{ background: '#1a1a1a', height: '3px' }}>
-                          <div
-                            className="rounded-full"
-                            style={{
-                              width: `${pct}%`,
-                              height: '3px',
-                              background: isEmpty ? '#222' : '#7fff7b',
-                              minWidth: count > 0 ? '4px' : '0',
-                            }}
-                          />
-                        </div>
-                      </button>
-                    )
-                  })}
-                </div>
-              )}
+                    <div style={{ width: '100%', height: 4, borderRadius: 999, background: C.surface2 }}>
+                      <div style={{ width: `${pct}%`, height: 4, borderRadius: 999, background: barColor, minWidth: count > 0 ? 4 : 0 }} />
+                    </div>
+                  </button>
+                )
+              })}
             </div>
+          )}
+        </DetailPanel>
 
-            {/* Recent Deals */}
-            <div
-              className="lg:col-span-2 rounded-lg px-5 py-5"
-              style={{ background: '#0f0f0f', border: '1px solid #333' }}
-            >
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xs uppercase tracking-widest" style={{ color: '#666' }}>Recent Deals</h2>
-                <button
-                  onClick={() => navigate('/wholesale/deals')}
-                  className="text-[10px] hover:opacity-80"
-                  style={{ color: '#C9A24A' }}
-                >
-                  View all →
-                </button>
-              </div>
-
-              {loading ? (
-                <div className="space-y-2">
-                  {[1, 2, 3].map(i => <Skeleton key={i} className="h-12 w-full" />)}
-                </div>
-              ) : recentDeals.length === 0 ? (
-                <p className="text-xs" style={{ color: '#444' }}>No deals yet.</p>
-              ) : (
-                <div className="space-y-2">
-                  {recentDeals.map(deal => (
-                    <button
-                      key={deal.id}
-                      onClick={() => navigate(`/wholesale/deals/${deal.id}`)}
-                      className="w-full text-left rounded px-3 py-2 transition-opacity hover:opacity-80"
-                      style={{ background: '#111', border: '1px solid #222' }}
-                    >
-                      <div className="flex items-start justify-between gap-2">
-                        <div className="min-w-0 flex-1">
-                          <p className="text-xs font-medium truncate" style={{ color: '#e5e5e5' }}>
-                            {deal.leads?.address ?? 'Unknown'}
-                          </p>
-                          <div className="flex items-center gap-2 mt-0.5">
-                            <span className="text-[10px]" style={{ color: '#555' }}>
-                              ARV {formatCurrency(deal.arv)}
-                            </span>
-                            {deal.repair_level && (
-                              <span
-                                className="text-[10px] px-1 rounded"
-                                style={{
-                                  background: '#1a1a1a',
-                                  color: REPAIR_COLOR[deal.repair_level] ?? '#aaa',
-                                }}
-                              >
-                                {deal.repair_level}
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                        <span className="text-xs shrink-0 font-medium" style={{ color: '#7fff7b' }}>
-                          {formatCurrency(deal.assignment_fee)}
-                        </span>
+        <DetailPanel title="Recent Deals" action={sectionAction('View all →', () => navigate('/wholesale/deals'))}>
+          {loading ? (
+            <p style={{ fontFamily: f.body, fontSize: 14, color: C.mute }}>Loading deals…</p>
+          ) : recentDeals.length === 0 ? (
+            <p style={{ fontFamily: f.body, fontSize: 13, color: C.mute }}>No deals yet.</p>
+          ) : (
+            <div style={{ display: 'grid', gap: 8 }}>
+              {recentDeals.map(deal => (
+                <button key={deal.id} onClick={() => navigate(`/wholesale/deals/${deal.id}`)} style={{
+                  display: 'block', width: '100%', textAlign: 'left', cursor: 'pointer',
+                  borderRadius: 12, border: `1px solid ${C.borderSoft}`, background: 'rgba(0,0,0,0.3)',
+                  padding: '12px 14px',
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
+                    <div style={{ minWidth: 0 }}>
+                      <p style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontFamily: f.body, fontSize: 14, fontWeight: 500, color: C.text }}>
+                        {deal.leads?.address ?? 'Unknown'}
+                      </p>
+                      <div style={{ marginTop: 4, display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <span style={{ fontFamily: f.mono, fontSize: 11, color: C.mute }}>ARV {formatCurrency(deal.arv)}</span>
+                        {deal.repair_level && (
+                          <span style={{
+                            fontFamily: f.mono, fontSize: 11, padding: '1px 6px', borderRadius: 6,
+                            background: C.surface2, color: REPAIR_COLOR[deal.repair_level] ?? C.sub,
+                          }}>{deal.repair_level}</span>
+                        )}
                       </div>
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Activity Feed */}
-          <div
-            className="rounded-lg px-5 py-5"
-            style={{ background: '#0f0f0f', border: '1px solid #333' }}
-          >
-            <h2 className="text-xs uppercase tracking-widest mb-4" style={{ color: '#666' }}>Recent Activity</h2>
-
-            {loading ? (
-              <div className="space-y-2">
-                {[1, 2, 3, 4].map(i => <Skeleton key={i} className="h-4 w-full" />)}
-              </div>
-            ) : activity.length === 0 ? (
-              <p className="text-xs" style={{ color: '#444' }}>
-                No activity yet — import leads to get started.
-              </p>
-            ) : (
-              <div className="space-y-2">
-                {activity.map((item, i) => (
-                  <div key={i} className="flex items-center justify-between gap-4">
-                    <div className="flex items-center gap-2 min-w-0">
-                      <span
-                        className="w-1.5 h-1.5 rounded-full shrink-0"
-                        style={{ background: item.type === 'lead' ? '#7fff7b' : '#C9A24A' }}
-                      />
-                      <span className="text-xs truncate" style={{ color: '#aaa' }}>
-                        {item.text}
-                      </span>
                     </div>
-                    <span className="text-[10px] shrink-0" style={{ color: '#444' }}>
-                      {timeAgo(item.time)}
+                    <span style={{ flexShrink: 0, fontFamily: f.body, fontSize: 14, fontWeight: 600, color: C.success }}>
+                      {formatCurrency(deal.assignment_fee)}
                     </span>
                   </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-        </div>
+                </button>
+              ))}
+            </div>
+          )}
+        </DetailPanel>
       </div>
-    </>
+
+      {/* Activity Feed */}
+      <div style={{ marginTop: 24 }}>
+        <DetailPanel title="Recent Activity">
+          {loading ? (
+            <p style={{ fontFamily: f.body, fontSize: 14, color: C.mute }}>Loading activity…</p>
+          ) : activity.length === 0 ? (
+            <p style={{ fontFamily: f.body, fontSize: 13, color: C.mute }}>No activity yet — import leads to get started.</p>
+          ) : (
+            <div style={{ display: 'grid', gap: 10 }}>
+              {activity.map((item, i) => (
+                <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: 0 }}>
+                    <span style={{ width: 6, height: 6, borderRadius: 999, flexShrink: 0, background: item.type === 'lead' ? C.success : C.gold }} />
+                    <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontFamily: f.body, fontSize: 13, color: C.sub }}>{item.text}</span>
+                  </div>
+                  <span style={{ flexShrink: 0, fontFamily: f.mono, fontSize: 11, color: C.mute }}>{timeAgo(item.time)}</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </DetailPanel>
+      </div>
+    </DesktopShell>
   )
 }
