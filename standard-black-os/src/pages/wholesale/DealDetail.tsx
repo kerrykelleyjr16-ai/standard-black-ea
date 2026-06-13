@@ -6,32 +6,50 @@ import { scoreAllBuyersForDeal } from '@wholesale/lib/matching'
 import { rankDispoBuyers } from '@wholesale/lib/dispo'
 import { isMaoApproved, canDraftOffer, isOfferApproved } from '@wholesale/lib/gates'
 import { createTask } from '@wholesale/lib/tasks'
-import Badge from '@wholesale/components/ui/Badge'
-import Button from '@wholesale/components/ui/Button'
-import Card from '@wholesale/components/ui/Card'
-import type { Deal, Lead, Buyer, BuyerMatchScore, RepairLevel } from '@wholesale/lib/types'
-import WholesaleNav from '@wholesale/components/WholesaleNav'
+import type { Deal, Lead, Buyer, BuyerMatchScore } from '@wholesale/lib/types'
+import { C, f } from '../../tokens.js'
+import DesktopShell from '@wholesale/components/ui/DesktopShell'
+import PageHeader from '@wholesale/components/ui/PageHeader'
+import DetailPanel from '@wholesale/components/ui/DetailPanel'
+import Metric from '@wholesale/components/ui/Metric'
+import StatusBadge from '@wholesale/components/ui/StatusBadge'
+import TagBadge from '@wholesale/components/ui/TagBadge'
+import { PrimaryButton, SecondaryButton } from '@wholesale/components/ui/ActionBar'
+import { inputBase, microLabel } from '@wholesale/components/ui/styles'
 
 type DealWithLead = Deal & {
   leads: Lead | null
 }
 
-const repairBadgeColor: Record<RepairLevel, 'green' | 'yellow' | 'red'> = {
-  light: 'green',
-  moderate: 'yellow',
-  heavy: 'red',
+const innerWrap: React.CSSProperties = { maxWidth: 768, margin: '0 auto' }
+
+const repairColor: Record<string, string> = {
+  light: C.success,
+  moderate: C.warning,
+  heavy: C.danger,
 }
 
 function scoreColor(score: number): string {
-  if (score >= 70) return '#7fff7b'
-  if (score >= 40) return '#ffff7b'
-  return '#ff7b7b'
+  if (score >= 70) return C.success
+  if (score >= 40) return C.warning
+  return C.danger
+}
+
+function strategyColor(strategy: string): string {
+  if (strategy === 'flip') return C.danger
+  if (strategy === 'rental') return C.blue
+  if (strategy === 'BRRRR') return C.purple
+  return C.sub
 }
 
 function parseCurrency(value: string): number | null {
   const cleaned = value.replace(/[^0-9.]/g, '')
   const num = parseFloat(cleaned)
   return isNaN(num) ? null : num
+}
+
+const codeBlock: React.CSSProperties = {
+  borderRadius: 12, padding: 16, background: 'rgba(0,0,0,0.3)', border: `1px solid ${C.borderSoft}`,
 }
 
 export default function DealDetail() {
@@ -419,29 +437,17 @@ export default function DealDetail() {
 
   if (loading) {
     return (
-      <>
-        <WholesaleNav />
-        <div
-          className="min-h-screen font-mono flex items-center justify-center"
-          style={{ background: '#0a0a0a', color: '#666' }}
-        >
-          Loading deal...
-        </div>
-      </>
+      <DesktopShell>
+        <p style={{ fontFamily: f.body, fontSize: 14, color: C.mute }}>Loading deal…</p>
+      </DesktopShell>
     )
   }
 
   if (error || !deal) {
     return (
-      <>
-        <WholesaleNav />
-        <div
-          className="min-h-screen font-mono flex items-center justify-center"
-          style={{ background: '#0a0a0a', color: '#ff7b7b' }}
-        >
-          {error ?? 'Deal not found'}
-        </div>
-      </>
+      <DesktopShell>
+        <p style={{ fontFamily: f.body, fontSize: 14, color: C.danger }}>{error ?? 'Deal not found'}</p>
+      </DesktopShell>
     )
   }
 
@@ -460,649 +466,284 @@ export default function DealDetail() {
     else if (overage > 0) maoStatus = 'warn'
   }
 
-  const maoBorderColor =
-    maoStatus === 'good' ? 'rgba(201,162,74,0.15)' : maoStatus === 'warn' ? '#2e2e1a' : '#2e1a1a'
   const maoValueColor =
-    maoStatus === 'good' ? '#7fff7b' : maoStatus === 'warn' ? '#ffff7b' : '#ff7b7b'
+    maoStatus === 'good' ? C.success : maoStatus === 'warn' ? C.warning : C.danger
 
   return (
-    <>
-      <WholesaleNav />
-      <div
-        className="min-h-screen font-mono"
-        style={{ background: '#0a0a0a', color: '#e5e5e5' }}
-      >
-        <div className="max-w-3xl mx-auto px-4 py-6 md:px-6 md:py-10 pb-[90px] md:pb-10">
-
-          {/* Header */}
-          <div className="mb-8">
-            <div className="flex items-start gap-3 mb-2">
-              {deal.repair_level && (
-                <Badge
-                  label={deal.repair_level}
-                  color={repairBadgeColor[deal.repair_level]}
-                />
-              )}
-              {lead?.stage && <Badge label={lead.stage} color="blue" />}
-              {deal.mao_override != null && <Badge label="MAO Override Active" color="yellow" />}
-            </div>
-            <h1 className="text-2xl font-bold" style={{ color: '#e5e5e5' }}>
-              {lead?.address ?? 'Unknown Address'}
-            </h1>
-            <p className="text-sm mt-1" style={{ color: '#666' }}>
-              {lead?.city ? `${lead.city}, ` : ''}
-              {lead?.state ?? ''} {lead?.zip ?? ''}
-            </p>
+    <DesktopShell>
+      <div style={innerWrap}>
+        {/* Header */}
+        <PageHeader
+          eyebrow="Deal"
+          title={lead?.address ?? 'Unknown Address'}
+          subtitle={`${lead?.city ? `${lead.city}, ` : ''}${lead?.state ?? ''} ${lead?.zip ?? ''}`.trim()}
+        >
+          <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 8 }}>
+            {deal.repair_level && <StatusBadge label={deal.repair_level} color={repairColor[deal.repair_level]} />}
+            {lead?.stage && <StatusBadge label={lead.stage} color={C.blue} />}
+            {deal.mao_override != null && <StatusBadge label="MAO Override Active" color={C.warning} />}
             {lead?.id && (
-              <Link
-                to={`/wholesale/leads/${lead.id}`}
-                className="text-xs mt-1 inline-block hover:underline"
-                style={{ color: '#C9A24A' }}
-              >
+              <Link to={`/wholesale/leads/${lead.id}`} style={{ fontFamily: f.mono, fontSize: 11, color: C.gold }}>
                 View Lead →
               </Link>
             )}
           </div>
+        </PageHeader>
 
+        <div style={{ marginTop: 20, display: 'grid', gap: 20 }}>
           {/* MAO Formula Panel */}
-          <Card className="mb-5">
-            <p className="text-xs mb-4" style={{ color: '#aaa' }}>
-              MAO Formula (70% display margin)
-            </p>
-            <div
-              className="rounded-lg p-4"
-              style={{
-                background: '#0a0a0a',
-                border: `1px solid ${maoBorderColor}`,
-              }}
-            >
-              <div className="grid grid-cols-5 gap-2 text-center text-sm">
-                <div>
-                  <p className="text-xs mb-1" style={{ color: '#666' }}>
-                    ARV
-                  </p>
-                  <p style={{ color: '#e5e5e5' }}>{formatCurrency(arv)}</p>
-                </div>
-                <div>
-                  <p className="text-xs mb-1" style={{ color: '#666' }}>
-                    Margin
-                  </p>
-                  <p style={{ color: '#aaa' }}>× {formatPercent(margin)}</p>
-                </div>
-                <div>
-                  <p className="text-xs mb-1" style={{ color: '#666' }}>
-                    Repairs
-                  </p>
-                  <p style={{ color: '#e5e5e5' }}>− {formatCurrency(repairs)}</p>
-                </div>
-                <div>
-                  <p className="text-xs mb-1" style={{ color: '#666' }}>
-                    Fee
-                  </p>
-                  <p style={{ color: '#e5e5e5' }}>− {formatCurrency(fee)}</p>
-                </div>
-                <div>
-                  <p className="text-xs mb-1" style={{ color: '#666' }}>
-                    MAO
-                  </p>
-                  <p className="font-bold" style={{ color: maoValueColor }}>
-                    = {formatCurrency(effectiveMao ?? calculateMAO(arv, margin, repairs, fee))}
-                  </p>
-                </div>
-              </div>
+          <DetailPanel title="MAO Formula">
+            <p style={{ marginBottom: 12, fontFamily: f.body, fontSize: 13, color: C.sub }}>70% display margin</p>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(96px, 1fr))', gap: 12 }}>
+              <Metric label="ARV" value={formatCurrency(arv)} />
+              <Metric label="Margin" value={`× ${formatPercent(margin)}`} />
+              <Metric label="Repairs" value={`− ${formatCurrency(repairs)}`} />
+              <Metric label="Fee" value={`− ${formatCurrency(fee)}`} />
+              <Metric label="MAO" value={<span style={{ color: maoValueColor, fontWeight: 700 }}>= {formatCurrency(effectiveMao ?? calculateMAO(arv, margin, repairs, fee))}</span>} />
             </div>
             {maoStatus === 'warn' && deal.offer_price != null && (
-              <p className="text-xs mt-2" style={{ color: '#ffff7b' }}>
+              <p style={{ marginTop: 12, fontFamily: f.mono, fontSize: 12, color: C.warning }}>
                 Offer price is above MAO — confirm buyer absorption.
               </p>
             )}
             {maoStatus === 'over' && deal.offer_price != null && (
-              <p className="text-xs mt-2" style={{ color: '#ff7b7b' }}>
+              <p style={{ marginTop: 12, fontFamily: f.mono, fontSize: 12, color: C.danger }}>
                 Offer price is more than 10% over MAO — deal is tight.
               </p>
             )}
 
             {/* MAO approval gate (W5) */}
-            <div className="mt-4 flex items-center gap-3 flex-wrap">
+            <div style={{ marginTop: 16, display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
               {isMaoApproved(deal) ? (
                 <>
-                  <Badge label="MAO Approved" color="green" />
-                  <span className="text-xs" style={{ color: '#666' }}>
+                  <StatusBadge label="MAO Approved" color={C.success} />
+                  <span style={{ fontFamily: f.mono, fontSize: 11, color: C.mute }}>
                     {new Date(deal.mao_approved_at!).toLocaleString()}
                   </span>
                 </>
               ) : (
                 <>
-                  <Button
-                    variant="primary"
-                    size="sm"
+                  <PrimaryButton
+                    label={approvingMao ? 'Approving…' : `Approve MAO ${effectiveMao != null ? formatCurrency(effectiveMao) : ''}`}
                     onClick={handleApproveMao}
                     disabled={approvingMao || effectiveMao == null}
-                  >
-                    {approvingMao ? 'Approving...' : `Approve MAO ${effectiveMao != null ? formatCurrency(effectiveMao) : ''}`}
-                  </Button>
-                  <span className="text-xs" style={{ color: '#ffff7b' }}>
+                  />
+                  <span style={{ fontFamily: f.mono, fontSize: 11, color: C.warning }}>
                     Approval required before an offer can be drafted
                   </span>
                 </>
               )}
             </div>
-          </Card>
+          </DetailPanel>
 
           {/* MAO Override */}
-          <Card className="mb-5">
-            <div className="flex items-center justify-between mb-3">
-              <p className="text-sm font-medium" style={{ color: '#e5e5e5' }}>
-                MAO Override
-              </p>
-              {deal.mao_override == null && !showOverrideForm && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setShowOverrideForm(true)}
-                >
-                  <span style={{ color: '#ffff7b' }}>Override MAO</span>
-                </Button>
-              )}
-            </div>
-
+          <DetailPanel
+            title="MAO Override"
+            action={deal.mao_override == null && !showOverrideForm ? (
+              <SecondaryButton label="Override MAO" onClick={() => setShowOverrideForm(true)} />
+            ) : undefined}
+          >
             {deal.mao_override != null ? (
               <div>
-                <div
-                  className="rounded px-3 py-2 mb-2 text-sm"
-                  style={{ background: '#2e2e1a', border: '1px solid #3a3a1a' }}
-                >
-                  <span style={{ color: '#ffff7b' }}>
-                    Override: {formatCurrency(deal.mao_override)}
-                  </span>
-                  <span className="ml-2" style={{ color: '#666' }}>
-                    — {deal.mao_override_reason}
-                  </span>
+                <div style={{ borderRadius: 12, padding: '10px 12px', marginBottom: 8, background: 'rgba(250,204,21,0.08)', border: `1px solid rgba(250,204,21,0.25)` }}>
+                  <span style={{ fontFamily: f.body, fontSize: 14, color: C.warning }}>Override: {formatCurrency(deal.mao_override)}</span>
+                  <span style={{ marginLeft: 8, fontFamily: f.body, fontSize: 13, color: C.mute }}>— {deal.mao_override_reason}</span>
                 </div>
-                <Badge label="Override active" color="yellow" />
-                <span className="ml-3 text-xs" style={{ color: '#666' }}>
-                  {deal.mao_override_reason}
-                </span>
-                <div className="mt-3">
-                  <Button
-                    variant="danger"
-                    size="sm"
-                    onClick={handleRemoveOverride}
-                    disabled={removingOverride}
-                  >
-                    {removingOverride ? 'Removing...' : 'Remove Override'}
-                  </Button>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+                  <StatusBadge label="Override active" color={C.warning} />
+                  <span style={{ fontFamily: f.body, fontSize: 12, color: C.mute }}>{deal.mao_override_reason}</span>
+                </div>
+                <div style={{ marginTop: 12 }}>
+                  <SecondaryButton label={removingOverride ? 'Removing…' : 'Remove Override'} onClick={handleRemoveOverride} disabled={removingOverride} />
                 </div>
               </div>
             ) : showOverrideForm ? (
-              <div className="flex flex-col gap-3">
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                 <div>
-                  <label className="block text-xs mb-1" style={{ color: '#aaa' }}>
-                    Override Amount
-                  </label>
-                  <input
-                    type="text"
-                    inputMode="numeric"
-                    placeholder="$95,000"
-                    value={overrideAmount}
-                    onChange={(e) => setOverrideAmount(e.target.value)}
-                    className="w-full rounded px-3 py-2 text-sm font-mono"
-                    style={{
-                      background: '#0a0a0a',
-                      border: '1px solid #333',
-                      color: '#e5e5e5',
-                      outline: 'none',
-                    }}
-                  />
+                  <label style={{ ...microLabel, display: 'block', marginBottom: 6 }}>Override Amount</label>
+                  <input type="text" inputMode="numeric" placeholder="$95,000" value={overrideAmount} onChange={(e) => setOverrideAmount(e.target.value)} style={inputBase} />
                 </div>
                 <div>
-                  <label className="block text-xs mb-1" style={{ color: '#aaa' }}>
-                    Reason (required)
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="e.g. Buyer wants a specific spread, market conditions..."
-                    value={overrideReason}
-                    onChange={(e) => setOverrideReason(e.target.value)}
-                    className="w-full rounded px-3 py-2 text-sm font-mono"
-                    style={{
-                      background: '#0a0a0a',
-                      border: '1px solid #333',
-                      color: '#e5e5e5',
-                      outline: 'none',
-                    }}
-                  />
+                  <label style={{ ...microLabel, display: 'block', marginBottom: 6 }}>Reason (required)</label>
+                  <input type="text" placeholder="e.g. Buyer wants a specific spread, market conditions..." value={overrideReason} onChange={(e) => setOverrideReason(e.target.value)} style={inputBase} />
                 </div>
-                <div className="flex gap-2">
-                  <Button
-                    variant="primary"
-                    size="sm"
-                    onClick={handleSaveOverride}
-                    disabled={!overrideReason.trim() || savingOverride}
-                  >
-                    {savingOverride ? 'Saving...' : 'Save Override'}
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => {
-                      setShowOverrideForm(false)
-                      setOverrideAmount('')
-                      setOverrideReason('')
-                    }}
-                  >
-                    Cancel
-                  </Button>
+                <div style={{ display: 'flex', gap: 8 }}>
+                  <PrimaryButton label={savingOverride ? 'Saving…' : 'Save Override'} onClick={handleSaveOverride} disabled={!overrideReason.trim() || savingOverride} />
+                  <SecondaryButton label="Cancel" onClick={() => { setShowOverrideForm(false); setOverrideAmount(''); setOverrideReason('') }} />
                 </div>
                 {!overrideReason.trim() && overrideAmount && (
-                  <p className="text-xs" style={{ color: '#ff7b7b' }}>
-                    Reason is required before saving an override.
-                  </p>
+                  <p style={{ fontFamily: f.mono, fontSize: 12, color: C.danger }}>Reason is required before saving an override.</p>
                 )}
               </div>
             ) : (
-              <p className="text-xs" style={{ color: '#555' }}>
-                No override set. Formula MAO is active.
-              </p>
+              <p style={{ fontFamily: f.body, fontSize: 13, color: C.mute }}>No override set. Formula MAO is active.</p>
             )}
-          </Card>
+          </DetailPanel>
 
           {/* Offer Price */}
-          <Card className="mb-5">
-            <p className="text-sm font-medium mb-3" style={{ color: '#e5e5e5' }}>
-              Offer Price
-            </p>
-            <div className="flex gap-2 items-center">
-              <input
-                type="text"
-                inputMode="numeric"
-                placeholder="$105,000"
-                value={offerInput}
-                onChange={(e) => setOfferInput(e.target.value)}
-                className="flex-1 rounded px-3 py-2 text-sm font-mono"
-                style={{
-                  background: '#0a0a0a',
-                  border: '1px solid #333',
-                  color: '#e5e5e5',
-                  outline: 'none',
-                }}
-              />
-              <Button
-                variant="primary"
-                size="sm"
-                onClick={handleSaveOffer}
-                disabled={savingOffer}
-              >
-                {savingOffer ? 'Saving...' : offerSaved ? 'Saved ✓' : 'Save'}
-              </Button>
+          <DetailPanel title="Offer Price">
+            <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+              <input type="text" inputMode="numeric" placeholder="$105,000" value={offerInput} onChange={(e) => setOfferInput(e.target.value)} style={{ ...inputBase, flex: 1 }} />
+              <PrimaryButton label={savingOffer ? 'Saving…' : offerSaved ? 'Saved ✓' : 'Save'} onClick={handleSaveOffer} disabled={savingOffer} />
             </div>
             {deal.offer_price != null && effectiveMao != null && (
-              <p
-                className="text-xs mt-2"
-                style={{
-                  color:
-                    deal.offer_price <= effectiveMao
-                      ? '#7fff7b'
-                      : deal.offer_price <= effectiveMao * 1.1
-                      ? '#ffff7b'
-                      : '#ff7b7b',
-                }}
-              >
+              <p style={{
+                marginTop: 12, fontFamily: f.mono, fontSize: 12,
+                color: deal.offer_price <= effectiveMao ? C.success : deal.offer_price <= effectiveMao * 1.1 ? C.warning : C.danger,
+              }}>
                 {deal.offer_price <= effectiveMao
                   ? `At or under MAO — ${formatCurrency(effectiveMao - deal.offer_price)} spread`
                   : `${formatCurrency(deal.offer_price - effectiveMao)} over MAO`}
               </p>
             )}
-          </Card>
+          </DetailPanel>
 
           {/* Offer Drafting (W7) — only visible when MAO approved */}
           {canDraftOffer(deal) && (
-            <Card className="mb-5">
-              <div className="flex items-center justify-between mb-3">
-                <div>
-                  <p className="text-sm font-medium" style={{ color: '#e5e5e5' }}>
-                    Offer Draft
-                  </p>
-                  {isOfferApproved(deal) && (
-                    <p className="text-xs mt-0.5" style={{ color: '#7fff7b' }}>
-                      Offer approved — lead marked Offer Made
-                    </p>
-                  )}
+            <DetailPanel
+              title="Offer Draft"
+              action={isOfferApproved(deal) ? (
+                <span style={{ fontFamily: f.mono, fontSize: 11, color: C.mute }}>{new Date(deal.offer_approved_at!).toLocaleString()}</span>
+              ) : (
+                <PrimaryButton label={draftingOffer ? 'Drafting…' : 'Draft Offer'} onClick={handleDraftOffer} disabled={draftingOffer} />
+              )}
+            >
+              {isOfferApproved(deal) && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
+                  <StatusBadge label="Offer Approved" color={C.success} />
+                  <span style={{ fontFamily: f.body, fontSize: 12, color: C.success }}>Lead marked Offer Made</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  {isOfferApproved(deal) ? (
-                    <>
-                      <Badge label="Offer Approved" color="green" />
-                      <span className="text-xs" style={{ color: '#666' }}>
-                        {new Date(deal.offer_approved_at!).toLocaleString()}
-                      </span>
-                    </>
-                  ) : (
-                    <Button
-                      variant="primary"
-                      size="sm"
-                      onClick={handleDraftOffer}
-                      disabled={draftingOffer}
-                    >
-                      {draftingOffer ? 'Drafting...' : 'Draft Offer'}
-                    </Button>
-                  )}
-                </div>
-              </div>
+              )}
 
               {offerDraftError && (
-                <p className="text-xs mb-3" style={{ color: '#ff7b7b' }}>{offerDraftError}</p>
+                <p style={{ marginBottom: 12, fontFamily: f.mono, fontSize: 12, color: C.danger }}>{offerDraftError}</p>
               )}
 
               {draftedLetter && !isOfferApproved(deal) && (
                 <div>
-                  <div
-                    className="rounded-lg p-4 mb-4"
-                    style={{ background: '#0f0f0f', border: '1px solid #333' }}
-                  >
-                    <p
-                      className="text-xs uppercase tracking-widest mb-2"
-                      style={{ color: '#C9A24A' }}
-                    >
-                      Drafted Offer Letter
-                    </p>
-                    <pre
-                      className="text-xs leading-relaxed whitespace-pre-wrap font-mono"
-                      style={{ color: '#e5e5e5' }}
-                    >
-                      {draftedLetter}
-                    </pre>
+                  <div style={{ ...codeBlock, marginBottom: 16 }}>
+                    <p style={{ ...microLabel, color: C.gold, marginBottom: 8 }}>Drafted Offer Letter</p>
+                    <pre style={{ margin: 0, fontFamily: f.mono, fontSize: 12, lineHeight: 1.6, whiteSpace: 'pre-wrap', color: C.text }}>{draftedLetter}</pre>
                   </div>
-
-                  <div className="mb-4">
-                    <label className="block text-xs mb-1" style={{ color: '#aaa' }}>
-                      Offer Price (editable)
-                    </label>
-                    <input
-                      type="text"
-                      inputMode="numeric"
-                      value={draftedPrice}
-                      onChange={(e) => setDraftedPrice(e.target.value)}
-                      className="w-full rounded px-3 py-2 text-sm font-mono"
-                      style={{
-                        background: '#0a0a0a',
-                        border: '1px solid #333',
-                        color: '#e5e5e5',
-                        outline: 'none',
-                      }}
-                    />
+                  <div style={{ marginBottom: 16 }}>
+                    <label style={{ ...microLabel, display: 'block', marginBottom: 6 }}>Offer Price (editable)</label>
+                    <input type="text" inputMode="numeric" value={draftedPrice} onChange={(e) => setDraftedPrice(e.target.value)} style={inputBase} />
                   </div>
-
-                  <Button
-                    variant="primary"
-                    onClick={handleApproveOffer}
-                    disabled={approvingOffer}
-                  >
-                    {approvingOffer ? 'Approving...' : 'Approve & Mark Offer Made'}
-                  </Button>
+                  <PrimaryButton label={approvingOffer ? 'Approving…' : 'Approve & Mark Offer Made'} onClick={handleApproveOffer} disabled={approvingOffer} />
                 </div>
               )}
-            </Card>
+            </DetailPanel>
           )}
 
           {/* Disposition (W8) — visible when Offer Approved or Under Contract */}
           {(isOfferApproved(deal) || deal.leads?.stage === 'Under Contract') && (
-            <Card className="mb-5">
-              <div className="flex items-center justify-between mb-3">
-                <div>
-                  <p className="text-sm font-medium" style={{ color: '#e5e5e5' }}>
-                    Disposition
-                  </p>
-                  <p className="text-xs mt-0.5" style={{ color: '#666' }}>
-                    Rank buyers and draft a blast to your cash buyer list
-                  </p>
+            <DetailPanel
+              title="Disposition"
+              action={
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  {dispoRanked == null && <SecondaryButton label="Load Rankings" onClick={handleLoadDispoRanking} />}
+                  <PrimaryButton label={draftingDispo ? 'Drafting…' : 'Draft Dispo Blast'} onClick={handleDraftDispo} disabled={draftingDispo} />
                 </div>
-                <div className="flex items-center gap-2">
-                  {dispoRanked == null && (
-                    <Button variant="ghost" size="sm" onClick={handleLoadDispoRanking}>
-                      Load Rankings
-                    </Button>
-                  )}
-                  <Button
-                    variant="primary"
-                    size="sm"
-                    onClick={handleDraftDispo}
-                    disabled={draftingDispo}
-                  >
-                    {draftingDispo ? 'Drafting...' : 'Draft Dispo Blast'}
-                  </Button>
-                </div>
-              </div>
+              }
+            >
+              <p style={{ marginBottom: 12, fontFamily: f.body, fontSize: 13, color: C.sub }}>Rank buyers and draft a blast to your cash buyer list</p>
 
-              {dispoError && (
-                <p className="text-xs mb-3" style={{ color: '#ff7b7b' }}>{dispoError}</p>
-              )}
+              {dispoError && <p style={{ marginBottom: 12, fontFamily: f.mono, fontSize: 12, color: C.danger }}>{dispoError}</p>}
 
               {dispoBlast && (
-                <div
-                  className="rounded-lg p-4 mb-4"
-                  style={{ background: '#0f0f0f', border: '1px solid #333' }}
-                >
-                  <p
-                    className="text-xs uppercase tracking-widest mb-2"
-                    style={{ color: '#C9A24A' }}
-                  >
-                    Disposition Blast
-                  </p>
-                  <p className="text-sm leading-relaxed" style={{ color: '#e5e5e5' }}>
-                    {dispoBlast}
-                  </p>
+                <div style={{ ...codeBlock, marginBottom: 16 }}>
+                  <p style={{ ...microLabel, color: C.gold, marginBottom: 8 }}>Disposition Blast</p>
+                  <p style={{ fontFamily: f.body, fontSize: 14, lineHeight: 1.6, color: C.text }}>{dispoBlast}</p>
                 </div>
               )}
 
               {dispoRanked != null && (
                 <div>
-                  <p className="text-xs mb-2 uppercase tracking-widest" style={{ color: '#666' }}>
-                    Ranked Buyers ({dispoRanked.length})
-                  </p>
+                  <p style={{ ...microLabel, marginBottom: 8 }}>Ranked Buyers ({dispoRanked.length})</p>
                   {dispoRanked.length === 0 ? (
-                    <p className="text-xs" style={{ color: '#555' }}>
-                      No qualified buyers found. Add buyers to the database to run dispo.
-                    </p>
+                    <p style={{ fontFamily: f.body, fontSize: 13, color: C.mute }}>No qualified buyers found. Add buyers to the database to run dispo.</p>
                   ) : (
-                    <div className="flex flex-col gap-2">
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                       {dispoRanked.map((m, idx) => (
-                        <div
-                          key={m.buyer.id}
-                          className="rounded px-3 py-3 flex items-center justify-between gap-3"
-                          style={{ background: '#0a0a0a', border: '1px solid #333' }}
-                        >
-                          <div className="flex items-center gap-2 min-w-0">
-                            <span className="text-xs" style={{ color: '#555' }}>#{idx + 1}</span>
-                            <span className="text-sm font-medium truncate" style={{ color: '#e5e5e5' }}>
-                              {m.buyer.name}
-                            </span>
-                            {m.buyer.company && (
-                              <span className="text-xs" style={{ color: '#555' }}>
-                                {m.buyer.company}
-                              </span>
-                            )}
-                            <span
-                              className="text-sm font-bold tabular-nums"
-                              style={{ color: scoreColor(m.score) }}
-                            >
-                              {m.score}
-                            </span>
+                        <div key={m.buyer.id} style={{ ...codeBlock, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: 0 }}>
+                            <span style={{ fontFamily: f.mono, fontSize: 11, color: C.mute }}>#{idx + 1}</span>
+                            <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontFamily: f.body, fontSize: 14, fontWeight: 500, color: C.text }}>{m.buyer.name}</span>
+                            {m.buyer.company && <span style={{ fontFamily: f.body, fontSize: 12, color: C.mute }}>{m.buyer.company}</span>}
+                            <span style={{ fontFamily: f.mono, fontSize: 14, fontWeight: 700, color: scoreColor(m.score) }}>{m.score}</span>
                           </div>
-                          <Button
-                            variant="ghost"
-                            size="sm"
+                          <SecondaryButton
+                            label={deal.leads?.stage === 'Assigned' && deal.matched_buyer_ids?.includes(m.buyer.id) ? 'Assigned' : assigningBuyer === m.buyer.id ? 'Assigning…' : 'Mark Assigned'}
                             onClick={() => handleMarkAssigned(m.buyer.id)}
-                            disabled={
-                              assigningBuyer === m.buyer.id ||
-                              deal.leads?.stage === 'Assigned'
-                            }
-                          >
-                            {deal.leads?.stage === 'Assigned' &&
-                            deal.matched_buyer_ids?.includes(m.buyer.id)
-                              ? 'Assigned'
-                              : assigningBuyer === m.buyer.id
-                              ? 'Assigning...'
-                              : 'Mark Assigned'}
-                          </Button>
+                            disabled={assigningBuyer === m.buyer.id || deal.leads?.stage === 'Assigned'}
+                          />
                         </div>
                       ))}
                     </div>
                   )}
                 </div>
               )}
-            </Card>
+            </DetailPanel>
           )}
 
           {/* Run Matching */}
-          <Card className="mb-5">
-            <div className="flex items-center justify-between mb-3">
-              <div>
-                <p className="text-sm font-medium" style={{ color: '#e5e5e5' }}>
-                  Buyer Matching
-                </p>
-                <p className="text-xs mt-0.5" style={{ color: '#666' }}>
-                  {deal.matched_buyer_ids?.length > 0
-                    ? `${deal.matched_buyer_ids.length} buyers matched previously`
-                    : 'No matching run yet'}
-                </p>
-              </div>
-              <Button
-                variant="primary"
-                onClick={handleMatchBuyers}
-                disabled={matching}
-              >
-                {matching ? 'Matching...' : 'Match Buyers'}
-              </Button>
-            </div>
+          <DetailPanel
+            title="Buyer Matching"
+            action={<PrimaryButton label={matching ? 'Matching…' : 'Match Buyers'} onClick={handleMatchBuyers} disabled={matching} />}
+          >
+            <p style={{ fontFamily: f.body, fontSize: 13, color: C.sub }}>
+              {deal.matched_buyer_ids?.length > 0
+                ? `${deal.matched_buyer_ids.length} buyers matched previously`
+                : 'No matching run yet'}
+            </p>
 
-            {matchError && (
-              <p className="text-xs mt-2" style={{ color: '#ff7b7b' }}>
-                {matchError}
-              </p>
-            )}
+            {matchError && <p style={{ marginTop: 8, fontFamily: f.mono, fontSize: 12, color: C.danger }}>{matchError}</p>}
 
             {/* Matched buyer scores */}
             {scores != null && scores.length > 0 && (
-              <div className="mt-4">
-                <div className="flex flex-col gap-2">
+              <div style={{ marginTop: 16 }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                   {scores.map((s, idx) => {
                     const isHardPass = s.hard_pass
-
                     return (
-                      <div
-                        key={s.buyer.id}
-                        className="rounded px-3 py-3"
-                        style={{
-                          background: '#0a0a0a',
-                          border: `1px solid ${isHardPass ? '#222' : '#333'}`,
-                          opacity: isHardPass ? 0.5 : 1,
-                        }}
-                      >
-                        <div className="flex items-center justify-between gap-3 mb-2">
-                          <div className="flex items-center gap-2">
-                            <span className="text-xs" style={{ color: '#555' }}>
-                              #{idx + 1}
-                            </span>
-                            <Link
-                              to={`/wholesale/buyers/${s.buyer.id}`}
-                              className="text-sm font-medium hover:underline"
-                              style={{ color: isHardPass ? '#555' : '#e5e5e5' }}
-                            >
-                              {s.buyer.name}
-                            </Link>
-                            {s.buyer.company && (
-                              <span className="text-xs" style={{ color: '#555' }}>
-                                {s.buyer.company}
-                              </span>
-                            )}
-                            {s.buyer.strategy && (
-                              <Badge
-                                label={s.buyer.strategy}
-                                color={
-                                  s.buyer.strategy === 'flip'
-                                    ? 'red'
-                                    : s.buyer.strategy === 'rental'
-                                    ? 'blue'
-                                    : s.buyer.strategy === 'BRRRR'
-                                    ? 'purple'
-                                    : 'gray'
-                                }
-                              />
-                            )}
+                      <div key={s.buyer.id} style={{ ...codeBlock, opacity: isHardPass ? 0.5 : 1 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, marginBottom: 8, flexWrap: 'wrap' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: 0, flexWrap: 'wrap' }}>
+                            <span style={{ fontFamily: f.mono, fontSize: 11, color: C.mute }}>#{idx + 1}</span>
+                            <Link to={`/wholesale/buyers/${s.buyer.id}`} style={{ fontFamily: f.body, fontSize: 14, fontWeight: 500, color: isHardPass ? C.mute : C.text }}>{s.buyer.name}</Link>
+                            {s.buyer.company && <span style={{ fontFamily: f.body, fontSize: 12, color: C.mute }}>{s.buyer.company}</span>}
+                            {s.buyer.strategy && <TagBadge label={s.buyer.strategy} />}
                           </div>
-
                           {isHardPass ? (
-                            <span className="text-xs" style={{ color: '#555' }}>
-                              Outside buy box
-                            </span>
+                            <span style={{ fontFamily: f.mono, fontSize: 11, color: C.mute }}>Outside buy box</span>
                           ) : (
-                            <span
-                              className="text-sm font-bold tabular-nums"
-                              style={{ color: scoreColor(s.score) }}
-                            >
-                              {s.score}
-                            </span>
+                            <span style={{ fontFamily: f.mono, fontSize: 14, fontWeight: 700, color: scoreColor(s.score) }}>{s.score}</span>
                           )}
                         </div>
-
-                        {/* Score bar */}
                         {!isHardPass && (
-                          <div
-                            className="w-full rounded-full mb-2"
-                            style={{ background: '#1a1a1a', height: '4px' }}
-                          >
-                            <div
-                              className="rounded-full"
-                              style={{
-                                width: `${s.score}%`,
-                                height: '4px',
-                                background: scoreColor(s.score),
-                              }}
-                            />
+                          <div style={{ width: '100%', height: 4, borderRadius: 999, marginBottom: 8, background: C.surface2 }}>
+                            <div style={{ width: `${s.score}%`, height: 4, borderRadius: 999, background: scoreColor(s.score) }} />
                           </div>
                         )}
-
-                        {/* Key reason */}
                         {s.reasons.length > 0 && (
-                          <p className="text-xs" style={{ color: '#555' }}>
-                            {isHardPass ? s.reasons[0] : s.reasons[1] ?? s.reasons[0]}
-                          </p>
+                          <p style={{ fontFamily: f.body, fontSize: 12, color: C.mute }}>{isHardPass ? s.reasons[0] : s.reasons[1] ?? s.reasons[0]}</p>
                         )}
                       </div>
                     )
                   })}
                 </div>
 
-                <div className="mt-4">
-                  <Button
-                    variant="ghost"
-                    size="sm"
+                <div style={{ marginTop: 16 }}>
+                  <SecondaryButton
+                    label={generatingSummary ? 'Generating…' : 'Generate Deal Summary'}
                     onClick={handleGenerateSummary}
-                    disabled={
-                      generatingSummary ||
-                      (scores == null && (deal.matched_buyer_ids?.length ?? 0) === 0)
-                    }
-                  >
-                    {generatingSummary ? 'Generating...' : 'Generate Deal Summary'}
-                  </Button>
-                  {summaryError && (
-                    <p className="text-xs mt-2" style={{ color: '#ff7b7b' }}>{summaryError}</p>
-                  )}
+                    disabled={generatingSummary || (scores == null && (deal.matched_buyer_ids?.length ?? 0) === 0)}
+                  />
+                  {summaryError && <p style={{ marginTop: 8, fontFamily: f.mono, fontSize: 12, color: C.danger }}>{summaryError}</p>}
                   {dealSummary && (
-                    <div
-                      className="mt-3 rounded-lg p-4"
-                      style={{ background: '#0f0f0f', border: '1px solid #333' }}
-                    >
-                      <p
-                        className="text-xs uppercase tracking-widest mb-2"
-                        style={{ color: '#C9A24A' }}
-                      >
-                        Deal Brief
-                      </p>
-                      <p className="text-sm leading-relaxed" style={{ color: '#e5e5e5' }}>
-                        {dealSummary}
-                      </p>
+                    <div style={{ ...codeBlock, marginTop: 12 }}>
+                      <p style={{ ...microLabel, color: C.gold, marginBottom: 8 }}>Deal Brief</p>
+                      <p style={{ fontFamily: f.body, fontSize: 14, lineHeight: 1.6, color: C.text }}>{dealSummary}</p>
                     </div>
                   )}
                 </div>
@@ -1110,14 +751,11 @@ export default function DealDetail() {
             )}
 
             {scores != null && scores.length === 0 && (
-              <p className="text-xs mt-3" style={{ color: '#555' }}>
-                No active buyers found in the database.
-              </p>
+              <p style={{ marginTop: 12, fontFamily: f.body, fontSize: 13, color: C.mute }}>No active buyers found in the database.</p>
             )}
-          </Card>
-
+          </DetailPanel>
         </div>
       </div>
-    </>
+    </DesktopShell>
   )
 }

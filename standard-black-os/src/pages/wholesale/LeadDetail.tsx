@@ -3,10 +3,14 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '@wholesale/lib/supabase'
 import type { Lead, LeadStage, Conversation } from '@wholesale/lib/types'
 import { isContactable } from '@wholesale/lib/compliance'
-import WholesaleNav from '@wholesale/components/WholesaleNav'
-import Button from '@wholesale/components/ui/Button'
-import Badge from '@wholesale/components/ui/Badge'
-import Card from '@wholesale/components/ui/Card'
+import { C, f } from '../../tokens.js'
+import DesktopShell from '@wholesale/components/ui/DesktopShell'
+import PageHeader from '@wholesale/components/ui/PageHeader'
+import DetailPanel from '@wholesale/components/ui/DetailPanel'
+import StatusBadge from '@wholesale/components/ui/StatusBadge'
+import TagBadge from '@wholesale/components/ui/TagBadge'
+import { PrimaryButton, SecondaryButton } from '@wholesale/components/ui/ActionBar'
+import { inputBase, microLabel } from '@wholesale/components/ui/styles'
 
 const STAGES: LeadStage[] = [
   'New', 'Skip Traced', 'Contacted', 'Responded',
@@ -14,20 +18,13 @@ const STAGES: LeadStage[] = [
   'Under Contract', 'Assigned', 'Closed',
 ]
 
-const MOTIVATION_COLORS: Record<string, 'blue' | 'yellow' | 'red' | 'purple' | 'cyan'> = {
-  absentee: 'blue',
-  vacant: 'yellow',
-  tax_delinquent: 'red',
-  pre_foreclosure: 'red',
-  inherited: 'purple',
-  tired_landlord: 'cyan',
+const SENTIMENT_COLORS: Record<string, string> = {
+  positive: C.success,
+  neutral: C.gold,
+  negative: C.danger,
 }
 
-const SENTIMENT_COLORS: Record<string, string> = {
-  positive: '#4ade80',
-  neutral: '#C9A24A',
-  negative: '#ff7b7b',
-}
+const innerWrap: React.CSSProperties = { maxWidth: 768, margin: '0 auto' }
 
 interface InboundScore {
   score: number
@@ -165,177 +162,159 @@ export default function LeadDetail() {
   }, [id, replyText, loadConversations])
 
   if (loading) return (
-    <><WholesaleNav /><div className="min-h-screen font-mono flex items-center justify-center" style={{ background: '#050505', color: '#666' }}>Loading...</div></>
+    <DesktopShell>
+      <p style={{ fontFamily: f.body, fontSize: 14, color: C.mute }}>Loading…</p>
+    </DesktopShell>
   )
   if (notFound || !lead) return (
-    <><WholesaleNav /><div className="p-8 font-mono" style={{ background: '#050505' }}><p className="text-sm mb-4" style={{ color: '#aaa' }}>Lead not found.</p><Button onClick={() => navigate('/wholesale/leads')} variant="ghost" size="sm">Back to Leads</Button></div></>
+    <DesktopShell>
+      <div style={innerWrap}>
+        <p style={{ fontFamily: f.body, fontSize: 14, color: C.sub, marginBottom: 16 }}>Lead not found.</p>
+        <SecondaryButton label="Back to Leads" onClick={() => navigate('/wholesale/leads')} />
+      </div>
+    </DesktopShell>
   )
 
   return (
-    <>
-      <WholesaleNav />
-      <div className="min-h-screen font-mono" style={{ background: '#050505', color: '#F5F1E8' }}>
-        <div className="max-w-3xl mx-auto px-4 py-6 md:px-6 md:py-8 pb-[90px] md:pb-8">
+    <DesktopShell>
+      <div style={innerWrap}>
+        {/* Back */}
+        <button
+          onClick={() => navigate('/wholesale/leads')}
+          style={{ marginBottom: 16, display: 'inline-flex', alignItems: 'center', gap: 4, background: 'none', border: 'none', cursor: 'pointer', fontFamily: f.mono, fontSize: 12, color: C.mute }}
+        >
+          ← All Leads
+        </button>
 
-          {/* Back */}
-          <button
-            onClick={() => navigate('/wholesale/leads')}
-            className="text-xs mb-6 flex items-center gap-1 hover:opacity-70 transition-opacity"
-            style={{ color: '#666', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit' }}
-          >
-            ← All Leads
-          </button>
-
-          {/* Opt-out banner */}
-          {!contactable && (
-            <div
-              className="mb-5 px-4 py-3 rounded text-sm font-mono"
-              style={{ background: 'rgba(255,60,60,0.08)', border: '1px solid #ff3c3c', color: '#ff7b7b' }}
-            >
-              Opted out — do not contact. This seller has replied with a stop keyword and must be removed from all outreach.
-            </div>
-          )}
-
-          {/* Header */}
-          <div className="mb-6">
-            <h1 className="text-2xl font-bold mb-1" style={{ color: '#F5F1E8' }}>{lead.address}</h1>
-            <p className="text-sm" style={{ color: '#666' }}>{lead.city}, {lead.state} {lead.zip}</p>
-            {lead.owner_name && <p className="text-sm mt-1" style={{ color: '#aaa' }}>Owner: {lead.owner_name}</p>}
-            <div className="flex flex-wrap gap-2 mt-3">
-              <Badge label={lead.stage} color="gold" />
-              {lead.motivation_signals?.map(s => (
-                <Badge key={s} label={s.replace(/_/g, ' ')} color={MOTIVATION_COLORS[s] ?? 'gray'} />
-              ))}
-            </div>
+        {/* Opt-out banner */}
+        {!contactable && (
+          <div style={{
+            marginBottom: 20, padding: '12px 16px', borderRadius: 12,
+            background: 'rgba(248,113,113,0.08)', border: `1px solid ${C.danger}`,
+            fontFamily: f.body, fontSize: 14, color: C.danger,
+          }}>
+            Opted out — do not contact. This seller has replied with a stop keyword and must be removed from all outreach.
           </div>
+        )}
 
+        {/* Header */}
+        <PageHeader
+          eyebrow="Lead"
+          title={lead.address}
+          subtitle={`${lead.city}, ${lead.state} ${lead.zip}${lead.owner_name ? ` · Owner: ${lead.owner_name}` : ''}`}
+        >
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+            <StatusBadge label={lead.stage} color={C.gold} />
+            {lead.motivation_signals?.map(s => (
+              <TagBadge key={s} label={s.replace(/_/g, ' ')} />
+            ))}
+          </div>
+        </PageHeader>
+
+        <div style={{ marginTop: 20, display: 'grid', gap: 20 }}>
           {/* Stage Selector */}
-          <Card className="mb-5">
-            <p className="text-xs uppercase tracking-widest mb-3" style={{ color: '#555' }}>Pipeline Stage</p>
-            <div className="flex flex-wrap gap-2">
-              {STAGES.map(stage => (
-                <button
-                  key={stage}
-                  onClick={() => handleStageChange(stage)}
-                  disabled={updatingStage}
-                  className="px-3 py-1 rounded text-xs font-mono transition-all"
-                  style={{
-                    background: lead.stage === stage ? 'rgba(201,162,74,0.12)' : 'transparent',
-                    border: `1px solid ${lead.stage === stage ? '#C9A24A' : '#222'}`,
-                    color: lead.stage === stage ? '#C9A24A' : '#666',
-                    cursor: updatingStage ? 'not-allowed' : 'pointer',
-                  }}
-                >
-                  {stage}
-                </button>
-              ))}
+          <DetailPanel title="Pipeline Stage">
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+              {STAGES.map(stage => {
+                const active = lead.stage === stage
+                return (
+                  <button
+                    key={stage}
+                    onClick={() => handleStageChange(stage)}
+                    disabled={updatingStage}
+                    style={{
+                      padding: '6px 12px', borderRadius: 999, fontFamily: f.mono, fontSize: 12,
+                      background: active ? 'rgba(201,162,74,0.12)' : 'transparent',
+                      border: `1px solid ${active ? C.gold : C.border}`,
+                      color: active ? C.gold : C.mute,
+                      cursor: updatingStage ? 'not-allowed' : 'pointer',
+                    }}
+                  >
+                    {stage}
+                  </button>
+                )
+              })}
             </div>
-          </Card>
+          </DetailPanel>
 
           {/* Quick stage advance: Responded → Qualified */}
           {(lead.stage === 'Responded') && (
-            <Card className="mb-5">
-              <p className="text-xs uppercase tracking-widest mb-3" style={{ color: '#555' }}>Advance Stage</p>
-              <p className="text-xs mb-3" style={{ color: '#888' }}>
+            <DetailPanel title="Advance Stage">
+              <p style={{ fontFamily: f.body, fontSize: 13, color: C.sub, marginBottom: 12 }}>
                 Seller has responded. Mark as Qualified once you have confirmed motivation and basic criteria.
               </p>
-              <Button
+              <PrimaryButton
+                label={updatingStage ? 'Updating…' : 'Mark Qualified →'}
                 onClick={() => handleStageChange('Qualified')}
                 disabled={updatingStage}
-                variant="primary"
-                size="sm"
-              >
-                {updatingStage ? 'Updating...' : 'Mark Qualified →'}
-              </Button>
-            </Card>
+              />
+            </DetailPanel>
           )}
 
           {/* Property Details */}
-          <Card className="mb-5">
-            <p className="text-xs uppercase tracking-widest mb-3" style={{ color: '#555' }}>Property Details</p>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-sm">
-              {lead.property_type && <div><p className="text-xs mb-1" style={{ color: '#555' }}>Type</p><p style={{ color: '#F5F1E8' }}>{lead.property_type}</p></div>}
-              {lead.beds != null && <div><p className="text-xs mb-1" style={{ color: '#555' }}>Beds</p><p style={{ color: '#F5F1E8' }}>{lead.beds}</p></div>}
-              {lead.baths != null && <div><p className="text-xs mb-1" style={{ color: '#555' }}>Baths</p><p style={{ color: '#F5F1E8' }}>{lead.baths}</p></div>}
-              {lead.sqft != null && <div><p className="text-xs mb-1" style={{ color: '#555' }}>Sqft</p><p style={{ color: '#F5F1E8' }}>{lead.sqft.toLocaleString()}</p></div>}
-              {lead.year_built != null && <div><p className="text-xs mb-1" style={{ color: '#555' }}>Year Built</p><p style={{ color: '#F5F1E8' }}>{lead.year_built}</p></div>}
-              {lead.owner_phone && <div><p className="text-xs mb-1" style={{ color: '#555' }}>Phone</p><p style={{ color: '#F5F1E8' }}>{lead.owner_phone}</p></div>}
+          <DetailPanel title="Property Details">
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: 16 }}>
+              {lead.property_type && <div><p style={microLabel}>Type</p><p style={{ marginTop: 4, fontFamily: f.body, fontSize: 14, color: C.text }}>{lead.property_type}</p></div>}
+              {lead.beds != null && <div><p style={microLabel}>Beds</p><p style={{ marginTop: 4, fontFamily: f.body, fontSize: 14, color: C.text }}>{lead.beds}</p></div>}
+              {lead.baths != null && <div><p style={microLabel}>Baths</p><p style={{ marginTop: 4, fontFamily: f.body, fontSize: 14, color: C.text }}>{lead.baths}</p></div>}
+              {lead.sqft != null && <div><p style={microLabel}>Sqft</p><p style={{ marginTop: 4, fontFamily: f.body, fontSize: 14, color: C.text }}>{lead.sqft.toLocaleString()}</p></div>}
+              {lead.year_built != null && <div><p style={microLabel}>Year Built</p><p style={{ marginTop: 4, fontFamily: f.body, fontSize: 14, color: C.text }}>{lead.year_built}</p></div>}
+              {lead.owner_phone && <div><p style={microLabel}>Phone</p><p style={{ marginTop: 4, fontFamily: f.body, fontSize: 14, color: C.text }}>{lead.owner_phone}</p></div>}
             </div>
-          </Card>
+          </DetailPanel>
 
           {/* Log Seller Reply + Score */}
-          <Card className="mb-5">
-            <p className="text-xs uppercase tracking-widest mb-4" style={{ color: '#555' }}>Log Seller Reply</p>
-
+          <DetailPanel title="Log Seller Reply">
             <textarea
               value={replyText}
               onChange={e => setReplyText(e.target.value)}
               placeholder="Paste or type the seller's reply..."
-              className="w-full rounded px-3 py-2 text-sm font-mono mb-3"
-              style={{
-                background: '#0a0a0a',
-                border: '1px solid #333',
-                color: '#F5F1E8',
-                outline: 'none',
-                resize: 'vertical',
-                minHeight: 80,
-              }}
+              style={{ ...inputBase, minHeight: 80, resize: 'vertical', marginBottom: 12 }}
             />
-
-            <Button
+            <PrimaryButton
+              label={scoring ? 'Scoring…' : 'Score Reply'}
               onClick={handleScoreReply}
               disabled={scoring || !replyText.trim()}
-              variant="primary"
-              size="sm"
-            >
-              {scoring ? 'Scoring...' : 'Score Reply'}
-            </Button>
+            />
 
             {scoreError && (
-              <p className="text-xs mt-2" style={{ color: '#ff7b7b' }}>{scoreError}</p>
+              <p style={{ marginTop: 8, fontFamily: f.mono, fontSize: 12, color: C.danger }}>{scoreError}</p>
             )}
 
             {/* Score results */}
             {scoreResult && !scoreResult.optedOut && (
-              <div className="mt-5">
-                {/* Big score number */}
-                <div className="flex items-end gap-3 mb-4">
-                  <span
-                    className="text-5xl font-bold"
-                    style={{ color: scoreResult.score >= 60 ? '#4ade80' : scoreResult.score >= 35 ? '#C9A24A' : '#ff7b7b' }}
-                  >
+              <div style={{ marginTop: 20 }}>
+                <div style={{ display: 'flex', alignItems: 'flex-end', gap: 12, marginBottom: 16 }}>
+                  <span style={{
+                    fontFamily: f.display, fontSize: 48, fontWeight: 700, lineHeight: 1,
+                    color: scoreResult.score >= 60 ? C.success : scoreResult.score >= 35 ? C.gold : C.danger,
+                  }}>
                     {scoreResult.score}
                   </span>
-                  <span className="text-sm mb-2" style={{ color: '#555' }}>/ 100 motivation score</span>
+                  <span style={{ marginBottom: 8, fontFamily: f.body, fontSize: 14, color: C.mute }}>/ 100 motivation score</span>
                 </div>
 
-                {/* Sentiment */}
-                <div className="mb-4">
-                  <p className="text-xs uppercase tracking-widest mb-1" style={{ color: '#555' }}>Sentiment</p>
-                  <span
-                    className="text-sm font-mono capitalize"
-                    style={{ color: SENTIMENT_COLORS[scoreResult.sentiment] ?? '#aaa' }}
-                  >
+                <div style={{ marginBottom: 16 }}>
+                  <p style={microLabel}>Sentiment</p>
+                  <span style={{ marginTop: 4, display: 'inline-block', fontFamily: f.mono, fontSize: 14, textTransform: 'capitalize', color: SENTIMENT_COLORS[scoreResult.sentiment] ?? C.sub }}>
                     {scoreResult.sentiment}
                   </span>
                 </div>
 
-                {/* Summary */}
                 {scoreResult.summary && (
-                  <div className="mb-4">
-                    <p className="text-xs uppercase tracking-widest mb-1" style={{ color: '#555' }}>AI Summary</p>
-                    <p className="text-sm" style={{ color: '#aaa' }}>{scoreResult.summary}</p>
+                  <div style={{ marginBottom: 16 }}>
+                    <p style={microLabel}>AI Summary</p>
+                    <p style={{ marginTop: 4, fontFamily: f.body, fontSize: 14, color: C.sub }}>{scoreResult.summary}</p>
                   </div>
                 )}
 
-                {/* Qualifying questions */}
                 {scoreResult.qualifying_questions.length > 0 && (
                   <div>
-                    <p className="text-xs uppercase tracking-widest mb-2" style={{ color: '#555' }}>Suggested Follow-Up Questions</p>
-                    <ol className="space-y-2">
+                    <p style={{ ...microLabel, marginBottom: 8 }}>Suggested Follow-Up Questions</p>
+                    <ol style={{ display: 'grid', gap: 8, listStyle: 'none', padding: 0, margin: 0 }}>
                       {scoreResult.qualifying_questions.map((q, i) => (
-                        <li key={i} className="text-sm flex gap-2" style={{ color: '#aaa' }}>
-                          <span style={{ color: '#C9A24A', minWidth: 16 }}>{i + 1}.</span>
+                        <li key={i} style={{ display: 'flex', gap: 8, fontFamily: f.body, fontSize: 14, color: C.sub }}>
+                          <span style={{ color: C.gold, minWidth: 16 }}>{i + 1}.</span>
                           <span>{q}</span>
                         </li>
                       ))}
@@ -347,74 +326,77 @@ export default function LeadDetail() {
 
             {/* Opt-out result from scoring */}
             {scoreResult?.optedOut && (
-              <div
-                className="mt-4 px-4 py-3 rounded text-sm"
-                style={{ background: 'rgba(255,60,60,0.08)', border: '1px solid #ff3c3c', color: '#ff7b7b' }}
-              >
+              <div style={{
+                marginTop: 16, padding: '12px 16px', borderRadius: 12,
+                background: 'rgba(248,113,113,0.08)', border: `1px solid ${C.danger}`,
+                fontFamily: f.body, fontSize: 14, color: C.danger,
+              }}>
                 STOP keyword detected — this seller has opted out. All contact actions are now suppressed.
               </div>
             )}
-          </Card>
+          </DetailPanel>
 
           {/* Outreach — hidden when opted out */}
           {contactable && (
-            <Card>
-              <p className="text-xs uppercase tracking-widest mb-4" style={{ color: '#555' }}>AI Outreach</p>
-
+            <DetailPanel title="AI Outreach">
               {/* Channel selector */}
-              <div className="flex gap-2 mb-4">
-                {(['sms', 'email'] as const).map(ch => (
-                  <button
-                    key={ch}
-                    onClick={() => { setChannel(ch); setDraft(''); setDraftSubject('') }}
-                    className="px-3 py-1 rounded text-xs font-mono transition-all"
-                    style={{
-                      background: channel === ch ? 'rgba(201,162,74,0.12)' : 'transparent',
-                      border: `1px solid ${channel === ch ? '#C9A24A' : '#222'}`,
-                      color: channel === ch ? '#C9A24A' : '#666',
-                      cursor: 'pointer',
-                      textTransform: 'uppercase',
-                    }}
-                  >
-                    {ch.toUpperCase()}
-                  </button>
-                ))}
+              <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
+                {(['sms', 'email'] as const).map(ch => {
+                  const active = channel === ch
+                  return (
+                    <button
+                      key={ch}
+                      onClick={() => { setChannel(ch); setDraft(''); setDraftSubject('') }}
+                      style={{
+                        padding: '6px 12px', borderRadius: 999, fontFamily: f.mono, fontSize: 12,
+                        textTransform: 'uppercase',
+                        background: active ? 'rgba(201,162,74,0.12)' : 'transparent',
+                        border: `1px solid ${active ? C.gold : C.border}`,
+                        color: active ? C.gold : C.mute, cursor: 'pointer',
+                      }}
+                    >
+                      {ch.toUpperCase()}
+                    </button>
+                  )
+                })}
               </div>
 
-              <Button onClick={handleDraftOutreach} disabled={drafting} variant="ghost" size="sm">
-                {drafting ? 'Drafting...' : `Draft ${channel.toUpperCase()} with AI`}
-              </Button>
+              <SecondaryButton
+                label={drafting ? 'Drafting…' : `Draft ${channel.toUpperCase()} with AI`}
+                onClick={handleDraftOutreach}
+                disabled={drafting}
+              />
 
-              {draftError && <p className="text-xs mt-2" style={{ color: '#ff7b7b' }}>{draftError}</p>}
+              {draftError && <p style={{ marginTop: 8, fontFamily: f.mono, fontSize: 12, color: C.danger }}>{draftError}</p>}
 
               {draft && (
-                <div className="mt-4">
+                <div style={{ marginTop: 16 }}>
                   {draftSubject && (
-                    <div className="mb-2">
-                      <p className="text-xs mb-1" style={{ color: '#555' }}>Subject</p>
-                      <p className="text-sm" style={{ color: '#F5F1E8' }}>{draftSubject}</p>
+                    <div style={{ marginBottom: 8 }}>
+                      <p style={microLabel}>Subject</p>
+                      <p style={{ marginTop: 4, fontFamily: f.body, fontSize: 14, color: C.text }}>{draftSubject}</p>
                     </div>
                   )}
-                  <p className="text-xs mb-2" style={{ color: '#555' }}>Message</p>
+                  <p style={{ ...microLabel, marginBottom: 8 }}>Message</p>
                   <textarea
                     value={draft}
                     onChange={e => setDraft(e.target.value)}
-                    className="w-full rounded px-3 py-2 text-sm font-mono"
-                    style={{ background: '#0a0a0a', border: '1px solid #333', color: '#F5F1E8', outline: 'none', resize: 'vertical', minHeight: 100 }}
+                    style={{ ...inputBase, minHeight: 100, resize: 'vertical' }}
                   />
-                  <div className="flex items-center gap-2 mt-2">
-                    <Button onClick={handleSend} disabled={sending || !draft} variant="primary" size="sm">
-                      {sending ? 'Sending...' : sendSuccess ? 'Sent ✓' : `Send ${channel.toUpperCase()}`}
-                    </Button>
-                    {sendError && <p className="text-xs" style={{ color: '#ff7b7b' }}>{sendError}</p>}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 12 }}>
+                    <PrimaryButton
+                      label={sending ? 'Sending…' : sendSuccess ? 'Sent ✓' : `Send ${channel.toUpperCase()}`}
+                      onClick={handleSend}
+                      disabled={sending || !draft}
+                    />
+                    {sendError && <p style={{ fontFamily: f.mono, fontSize: 12, color: C.danger }}>{sendError}</p>}
                   </div>
                 </div>
               )}
-            </Card>
+            </DetailPanel>
           )}
-
         </div>
       </div>
-    </>
+    </DesktopShell>
   )
 }

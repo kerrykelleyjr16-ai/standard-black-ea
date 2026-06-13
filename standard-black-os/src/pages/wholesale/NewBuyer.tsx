@@ -2,13 +2,25 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '@wholesale/lib/supabase'
 import type { BuyerStrategy, RepairLevel } from '@wholesale/lib/types'
-import Button from '@wholesale/components/ui/Button'
-import Card from '@wholesale/components/ui/Card'
-import WholesaleNav from '@wholesale/components/WholesaleNav'
+import { C, f } from '../../tokens.js'
+import DesktopShell from '@wholesale/components/ui/DesktopShell'
+import PageHeader from '@wholesale/components/ui/PageHeader'
+import DetailPanel from '@wholesale/components/ui/DetailPanel'
+import ActionBar, { PrimaryButton, SecondaryButton } from '@wholesale/components/ui/ActionBar'
+import { Field, TextInput, SelectInput, TextArea } from '@wholesale/components/ui/FormPanel'
+import { microLabel } from '@wholesale/components/ui/styles'
 
 const PROPERTY_TYPE_OPTIONS = ['SFR', 'Multi-Family', 'Condo', 'Commercial']
 const STRATEGY_OPTIONS: BuyerStrategy[] = ['flip', 'rental', 'BRRRR', 'buy-hold']
 const CONDITION_OPTIONS: RepairLevel[] = ['light', 'moderate', 'heavy']
+
+const innerWrap: React.CSSProperties = { maxWidth: 768, margin: '0 auto' }
+
+const gridStyle = (cols: number): React.CSSProperties => ({
+  display: 'grid',
+  gridTemplateColumns: `repeat(auto-fit, minmax(${cols >= 3 ? 140 : 180}px, 1fr))`,
+  gap: 16,
+})
 
 interface FormState {
   name: string
@@ -54,44 +66,6 @@ const initialForm: FormState = {
   max_rehab: '',
   financing: '',
   proof_of_funds: '',
-}
-
-const inputStyle: React.CSSProperties = {
-  background: '#111',
-  border: '1px solid #333',
-  color: '#e5e5e5',
-  borderRadius: 6,
-  padding: '8px 12px',
-  fontSize: 13,
-  fontFamily: 'inherit',
-  width: '100%',
-  outline: 'none',
-}
-
-const labelStyle: React.CSSProperties = {
-  display: 'block',
-  fontSize: 11,
-  color: '#666',
-  marginBottom: 4,
-  textTransform: 'uppercase',
-  letterSpacing: '0.06em',
-}
-
-const errorStyle: React.CSSProperties = {
-  color: '#ff7b7b',
-  fontSize: 11,
-  marginTop: 4,
-}
-
-function SectionHeading({ children }: { children: React.ReactNode }) {
-  return (
-    <h3
-      className="text-xs uppercase tracking-widest mb-4"
-      style={{ color: '#C9A24A', borderBottom: '1px solid rgba(201,162,74,0.15)', paddingBottom: 8 }}
-    >
-      {children}
-    </h3>
-  )
 }
 
 export default function NewBuyer() {
@@ -167,141 +141,73 @@ export default function NewBuyer() {
   }
 
   return (
-    <>
-      <WholesaleNav />
-      <div className="p-4 md:p-8 pb-[90px] md:pb-8 font-mono" style={{ background: '#0a0a0a', minHeight: '100vh' }}>
-        <div className="max-w-3xl mx-auto">
-          {/* Header */}
-          <div className="flex items-center justify-between gap-3 mb-8">
-            <div>
-              <h1 className="text-xl font-medium" style={{ color: '#e5e5e5' }}>Add Buyer</h1>
-              <p className="text-xs mt-1" style={{ color: '#666' }}>New buyer profile and buy box</p>
-            </div>
-            <Button onClick={() => navigate('/wholesale/buyers')} variant="ghost" size="md">
-              Cancel
-            </Button>
+    <DesktopShell>
+      <div style={innerWrap}>
+        <PageHeader eyebrow="Disposition Network" title="Add Buyer" subtitle="New buyer profile and buy box">
+          <SecondaryButton label="Cancel" onClick={() => navigate('/wholesale/buyers')} />
+        </PageHeader>
+
+        {serverError && (
+          <div style={{
+            marginTop: 16, padding: '12px 16px', borderRadius: 12,
+            background: 'rgba(248,113,113,0.08)', border: `1px solid ${C.danger}`,
+            fontFamily: f.body, fontSize: 14, color: C.danger,
+          }}>
+            {serverError}
           </div>
+        )}
 
-          {serverError && (
-            <div
-              className="mb-6 px-4 py-3 rounded text-sm"
-              style={{ background: '#2e1a1a', border: '1px solid #ff7b7b33', color: '#ff7b7b' }}
-            >
-              {serverError}
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} noValidate>
-            {/* Identity Section */}
-            <Card className="mb-6">
-              <SectionHeading>Identity</SectionHeading>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-                <div>
-                  <label style={labelStyle}>Name *</label>
-                  <input
-                    style={{
-                      ...inputStyle,
-                      borderColor: nameError ? '#ff7b7b' : '#333',
-                    }}
+        <form onSubmit={handleSubmit} noValidate style={{ marginTop: 20, display: 'grid', gap: 20 }}>
+          {/* Identity */}
+          <DetailPanel title="Identity">
+            <div style={{ display: 'grid', gap: 16 }}>
+              <div style={gridStyle(2)}>
+                <Field label="Name *">
+                  <TextInput
+                    style={{ borderColor: nameError ? C.danger : undefined }}
                     value={form.name}
                     onChange={e => set('name', e.target.value)}
                     placeholder="Marcus Webb"
                   />
-                  {nameError && <div style={errorStyle}>{nameError}</div>}
-                </div>
-                <div>
-                  <label style={labelStyle}>Company</label>
-                  <input
-                    style={inputStyle}
-                    value={form.company}
-                    onChange={e => set('company', e.target.value)}
-                    placeholder="Webb Investments"
-                  />
-                </div>
+                  {nameError && <div style={{ color: C.danger, fontFamily: f.mono, fontSize: 11, marginTop: 4 }}>{nameError}</div>}
+                </Field>
+                <Field label="Company">
+                  <TextInput value={form.company} onChange={e => set('company', e.target.value)} placeholder="Webb Investments" />
+                </Field>
               </div>
+              <div style={gridStyle(2)}>
+                <Field label="Phone">
+                  <TextInput type="tel" value={form.phone} onChange={e => set('phone', e.target.value)} placeholder="214-555-0100" />
+                </Field>
+                <Field label="Email">
+                  <TextInput type="email" value={form.email} onChange={e => set('email', e.target.value)} placeholder="marcus@webb.com" />
+                </Field>
+              </div>
+              <Field label="Source">
+                <TextInput value={form.source} onChange={e => set('source', e.target.value)} placeholder="How you know them (REIA, referral, cold call...)" />
+              </Field>
+              <Field label="Notes">
+                <TextArea value={form.notes} onChange={e => set('notes', e.target.value)} placeholder="Any relevant background..." />
+              </Field>
+            </div>
+          </DetailPanel>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-                <div>
-                  <label style={labelStyle}>Phone</label>
-                  <input
-                    style={inputStyle}
-                    value={form.phone}
-                    onChange={e => set('phone', e.target.value)}
-                    placeholder="214-555-0100"
-                    type="tel"
-                  />
-                </div>
-                <div>
-                  <label style={labelStyle}>Email</label>
-                  <input
-                    style={inputStyle}
-                    value={form.email}
-                    onChange={e => set('email', e.target.value)}
-                    placeholder="marcus@webb.com"
-                    type="email"
-                  />
-                </div>
-              </div>
-
-              <div className="mb-4">
-                <label style={labelStyle}>Source</label>
-                <input
-                  style={inputStyle}
-                  value={form.source}
-                  onChange={e => set('source', e.target.value)}
-                  placeholder="How you know them (REIA, referral, cold call...)"
-                />
-              </div>
+          {/* Buy Box */}
+          <DetailPanel title="Buy Box">
+            <div style={{ display: 'grid', gap: 16 }}>
+              <Field label="Target Markets">
+                <TextInput value={form.target_markets} onChange={e => set('target_markets', e.target.value)} placeholder="75208, 75203, Dallas, Irving — comma separated" />
+                <p style={{ fontFamily: f.mono, fontSize: 11, color: C.mute, marginTop: 4 }}>Zip codes or city names, comma-separated</p>
+              </Field>
 
               <div>
-                <label style={labelStyle}>Notes</label>
-                <textarea
-                  style={{ ...inputStyle, resize: 'vertical', minHeight: 80 }}
-                  value={form.notes}
-                  onChange={e => set('notes', e.target.value)}
-                  placeholder="Any relevant background..."
-                />
-              </div>
-            </Card>
-
-            {/* Buy Box Section */}
-            <Card className="mb-8">
-              <SectionHeading>Buy Box</SectionHeading>
-
-              {/* Target Markets */}
-              <div className="mb-4">
-                <label style={labelStyle}>Target Markets</label>
-                <input
-                  style={inputStyle}
-                  value={form.target_markets}
-                  onChange={e => set('target_markets', e.target.value)}
-                  placeholder="75208, 75203, Dallas, Irving — comma separated"
-                />
-                <p className="text-xs mt-1" style={{ color: '#555' }}>
-                  Zip codes or city names, comma-separated
-                </p>
-              </div>
-
-              {/* Property Types */}
-              <div className="mb-4">
-                <label style={labelStyle}>Property Types</label>
-                <div className="flex flex-wrap gap-3 mt-1">
+                <p style={{ ...microLabel, marginBottom: 8 }}>Property Types</p>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
                   {PROPERTY_TYPE_OPTIONS.map(pt => {
                     const checked = form.property_types.includes(pt)
                     return (
-                      <label
-                        key={pt}
-                        className="flex items-center gap-2 cursor-pointer text-sm"
-                        style={{ color: checked ? '#e5e5e5' : '#666' }}
-                      >
-                        <input
-                          type="checkbox"
-                          checked={checked}
-                          onChange={() => togglePropertyType(pt)}
-                          className="accent-[#C9A24A]"
-                          style={{ cursor: 'pointer' }}
-                        />
+                      <label key={pt} style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', fontFamily: f.body, fontSize: 14, color: checked ? C.text : C.mute }}>
+                        <input type="checkbox" checked={checked} onChange={() => togglePropertyType(pt)} style={{ accentColor: C.gold, cursor: 'pointer' }} />
                         {pt}
                       </label>
                     )
@@ -309,178 +215,71 @@ export default function NewBuyer() {
                 </div>
               </div>
 
-              {/* Price Range */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-                <div>
-                  <label style={labelStyle}>Min Price ($)</label>
-                  <input
-                    style={inputStyle}
-                    value={form.min_price}
-                    onChange={e => set('min_price', e.target.value)}
-                    placeholder="60000"
-                    type="number"
-                    min="0"
-                  />
-                </div>
-                <div>
-                  <label style={labelStyle}>Max Price ($)</label>
-                  <input
-                    style={inputStyle}
-                    value={form.max_price}
-                    onChange={e => set('max_price', e.target.value)}
-                    placeholder="180000"
-                    type="number"
-                    min="0"
-                  />
-                </div>
+              <div style={gridStyle(2)}>
+                <Field label="Min Price ($)">
+                  <TextInput type="number" min="0" value={form.min_price} onChange={e => set('min_price', e.target.value)} placeholder="60000" />
+                </Field>
+                <Field label="Max Price ($)">
+                  <TextInput type="number" min="0" value={form.max_price} onChange={e => set('max_price', e.target.value)} placeholder="180000" />
+                </Field>
               </div>
 
-              {/* Condition Max + Beds/Baths */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
-                <div>
-                  <label style={labelStyle}>Condition Max</label>
-                  <select
-                    style={{ ...inputStyle, cursor: 'pointer' }}
-                    value={form.condition_max}
-                    onChange={e => set('condition_max', e.target.value)}
-                  >
+              <div style={gridStyle(3)}>
+                <Field label="Condition Max">
+                  <SelectInput value={form.condition_max} onChange={e => set('condition_max', e.target.value)}>
                     <option value="">Any</option>
-                    {CONDITION_OPTIONS.map(c => (
-                      <option key={c} value={c}>{c}</option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label style={labelStyle}>Min Beds</label>
-                  <input
-                    style={inputStyle}
-                    value={form.min_beds}
-                    onChange={e => set('min_beds', e.target.value)}
-                    placeholder="3"
-                    type="number"
-                    min="0"
-                  />
-                </div>
-                <div>
-                  <label style={labelStyle}>Min Baths</label>
-                  <input
-                    style={inputStyle}
-                    value={form.min_baths}
-                    onChange={e => set('min_baths', e.target.value)}
-                    placeholder="2"
-                    type="number"
-                    min="0"
-                    step="0.5"
-                  />
-                </div>
+                    {CONDITION_OPTIONS.map(c => <option key={c} value={c}>{c}</option>)}
+                  </SelectInput>
+                </Field>
+                <Field label="Min Beds">
+                  <TextInput type="number" min="0" value={form.min_beds} onChange={e => set('min_beds', e.target.value)} placeholder="3" />
+                </Field>
+                <Field label="Min Baths">
+                  <TextInput type="number" min="0" step="0.5" value={form.min_baths} onChange={e => set('min_baths', e.target.value)} placeholder="2" />
+                </Field>
               </div>
 
-              {/* Strategy */}
-              <div className="mb-4">
-                <label style={labelStyle}>Strategy</label>
-                <select
-                  style={{ ...inputStyle, cursor: 'pointer' }}
-                  value={form.strategy}
-                  onChange={e => set('strategy', e.target.value)}
-                >
+              <Field label="Strategy">
+                <SelectInput value={form.strategy} onChange={e => set('strategy', e.target.value)}>
                   <option value="">Select strategy</option>
-                  {STRATEGY_OPTIONS.map(s => (
-                    <option key={s} value={s}>{s}</option>
-                  ))}
-                </select>
+                  {STRATEGY_OPTIONS.map(s => <option key={s} value={s}>{s}</option>)}
+                </SelectInput>
+              </Field>
+
+              <div style={gridStyle(3)}>
+                <Field label="Target Margin (%)">
+                  <TextInput type="number" min="0" max="100" value={form.target_margin} onChange={e => set('target_margin', e.target.value)} placeholder="70" />
+                </Field>
+                <Field label="Target ROI (%)">
+                  <TextInput type="number" min="0" value={form.target_roi} onChange={e => set('target_roi', e.target.value)} placeholder="12" />
+                  <p style={{ fontFamily: f.mono, fontSize: 11, color: C.mute, marginTop: 4 }}>rental buyers only</p>
+                </Field>
+                <Field label="Cap Rate (%)">
+                  <TextInput type="number" min="0" value={form.cap_rate} onChange={e => set('cap_rate', e.target.value)} placeholder="8" />
+                  <p style={{ fontFamily: f.mono, fontSize: 11, color: C.mute, marginTop: 4 }}>rental buyers only</p>
+                </Field>
               </div>
 
-              {/* Margin + ROI + Cap Rate */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
-                <div>
-                  <label style={labelStyle}>Target Margin (%)</label>
-                  <input
-                    style={inputStyle}
-                    value={form.target_margin}
-                    onChange={e => set('target_margin', e.target.value)}
-                    placeholder="70"
-                    type="number"
-                    min="0"
-                    max="100"
-                  />
-                </div>
-                <div>
-                  <label style={labelStyle}>Target ROI (%)</label>
-                  <input
-                    style={inputStyle}
-                    value={form.target_roi}
-                    onChange={e => set('target_roi', e.target.value)}
-                    placeholder="12"
-                    type="number"
-                    min="0"
-                  />
-                  <p className="text-xs mt-1" style={{ color: '#555' }}>rental buyers only</p>
-                </div>
-                <div>
-                  <label style={labelStyle}>Cap Rate (%)</label>
-                  <input
-                    style={inputStyle}
-                    value={form.cap_rate}
-                    onChange={e => set('cap_rate', e.target.value)}
-                    placeholder="8"
-                    type="number"
-                    min="0"
-                  />
-                  <p className="text-xs mt-1" style={{ color: '#555' }}>rental buyers only</p>
-                </div>
+              <div style={gridStyle(3)}>
+                <Field label="Max Rehab ($)">
+                  <TextInput type="number" min="0" value={form.max_rehab} onChange={e => set('max_rehab', e.target.value)} placeholder="40000" />
+                </Field>
+                <Field label="Financing">
+                  <TextInput value={form.financing} onChange={e => set('financing', e.target.value)} placeholder="Cash, Hard money..." />
+                </Field>
+                <Field label="Proof of Funds">
+                  <TextInput value={form.proof_of_funds} onChange={e => set('proof_of_funds', e.target.value)} placeholder="Verified, On file..." />
+                </Field>
               </div>
-
-              {/* Max Rehab + Financing + POF */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-0">
-                <div>
-                  <label style={labelStyle}>Max Rehab ($)</label>
-                  <input
-                    style={inputStyle}
-                    value={form.max_rehab}
-                    onChange={e => set('max_rehab', e.target.value)}
-                    placeholder="40000"
-                    type="number"
-                    min="0"
-                  />
-                </div>
-                <div>
-                  <label style={labelStyle}>Financing</label>
-                  <input
-                    style={inputStyle}
-                    value={form.financing}
-                    onChange={e => set('financing', e.target.value)}
-                    placeholder="Cash, Hard money..."
-                  />
-                </div>
-                <div>
-                  <label style={labelStyle}>Proof of Funds</label>
-                  <input
-                    style={inputStyle}
-                    value={form.proof_of_funds}
-                    onChange={e => set('proof_of_funds', e.target.value)}
-                    placeholder="Verified, On file..."
-                  />
-                </div>
-              </div>
-            </Card>
-
-            {/* Submit */}
-            <div className="flex items-center justify-end gap-3">
-              <Button
-                type="button"
-                onClick={() => navigate('/wholesale/buyers')}
-                variant="ghost"
-                size="md"
-              >
-                Cancel
-              </Button>
-              <Button type="submit" variant="primary" size="md" disabled={submitting}>
-                {submitting ? 'Saving...' : 'Add Buyer'}
-              </Button>
             </div>
-          </form>
-        </div>
+          </DetailPanel>
+
+          <ActionBar style={{ justifyContent: 'flex-end' }}>
+            <SecondaryButton type="button" label="Cancel" onClick={() => navigate('/wholesale/buyers')} />
+            <PrimaryButton type="submit" label={submitting ? 'Saving…' : 'Add Buyer'} disabled={submitting} />
+          </ActionBar>
+        </form>
       </div>
-    </>
+    </DesktopShell>
   )
 }
